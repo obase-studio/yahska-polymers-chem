@@ -1,135 +1,95 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { Navigation } from "@/components/navigation"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Badge } from "@/components/ui/badge"
-import { Search, ArrowRight, Mail, Phone, ExternalLink } from "lucide-react"
+import { Search, ArrowRight, Mail, Phone, ExternalLink, Loader2 } from "lucide-react"
 import Link from "next/link"
 import { Footer } from "@/components/footer"
 
-const productCategories = [
-  {
-    id: "construction",
-    name: "Construction Chemicals",
-    description: "Advanced solutions for construction and infrastructure projects",
-    products: [
-      {
-        id: "polycarboxylate-ether",
-        name: "Polycarboxylate Ether (PC Liquid) PC SR",
-        description:
-          "State-of-the-art polycarboxylate ether-based superplasticizer for ultra-high performance concrete",
-        price: "₹90/Kg",
-        applications: [
-          "Ultra-High Performance Concrete",
-          "Bridge Construction",
-          "Tunnel Projects",
-          "High-Rise Buildings",
-        ],
-        features: ["Ultra-high water reduction", "Excellent slump retention", "Superior strength development"],
-      },
-      {
-        id: "concrete-curing-compound",
-        name: "Concrete Curing Compound",
-        description:
-          "Membrane-forming curing compound that ensures optimal concrete hydration and strength development",
-        price: "₹40/Kg",
-        applications: ["Road Construction", "Airport Runways", "Industrial Flooring", "Parking Structures"],
-        features: ["Forms protective membrane", "Prevents moisture loss", "UV resistant formulation"],
-      },
-    ],
-  },
-  {
-    id: "concrete",
-    name: "Concrete Admixtures",
-    description: "High-performance additives for enhanced concrete properties",
-    products: [
-      {
-        id: "superplasticizer-snf",
-        name: "Superplasticizer Concrete Admixture (SNF Based)",
-        description:
-          "High-performance superplasticizer based on Sulfonated Naphthalene Formaldehyde for enhanced concrete workability",
-        price: "₹40/Kg",
-        applications: ["Ready Mix Concrete Plants", "Precast Concrete Manufacturing", "High-Rise Construction"],
-        features: [
-          "Reduces water content by 15-25%",
-          "Improves concrete workability",
-          "Increases compressive strength",
-        ],
-      },
-      {
-        id: "concrete-admixture",
-        name: "Concrete Admixture",
-        description:
-          "General purpose concrete admixture designed to improve workability and durability of concrete mixes",
-        price: "₹32/Kg",
-        applications: ["General Construction", "Residential Buildings", "Commercial Projects"],
-        features: ["Improves workability", "Reduces segregation", "Cost-effective solution"],
-      },
-      {
-        id: "hyper-plasticizer-pc",
-        name: "Hyper Plasticizer (PC Base Admixture)",
-        description: "Advanced polycarboxylate-based hyper plasticizer for superior concrete performance and strength",
-        price: "₹60/Kg",
-        applications: ["High-Strength Concrete", "Self-Compacting Concrete", "Precast Elements"],
-        features: ["High water reduction (30-40%)", "Superior workability retention", "Enhanced early strength"],
-      },
-    ],
-  },
-  {
-    id: "dispersing",
-    name: "Dispersing Agents",
-    description: "Specialized dispersing agents for various industrial applications",
-    products: [
-      {
-        id: "sodium-ligno-sulphonate",
-        name: "Sodium Ligno Sulphonate",
-        description:
-          "Natural polymer-based dispersing agent derived from wood pulp, ideal for concrete and industrial applications",
-        price: "₹60/Kg",
-        applications: ["Concrete Plasticizer", "Ceramic Binder Applications", "Dust Control Agent"],
-        features: ["Natural polymer base", "Excellent dispersing properties", "Environmentally friendly"],
-      },
-      {
-        id: "lignosulphonate-powder",
-        name: "Lignosulphonate Powder",
-        description: "Premium grade lignosulphonate powder for specialized high-performance applications",
-        price: "₹90/Kg",
-        applications: ["High-Performance Concrete", "Specialty Mortars", "Industrial Applications"],
-        features: ["Premium quality grade", "Superior dispersing action", "High purity formulation"],
-      },
-      {
-        id: "sodium-naphthalene-formaldehyde",
-        name: "Sodium Naphthalene Formaldehyde",
-        description: "High-quality dispersing agent specifically designed for textile and dyestuff applications",
-        price: "₹100/Kg",
-        applications: ["Textile Dyeing Process", "Pigment Dispersion", "Leather Processing"],
-        features: ["Excellent dispersing properties", "High thermal stability", "Superior color fastness"],
-      },
-    ],
-  },
-]
+interface Product {
+  id: number
+  name: string
+  description: string
+  category_id: string
+  category_name: string
+  applications: string
+  features: string
+  usage: string
+  advantages: string
+  technical_specifications: string
+  product_code: string
+  is_active: boolean
+}
+
+interface Category {
+  id: string
+  name: string
+  description: string
+  sort_order: number
+}
 
 export default function ProductsPage() {
   const [selectedCategory, setSelectedCategory] = useState("all")
   const [searchTerm, setSearchTerm] = useState("")
+  const [products, setProducts] = useState<Product[]>([])
+  const [categories, setCategories] = useState<Category[]>([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
 
-  const filteredCategories = productCategories.filter((category) => {
-    if (selectedCategory === "all") return true
-    return category.id === selectedCategory
-  })
+  // Fetch products from API
+  useEffect(() => {
+    const fetchProducts = async () => {
+      try {
+        setLoading(true)
+        const params = new URLSearchParams()
+        if (selectedCategory !== 'all') {
+          params.append('category', selectedCategory)
+        }
+        if (searchTerm) {
+          params.append('search', searchTerm)
+        }
+        
+        const response = await fetch(`/api/products?${params.toString()}`)
+        const result = await response.json()
+        
+        if (result.success) {
+          setProducts(result.data.products)
+          setCategories(result.data.categories)
+        } else {
+          setError(result.error || 'Failed to fetch products')
+        }
+      } catch (err) {
+        setError('Failed to fetch products')
+        console.error('Error fetching products:', err)
+      } finally {
+        setLoading(false)
+      }
+    }
 
-  const filteredProducts = filteredCategories.flatMap((category) =>
-    category.products
-      .filter(
-        (product) =>
-          product.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-          product.description.toLowerCase().includes(searchTerm.toLowerCase()),
-      )
-      .map((product) => ({ ...product, category: category.name, categoryId: category.id })),
-  )
+    fetchProducts()
+  }, [selectedCategory, searchTerm])
+
+  // Parse JSON fields safely
+  const parseJsonField = (field: string | null) => {
+    if (!field) return []
+    try {
+      return JSON.parse(field)
+    } catch {
+      return []
+    }
+  }
+
+  // Get filtered products
+  const filteredProducts = products.filter(product => product.is_active)
+
+  // Get category by ID
+  const getCategoryById = (id: string) => {
+    return categories.find(cat => cat.id === id)
+  }
 
   return (
     <div className="min-h-screen bg-background">
@@ -174,7 +134,7 @@ export default function ProductsPage() {
               >
                 All Products
               </Button>
-              {productCategories.map((category) => (
+              {categories.map((category) => (
                 <Button
                   key={category.id}
                   variant={selectedCategory === category.id ? "default" : "outline"}
@@ -206,26 +166,29 @@ export default function ProductsPage() {
             </div>
 
             <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
-              {productCategories.map((category) => (
-                <Card key={category.id} className="hover:shadow-lg transition-shadow duration-300">
-                  <CardHeader>
-                    <CardTitle className="text-primary">{category.name}</CardTitle>
-                    <CardDescription>{category.description}</CardDescription>
-                  </CardHeader>
-                  <CardContent>
-                    <p className="text-sm text-muted-foreground mb-4">{category.products.length} products available</p>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => setSelectedCategory(category.id)}
-                      className="w-full"
-                    >
-                      View Products
-                      <ArrowRight className="ml-2 h-4 w-4" />
-                    </Button>
-                  </CardContent>
-                </Card>
-              ))}
+              {categories.map((category) => {
+                const categoryProducts = products.filter(p => p.category_id === category.id && p.is_active)
+                return (
+                  <Card key={category.id} className="hover:shadow-lg transition-shadow duration-300">
+                    <CardHeader>
+                      <CardTitle className="text-primary">{category.name}</CardTitle>
+                      <CardDescription>{category.description}</CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                      <p className="text-sm text-muted-foreground mb-4">{categoryProducts.length} products available</p>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => setSelectedCategory(category.id)}
+                        className="w-full"
+                      >
+                        View Products
+                        <ArrowRight className="ml-2 h-4 w-4" />
+                      </Button>
+                    </CardContent>
+                  </Card>
+                )
+              })}
             </div>
           </div>
         </section>
@@ -240,10 +203,10 @@ export default function ProductsPage() {
                 className="text-3xl lg:text-4xl font-bold text-foreground mb-4"
                 style={{ fontFamily: "var(--font-heading)" }}
               >
-                {productCategories.find((cat) => cat.id === selectedCategory)?.name}
+                {getCategoryById(selectedCategory)?.name}
               </h2>
               <p className="text-xl text-muted-foreground">
-                {productCategories.find((cat) => cat.id === selectedCategory)?.description}
+                {getCategoryById(selectedCategory)?.description}
               </p>
             </div>
           )}
@@ -256,66 +219,134 @@ export default function ProductsPage() {
             </div>
           )}
 
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {filteredProducts.map((product, index) => (
-              <Card key={index} className="hover:shadow-lg transition-shadow duration-300 flex flex-col h-full">
-                <CardHeader className="flex-shrink-0">
-                  <div className="flex items-start justify-between">
-                    <div>
-                      <CardTitle className="text-lg">{product.name}</CardTitle>
-                      <Badge variant="secondary" className="mt-2">
-                        {product.category}
-                      </Badge>
-                      <div className="mt-2">
-                        <span className="text-2xl font-bold text-primary">{product.price}</span>
-                        <span className="text-sm text-muted-foreground ml-1">Ex-works</span>
-                      </div>
-                    </div>
-                  </div>
-                  <CardDescription className="mt-3">{product.description}</CardDescription>
-                </CardHeader>
-                <CardContent className="flex flex-col flex-grow">
-                  <div className="space-y-4 flex-grow">
-                    <div>
-                      <h4 className="font-semibold text-sm text-foreground mb-2">Applications:</h4>
-                      <div className="flex flex-wrap gap-1">
-                        {product.applications.map((app, appIndex) => (
-                          <Badge key={appIndex} variant="outline" className="text-xs">
-                            {app}
-                          </Badge>
-                        ))}
-                      </div>
-                    </div>
-                    <div>
-                      <h4 className="font-semibold text-sm text-foreground mb-2">Key Features:</h4>
-                      <ul className="text-sm text-muted-foreground space-y-1">
-                        {product.features.map((feature, featureIndex) => (
-                          <li key={featureIndex} className="flex items-center">
-                            <div className="w-1.5 h-1.5 bg-accent rounded-full mr-2 flex-shrink-0" />
-                            {feature}
-                          </li>
-                        ))}
-                      </ul>
-                    </div>
-                  </div>
-                  <div className="pt-4 mt-auto border-t border-border flex gap-2">
-                    <Button asChild size="sm" variant="outline" className="flex-1 bg-transparent">
-                      <Link href={`/products/${product.id}`}>
-                        View Details
-                        <ExternalLink className="ml-2 h-4 w-4" />
-                      </Link>
-                    </Button>
-                    <Button size="sm" className="flex-1 bg-primary hover:bg-primary/90">
-                      Request Quote
-                      <ArrowRight className="ml-2 h-4 w-4" />
-                    </Button>
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
+          {/* Loading State */}
+          {loading && (
+            <div className="text-center py-12">
+              <Loader2 className="h-8 w-8 animate-spin mx-auto mb-4 text-primary" />
+              <p className="text-muted-foreground">Loading products...</p>
+            </div>
+          )}
 
-          {filteredProducts.length === 0 && (
+          {/* Error State */}
+          {error && !loading && (
+            <div className="text-center py-12">
+              <p className="text-destructive text-lg mb-4">Error loading products</p>
+              <p className="text-muted-foreground mb-4">{error}</p>
+              <Button onClick={() => window.location.reload()} variant="outline">
+                Try Again
+              </Button>
+            </div>
+          )}
+
+          {/* Products Grid */}
+          {!loading && !error && (
+            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+              {filteredProducts.map((product) => {
+                const applications = parseJsonField(product.applications)
+                const features = parseJsonField(product.features)
+                
+                return (
+                  <Card key={product.id} className="hover:shadow-lg transition-shadow duration-300 flex flex-col h-full">
+                    <CardHeader className="flex-shrink-0">
+                      <div className="flex items-start justify-between">
+                        <div>
+                          <CardTitle className="text-lg">{product.name}</CardTitle>
+                          <Badge variant="secondary" className="mt-2">
+                            {product.category_name || getCategoryById(product.category_id)?.name}
+                          </Badge>
+                          {product.product_code && (
+                            <div className="mt-2">
+                              <span className="text-sm text-muted-foreground">Code: {product.product_code}</span>
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                      <CardDescription className="mt-3">{product.description}</CardDescription>
+                    </CardHeader>
+                    <CardContent className="flex flex-col flex-grow">
+                      <div className="space-y-4 flex-grow">
+                        {applications.length > 0 && (
+                          <div>
+                            <h4 className="font-semibold text-sm text-foreground mb-2">Applications:</h4>
+                            <div className="flex flex-wrap gap-1">
+                              {applications.slice(0, 3).map((app, appIndex) => (
+                                <Badge key={appIndex} variant="outline" className="text-xs">
+                                  {app}
+                                </Badge>
+                              ))}
+                              {applications.length > 3 && (
+                                <Badge variant="outline" className="text-xs">
+                                  +{applications.length - 3} more
+                                </Badge>
+                              )}
+                            </div>
+                          </div>
+                        )}
+                        
+                        {features.length > 0 && (
+                          <div>
+                            <h4 className="font-semibold text-sm text-foreground mb-2">Key Features:</h4>
+                            <ul className="text-sm text-muted-foreground space-y-1">
+                              {features.slice(0, 3).map((feature, featureIndex) => (
+                                <li key={featureIndex} className="flex items-center">
+                                  <div className="w-1.5 h-1.5 bg-accent rounded-full mr-2 flex-shrink-0" />
+                                  {feature}
+                                </li>
+                              ))}
+                              {features.length > 3 && (
+                                <li className="text-xs text-muted-foreground">
+                                  +{features.length - 3} more features
+                                </li>
+                              )}
+                            </ul>
+                          </div>
+                        )}
+
+                        {product.usage && (
+                          <div>
+                            <h4 className="font-semibold text-sm text-foreground mb-2">Usage:</h4>
+                            <p className="text-sm text-muted-foreground">
+                              {product.usage.length > 100 
+                                ? `${product.usage.substring(0, 100)}...` 
+                                : product.usage
+                              }
+                            </p>
+                          </div>
+                        )}
+
+                        {product.advantages && (
+                          <div>
+                            <h4 className="font-semibold text-sm text-foreground mb-2">Advantages:</h4>
+                            <p className="text-sm text-muted-foreground">
+                              {product.advantages.length > 100 
+                                ? `${product.advantages.substring(0, 100)}...` 
+                                : product.advantages
+                              }
+                            </p>
+                          </div>
+                        )}
+                      </div>
+                      
+                      <div className="pt-4 mt-auto border-t border-border flex gap-2">
+                        <Button asChild size="sm" variant="outline" className="flex-1 bg-transparent">
+                          <Link href={`/products/${product.id}`}>
+                            View Details
+                            <ExternalLink className="ml-2 h-4 w-4" />
+                          </Link>
+                        </Button>
+                        <Button size="sm" className="flex-1 bg-primary hover:bg-primary/90">
+                          Request Quote
+                          <ArrowRight className="ml-2 h-4 w-4" />
+                        </Button>
+                      </div>
+                    </CardContent>
+                  </Card>
+                )
+              })}
+            </div>
+          )}
+
+          {!loading && !error && filteredProducts.length === 0 && (
             <div className="text-center py-12">
               <p className="text-muted-foreground text-lg">No products found matching your search criteria.</p>
               <Button
@@ -356,7 +387,7 @@ export default function ProductsPage() {
               className="border-primary-foreground text-primary-foreground hover:bg-primary-foreground hover:text-primary bg-transparent"
             >
               <Link href="tel:+919825012345">
-                <Phone className="mr-2 h-5 w-5" />
+                <Phone className="mr-2 h-5 w-4" />
                 Call Now
               </Link>
             </Button>

@@ -1,427 +1,320 @@
-import Link from "next/link"
-import { ArrowLeft, Download, Mail, Phone, CheckCircle, Beaker, Factory, Truck } from "lucide-react"
+"use client"
 
-const products = {
-  "superplasticizer-snf": {
-    name: "Superplasticizer Concrete Admixture (SNF Based)",
-    category: "Concrete Admixtures",
-    industry: "Construction",
-    price: "₹40/Kg",
-    description:
-      "High-performance superplasticizer based on Sulfonated Naphthalene Formaldehyde for enhanced concrete workability and strength.",
-    image: "/placeholder.svg?height=400&width=600",
-    features: [
-      "Reduces water content by 15-25%",
-      "Improves concrete workability",
-      "Increases compressive strength",
-      "Compatible with all types of cement",
-      "Chloride-free formulation",
-    ],
-    applications: [
-      "Ready Mix Concrete Plants",
-      "Precast Concrete Manufacturing",
-      "High-Rise Construction Projects",
-      "Infrastructure Development",
-      "Bridge and Tunnel Construction",
-    ],
-    technicalSpecs: {
-      Appearance: "Brown powder",
-      "Bulk Density": "500-600 kg/m³",
-      "pH Value": "7-9",
-      "Chloride Content": "< 0.1%",
-      Dosage: "0.5-2.0% by weight of cement",
-    },
-    packaging: ["25 kg bags", "50 kg bags", "500 kg jumbo bags", "Bulk supply available"],
-    industries: ["Construction", "Infrastructure", "Precast Concrete"],
-  },
-  "sodium-ligno-sulphonate": {
-    name: "Sodium Ligno Sulphonate",
-    category: "Dispersing Agents",
-    industry: "Construction",
-    price: "₹60/Kg",
-    description:
-      "Natural polymer-based dispersing agent derived from wood pulp, ideal for concrete and industrial applications.",
-    image: "/placeholder.svg?height=400&width=600",
-    features: [
-      "Natural polymer base",
-      "Excellent dispersing properties",
-      "Reduces water requirement",
-      "Improves concrete workability",
-      "Environmentally friendly",
-    ],
-    applications: [
-      "Concrete Plasticizer",
-      "Ceramic Binder Applications",
-      "Dust Control Agent",
-      "Textile Dyeing Assistant",
-      "Leather Tanning Process",
-    ],
-    technicalSpecs: {
-      Appearance: "Brown powder",
-      "Moisture Content": "< 5%",
-      "pH Value": "8-10",
-      "Reducing Sugar": "< 4%",
-      Dosage: "0.2-0.8% by weight of cement",
-    },
-    packaging: ["25 kg bags", "50 kg bags", "Bulk supply available"],
-    industries: ["Construction", "Textile", "Ceramics", "Leather"],
-  },
-  "concrete-admixture": {
-    name: "Concrete Admixture",
-    category: "Concrete Admixtures",
-    industry: "Construction",
-    price: "₹32/Kg",
-    description: "General purpose concrete admixture designed to improve workability and durability of concrete mixes.",
-    image: "/placeholder.svg?height=400&width=600",
-    features: [
-      "Improves workability",
-      "Reduces segregation",
-      "Enhances durability",
-      "Cost-effective solution",
-      "Easy to use",
-    ],
-    applications: [
-      "General Construction",
-      "Residential Buildings",
-      "Commercial Projects",
-      "Infrastructure Development",
-      "Road Construction",
-    ],
-    technicalSpecs: {
-      Appearance: "Dark brown liquid",
-      "Specific Gravity": "1.15-1.25",
-      "pH Value": "6-8",
-      "Chloride Content": "Nil",
-      Dosage: "0.5-1.5% by weight of cement",
-    },
-    packaging: ["200 L drums", "1000 L IBC tanks", "Bulk tankers"],
-    industries: ["Construction", "Infrastructure"],
-  },
-  "lignosulphonate-powder": {
-    name: "Lignosulphonate Powder",
-    category: "Dispersing Agents",
-    industry: "Construction",
-    price: "₹90/Kg",
-    description: "Premium grade lignosulphonate powder for specialized high-performance applications.",
-    image: "/placeholder.svg?height=400&width=600",
-    features: [
-      "Premium quality grade",
-      "Superior dispersing action",
-      "High purity formulation",
-      "Consistent performance",
-      "Long shelf life",
-    ],
-    applications: [
-      "High-Performance Concrete",
-      "Specialty Mortars",
-      "Industrial Applications",
-      "Refractory Materials",
-      "Oil Well Drilling",
-    ],
-    technicalSpecs: {
-      Appearance: "Light brown powder",
-      Purity: "> 95%",
-      "Moisture Content": "< 3%",
-      "pH Value": "8-10",
-      Dosage: "0.3-1.0% by weight of cement",
-    },
-    packaging: ["25 kg bags", "500 kg jumbo bags", "Customized packaging"],
-    industries: ["Construction", "Oil & Gas", "Refractory"],
-  },
-  "hyper-plasticizer-pc": {
-    name: "Hyper Plasticizer (PC Base Admixture)",
-    category: "Concrete Admixtures",
-    industry: "Construction",
-    price: "₹60/Kg",
-    description: "Advanced polycarboxylate-based hyper plasticizer for superior concrete performance and strength.",
-    image: "/placeholder.svg?height=400&width=600",
-    features: [
-      "High water reduction (30-40%)",
-      "Superior workability retention",
-      "Enhanced early strength",
-      "Reduced shrinkage",
-      "Improved durability",
-    ],
-    applications: [
-      "High-Strength Concrete",
-      "Self-Compacting Concrete",
-      "Precast Elements",
-      "Architectural Concrete",
-      "Marine Structures",
-    ],
-    technicalSpecs: {
-      Appearance: "Light yellow liquid",
-      "Solid Content": "40±2%",
-      "pH Value": "6-8",
-      "Chloride Content": "< 0.1%",
-      Dosage: "0.8-2.5% by weight of cement",
-    },
-    packaging: ["200 L drums", "1000 L IBC tanks", "Bulk supply"],
-    industries: ["Construction", "Precast", "Infrastructure"],
-  },
-  "polycarboxylate-ether": {
-    name: "Polycarboxylate Ether (PC Liquid) PC SR",
-    category: "Construction Chemicals",
-    industry: "Construction",
-    price: "₹90/Kg",
-    description:
-      "State-of-the-art polycarboxylate ether-based superplasticizer for ultra-high performance concrete applications.",
-    image: "/placeholder.svg?height=400&width=600",
-    features: [
-      "Ultra-high water reduction",
-      "Excellent slump retention",
-      "Superior strength development",
-      "Low shrinkage properties",
-      "Enhanced workability",
-    ],
-    applications: [
-      "Ultra-High Performance Concrete",
-      "Bridge Construction",
-      "Tunnel Projects",
-      "High-Rise Buildings",
-      "Prestressed Concrete",
-    ],
-    technicalSpecs: {
-      Appearance: "Colorless to light yellow liquid",
-      "Solid Content": "50±2%",
-      "pH Value": "5-7",
-      Density: "1.08±0.02 g/cm³",
-      Dosage: "1.0-3.0% by weight of cement",
-    },
-    packaging: ["200 L drums", "1000 L IBC tanks", "Bulk tankers"],
-    industries: ["Construction", "Infrastructure", "Precast"],
-  },
-  "sodium-naphthalene-formaldehyde": {
-    name: "Sodium Naphthalene Formaldehyde",
-    category: "Dispersing Agents",
-    industry: "Textile Industry",
-    price: "₹100/Kg",
-    description: "High-quality dispersing agent specifically designed for textile and dyestuff applications.",
-    image: "/placeholder.svg?height=400&width=600",
-    features: [
-      "Excellent dispersing properties",
-      "High thermal stability",
-      "Superior color fastness",
-      "Uniform dye distribution",
-      "Reduced foaming",
-    ],
-    applications: [
-      "Textile Dyeing Process",
-      "Pigment Dispersion",
-      "Leather Processing",
-      "Paper Industry",
-      "Ceramic Applications",
-    ],
-    technicalSpecs: {
-      Appearance: "Light brown powder",
-      Purity: "> 92%",
-      "pH Value": "7-9",
-      "Moisture Content": "< 5%",
-      Dosage: "0.5-2.0% of dye weight",
-    },
-    packaging: ["25 kg bags", "50 kg bags", "Customized packaging"],
-    industries: ["Textile", "Leather", "Paper", "Ceramics"],
-  },
-  "concrete-curing-compound": {
-    name: "Concrete Curing Compound",
-    category: "Construction Chemicals",
-    industry: "Construction",
-    price: "₹40/Kg",
-    description: "Membrane-forming curing compound that ensures optimal concrete hydration and strength development.",
-    image: "/placeholder.svg?height=400&width=600",
-    features: [
-      "Forms protective membrane",
-      "Prevents moisture loss",
-      "Enhances strength development",
-      "UV resistant formulation",
-      "Easy application",
-    ],
-    applications: ["Road Construction", "Airport Runways", "Industrial Flooring", "Parking Structures", "Bridge Decks"],
-    technicalSpecs: {
-      Appearance: "White liquid",
-      "Solid Content": "25±2%",
-      "Specific Gravity": "0.95-1.05",
-      "Drying Time": "30-60 minutes",
-      Coverage: "4-6 m²/L",
-    },
-    packaging: ["20 L cans", "200 L drums", "Bulk supply"],
-    industries: ["Construction", "Infrastructure", "Industrial"],
-  },
+import { useState, useEffect } from "react"
+import { useParams } from "next/navigation"
+import { Navigation } from "@/components/navigation"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { Button } from "@/components/ui/button"
+import { Badge } from "@/components/ui/badge"
+import { ArrowLeft, Mail, Phone, ExternalLink, Loader2, AlertCircle } from "lucide-react"
+import Link from "next/link"
+import { Footer } from "@/components/footer"
+
+interface Product {
+  id: number
+  name: string
+  description: string
+  category_id: string
+  category_name: string
+  applications: string
+  features: string
+  usage: string
+  advantages: string
+  technical_specifications: string
+  product_code: string
+  is_active: boolean
 }
 
-export default function ProductDetailPage({ params }: { params: { id: string } }) {
-  const product = products[params.id as keyof typeof products]
+export default function ProductDetailPage() {
+  const params = useParams()
+  const productId = params.id
+  const [product, setProduct] = useState<Product | null>(null)
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
 
-  if (!product) {
+  useEffect(() => {
+    const fetchProduct = async () => {
+      try {
+        setLoading(true)
+        const response = await fetch(`/api/products/${productId}`)
+        const result = await response.json()
+        
+        if (result.success) {
+          setProduct(result.data)
+        } else {
+          setError(result.error || 'Product not found')
+        }
+      } catch (err) {
+        setError('Failed to fetch product details')
+        console.error('Error fetching product:', err)
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    if (productId) {
+      fetchProduct()
+    }
+  }, [productId])
+
+  // Parse JSON fields safely
+  const parseJsonField = (field: string | null) => {
+    if (!field) return []
+    try {
+      return JSON.parse(field)
+    } catch {
+      return []
+    }
+  }
+
+  if (loading) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="text-center">
-          <h1 className="text-2xl font-bold text-gray-900 mb-4">Product Not Found</h1>
-          <Link href="/products" className="text-blue-600 hover:text-blue-700">
-            ← Back to Products
-          </Link>
+      <div className="min-h-screen bg-background">
+        <Navigation />
+        <div className="text-center py-20">
+          <Loader2 className="h-8 w-8 animate-spin mx-auto mb-4 text-primary" />
+          <p className="text-muted-foreground">Loading product details...</p>
         </div>
+        <Footer />
       </div>
     )
   }
 
-  return (
-    <div className="min-h-screen bg-gray-50">
-      {/* Breadcrumb */}
-      <div className="bg-white border-b">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-          <div className="flex items-center space-x-2 text-sm text-gray-600">
-            <Link href="/" className="hover:text-blue-600">
-              Home
+  if (error || !product) {
+    return (
+      <div className="min-h-screen bg-background">
+        <Navigation />
+        <div className="text-center py-20">
+          <AlertCircle className="h-16 w-16 mx-auto mb-4 text-destructive" />
+          <h1 className="text-2xl font-bold text-foreground mb-2">Product Not Found</h1>
+          <p className="text-muted-foreground mb-6">{error || 'The requested product could not be found.'}</p>
+          <Button asChild>
+            <Link href="/products">
+              <ArrowLeft className="mr-2 h-4 w-4" />
+              Back to Products
             </Link>
-            <span>/</span>
-            <Link href="/products" className="hover:text-blue-600">
-              Products
-            </Link>
-            <span>/</span>
-            <span className="text-gray-900">{product.name}</span>
-          </div>
+          </Button>
         </div>
+        <Footer />
       </div>
+    )
+  }
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {/* Back Button */}
-        <Link href="/products" className="inline-flex items-center text-blue-600 hover:text-blue-700 mb-6">
-          <ArrowLeft className="w-4 h-4 mr-2" />
-          Back to Products
-        </Link>
+  const applications = parseJsonField(product.applications)
+  const features = parseJsonField(product.features)
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-12">
-          {/* Product Image */}
-          <div className="bg-white rounded-lg shadow-sm overflow-hidden">
-            <img src={product.image || "/placeholder.svg"} alt={product.name} className="w-full h-96 object-cover" />
-          </div>
+  return (
+    <div className="min-h-screen bg-background">
+      <Navigation />
 
-          {/* Product Info */}
-          <div className="bg-white rounded-lg shadow-sm p-8">
-            <div className="flex items-center gap-2 mb-4">
-              <span className="px-3 py-1 bg-blue-100 text-blue-800 text-sm font-medium rounded-full">
-                {product.category}
-              </span>
-              <span className="px-3 py-1 bg-green-100 text-green-800 text-sm font-medium rounded-full">
-                {product.industry}
-              </span>
-            </div>
-
-            <h1 className="text-3xl font-bold text-gray-900 mb-4">{product.name}</h1>
-            <p className="text-gray-600 text-lg mb-6">{product.description}</p>
-
-            <div className="flex items-center justify-between mb-8">
-              <div>
-                <span className="text-3xl font-bold text-blue-600">{product.price}</span>
-                <span className="text-gray-500 ml-2">Ex-works price</span>
-              </div>
-            </div>
-
-            <div className="flex gap-4 mb-8">
-              <button className="flex-1 bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition-colors font-medium">
-                <Mail className="w-5 h-5 inline mr-2" />
-                Request Quote
-              </button>
-              <button className="px-6 py-3 border border-blue-600 text-blue-600 rounded-lg hover:bg-blue-50 transition-colors font-medium">
-                <Phone className="w-5 h-5 inline mr-2" />
-                Call Now
-              </button>
-            </div>
-
-            <div className="border-t pt-6">
-              <h3 className="font-semibold text-gray-900 mb-3">Key Features</h3>
-              <ul className="space-y-2">
-                {product.features.map((feature, index) => (
-                  <li key={index} className="flex items-center text-gray-600">
-                    <CheckCircle className="w-5 h-5 text-green-500 mr-3 flex-shrink-0" />
-                    {feature}
-                  </li>
-                ))}
-              </ul>
-            </div>
-          </div>
+      {/* Breadcrumb */}
+      <section className="py-6 bg-muted/30">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <nav className="flex items-center space-x-2 text-sm text-muted-foreground">
+            <Link href="/" className="hover:text-foreground">Home</Link>
+            <span>/</span>
+            <Link href="/products" className="hover:text-foreground">Products</Link>
+            <span>/</span>
+            <span className="text-foreground">{product.name}</span>
+          </nav>
         </div>
+      </section>
 
-        {/* Detailed Information Tabs */}
-        <div className="bg-white rounded-lg shadow-sm">
-          <div className="border-b border-gray-200">
-            <nav className="flex space-x-8 px-8">
-              <button className="py-4 px-1 border-b-2 border-blue-600 text-blue-600 font-medium">Applications</button>
-              <button className="py-4 px-1 text-gray-500 hover:text-gray-700">Technical Specifications</button>
-              <button className="py-4 px-1 text-gray-500 hover:text-gray-700">Packaging</button>
-            </nav>
+      {/* Product Header */}
+      <section className="py-12 bg-gradient-to-br from-primary/10 to-accent/5">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="mb-6">
+            <Button asChild variant="outline" size="sm">
+              <Link href="/products">
+                <ArrowLeft className="mr-2 h-4 w-4" />
+                Back to Products
+              </Link>
+            </Button>
           </div>
-
-          <div className="p-8">
-            {/* Applications Tab */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-              <div>
-                <div className="flex items-center mb-4">
-                  <Factory className="w-6 h-6 text-blue-600 mr-3" />
-                  <h3 className="text-lg font-semibold text-gray-900">Applications</h3>
+          
+          <div className="grid lg:grid-cols-2 gap-12 items-start">
+            <div>
+              <Badge variant="secondary" className="mb-4">
+                {product.category_name}
+              </Badge>
+              <h1 className="text-4xl lg:text-5xl font-black text-foreground mb-6" style={{ fontFamily: "var(--font-heading)" }}>
+                {product.name}
+              </h1>
+              <p className="text-xl text-muted-foreground leading-relaxed mb-6">
+                {product.description}
+              </p>
+              
+              {product.product_code && (
+                <div className="mb-6">
+                  <span className="text-sm text-muted-foreground">Product Code: </span>
+                  <span className="font-mono text-primary font-semibold">{product.product_code}</span>
                 </div>
-                <ul className="space-y-2">
-                  {product.applications.map((app, index) => (
-                    <li key={index} className="text-gray-600 flex items-center">
-                      <span className="w-2 h-2 bg-blue-600 rounded-full mr-3"></span>
-                      {app}
-                    </li>
-                  ))}
-                </ul>
+              )}
+
+              <div className="flex flex-col sm:flex-row gap-4">
+                <Button size="lg" className="bg-primary hover:bg-primary/90">
+                  <Mail className="mr-2 h-5 w-5" />
+                  Request Quote
+                </Button>
+                <Button size="lg" variant="outline">
+                  <Phone className="mr-2 h-5 w-5" />
+                  Call Expert
+                </Button>
               </div>
+            </div>
 
-              <div>
-                <div className="flex items-center mb-4">
-                  <Beaker className="w-6 h-6 text-blue-600 mr-3" />
-                  <h3 className="text-lg font-semibold text-gray-900">Technical Specs</h3>
+            <div className="bg-muted/30 rounded-lg p-8">
+              <h3 className="text-lg font-semibold mb-4">Quick Overview</h3>
+              <div className="space-y-3">
+                <div className="flex justify-between">
+                  <span className="text-muted-foreground">Category:</span>
+                  <span className="font-medium">{product.category_name}</span>
                 </div>
-                <div className="space-y-3">
-                  {Object.entries(product.technicalSpecs).map(([key, value]) => (
-                    <div key={key} className="flex justify-between">
-                      <span className="text-gray-600">{key}:</span>
-                      <span className="font-medium text-gray-900">{value}</span>
-                    </div>
-                  ))}
+                {product.product_code && (
+                  <div className="flex justify-between">
+                    <span className="text-muted-foreground">Product Code:</span>
+                    <span className="font-mono text-primary">{product.product_code}</span>
+                  </div>
+                )}
+                <div className="flex justify-between">
+                  <span className="text-muted-foreground">Applications:</span>
+                  <span className="font-medium">{applications.length}</span>
                 </div>
-              </div>
-
-              <div>
-                <div className="flex items-center mb-4">
-                  <Truck className="w-6 h-6 text-blue-600 mr-3" />
-                  <h3 className="text-lg font-semibold text-gray-900">Packaging Options</h3>
+                <div className="flex justify-between">
+                  <span className="text-muted-foreground">Key Features:</span>
+                  <span className="font-medium">{features.length}</span>
                 </div>
-                <ul className="space-y-2">
-                  {product.packaging.map((pack, index) => (
-                    <li key={index} className="text-gray-600 flex items-center">
-                      <span className="w-2 h-2 bg-green-600 rounded-full mr-3"></span>
-                      {pack}
-                    </li>
-                  ))}
-                </ul>
               </div>
             </div>
           </div>
         </div>
+      </section>
 
-        {/* CTA Section */}
-        <div className="bg-blue-600 rounded-lg p-8 mt-12 text-center text-white">
-          <h2 className="text-2xl font-bold mb-4">Need Technical Support or Custom Solutions?</h2>
-          <p className="text-blue-100 mb-6 max-w-2xl mx-auto">
-            Our technical experts are ready to help you find the perfect solution for your specific requirements. Get
-            personalized recommendations and technical data sheets.
+      {/* Product Details */}
+      <section className="py-20">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid lg:grid-cols-2 gap-12">
+            
+            {/* Applications */}
+            {applications.length > 0 && (
+              <Card>
+                <CardHeader>
+                  <CardTitle className="text-primary">Applications</CardTitle>
+                  <CardDescription>Where and how this product can be used</CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <ul className="space-y-3">
+                    {applications.map((app, index) => (
+                      <li key={index} className="flex items-start">
+                        <div className="w-2 h-2 bg-primary rounded-full mr-3 mt-2 flex-shrink-0" />
+                        <span className="text-muted-foreground">{app}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </CardContent>
+              </Card>
+            )}
+
+            {/* Key Features */}
+            {features.length > 0 && (
+              <Card>
+                <CardHeader>
+                  <CardTitle className="text-primary">Key Features</CardTitle>
+                  <CardDescription>What makes this product special</CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <ul className="space-y-3">
+                    {features.map((feature, index) => (
+                      <li key={index} className="flex items-start">
+                        <div className="w-2 h-2 bg-accent rounded-full mr-3 mt-2 flex-shrink-0" />
+                        <span className="text-muted-foreground">{feature}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </CardContent>
+              </Card>
+            )}
+
+            {/* Usage Instructions */}
+            {product.usage && (
+              <Card>
+                <CardHeader>
+                  <CardTitle className="text-primary">Usage Instructions</CardTitle>
+                  <CardDescription>How to properly use this product</CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-muted-foreground leading-relaxed">
+                    {product.usage}
+                  </p>
+                </CardContent>
+              </Card>
+            )}
+
+            {/* Advantages */}
+            {product.advantages && (
+              <Card>
+                <CardHeader>
+                  <CardTitle className="text-primary">Advantages</CardTitle>
+                  <CardDescription>Benefits of using this product</CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-muted-foreground leading-relaxed">
+                    {product.advantages}
+                  </p>
+                </CardContent>
+              </Card>
+            )}
+
+            {/* Technical Specifications */}
+            {product.technical_specifications && (
+              <Card className="lg:col-span-2">
+                <CardHeader>
+                  <CardTitle className="text-primary">Technical Specifications</CardTitle>
+                  <CardDescription>Detailed technical information</CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-muted-foreground leading-relaxed">
+                    {product.technical_specifications}
+                  </p>
+                </CardContent>
+              </Card>
+            )}
+          </div>
+        </div>
+      </section>
+
+      {/* Contact CTA */}
+      <section className="py-20 bg-primary text-primary-foreground">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+          <h2 className="text-3xl lg:text-4xl font-bold mb-4" style={{ fontFamily: "var(--font-heading)" }}>
+            Need More Information?
+          </h2>
+          <p className="text-xl mb-8 opacity-90 max-w-2xl mx-auto">
+            Our technical experts can provide detailed specifications, application guidance, and custom solutions for your specific requirements.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <button className="bg-white text-blue-600 px-8 py-3 rounded-lg font-medium hover:bg-gray-50 transition-colors">
-              <Download className="w-5 h-5 inline mr-2" />
-              Download Technical Data Sheet
-            </button>
-            <button className="border border-white text-white px-8 py-3 rounded-lg font-medium hover:bg-blue-700 transition-colors">
-              Contact Technical Team
-            </button>
+            <Button asChild size="lg" variant="secondary">
+              <Link href="/contact">
+                <Mail className="mr-2 h-5 w-5" />
+                Contact Our Experts
+              </Link>
+            </Button>
+            <Button
+              asChild
+              size="lg"
+              variant="outline"
+              className="border-primary-foreground text-primary-foreground hover:bg-primary-foreground hover:text-primary bg-transparent"
+            >
+              <Link href="tel:+919825012345">
+                <Phone className="mr-2 h-5 w-5" />
+                Call Now
+              </Link>
+            </Button>
           </div>
         </div>
-      </div>
+      </section>
+
+      <Footer />
     </div>
   )
 }
