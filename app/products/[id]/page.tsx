@@ -204,7 +204,7 @@ export default function ProductDetailPage() {
                 </CardHeader>
                 <CardContent>
                   <ul className="space-y-3">
-                    {applications.map((app, index) => (
+                    {applications.map((app: string, index: number) => (
                       <li key={index} className="flex items-start">
                         <div className="w-2 h-2 bg-primary rounded-full mr-3 mt-2 flex-shrink-0" />
                         <span className="text-muted-foreground">{app}</span>
@@ -224,7 +224,7 @@ export default function ProductDetailPage() {
                 </CardHeader>
                 <CardContent>
                   <ul className="space-y-3">
-                    {features.map((feature, index) => (
+                    {features.map((feature: string, index: number) => (
                       <li key={index} className="flex items-start">
                         <div className="w-2 h-2 bg-accent rounded-full mr-3 mt-2 flex-shrink-0" />
                         <span className="text-muted-foreground">{feature}</span>

@@ -1,0 +1,67 @@
+version: '3.8'
+
+services:
+  # Main application
+  yahska-polymers:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=production
+      - DATABASE_URL=./admin.db
+      - NEXTAUTH_SECRET=${NEXTAUTH_SECRET:-your-secret-key-here}
+      - NEXTAUTH_URL=${NEXTAUTH_URL:-http://localhost:3000}
+    volumes:
+      - ./admin.db:/app/admin.db
+      - ./public/media:/app/public/media
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000/api/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  # Nginx reverse proxy
+  nginx:
+    image: nginx:alpine
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./ssl:/etc/nginx/ssl:ro
+      - ./public/media:/var/www/media:ro
+    depends_on:
+      - yahska-polymers
+    restart: unless-stopped
+
+  # Redis for caching (optional)
+  redis:
+    image: redis:alpine
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    restart: unless-stopped
+    command: redis-server --appendonly yes
+
+  # Database backup service
+  backup:
+    image: alpine:latest
+    volumes:
+      - ./admin.db:/backup/admin.db
+      - ./backups:/backups
+    command: |
+      sh -c "
+        while true; do
+          cp /backup/admin.db /backups/admin-$$(date +%Y%m%d-%H%M%S).db
+          sleep 86400
+        done
+      "
+    restart: unless-stopped
+
+volumes:
+  redis_data:

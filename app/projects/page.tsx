@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Search, ExternalLink, Building2, Train, Road, Factory, Award, Users } from "lucide-react"
+import { Search, ExternalLink, Building2, Train, Factory, Award, Users, MapPin } from "lucide-react"
 import Image from "next/image"
 import { Footer } from "@/components/footer"
 
@@ -94,8 +94,8 @@ export default function ProjectsPage() {
     switch (category) {
       case 'metro-rail':
         return <Train className="h-5 w-5" />
-      case 'road-projects':
-        return <Road className="h-5 w-5" />
+              case 'road-projects':
+          return <MapPin className="h-5 w-5" />
       case 'buildings-factories':
         return <Building2 className="h-5 w-5" />
       case 'bullet':

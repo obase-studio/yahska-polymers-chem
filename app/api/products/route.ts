@@ -10,15 +10,15 @@ export async function GET(request: NextRequest) {
     // Get all products from database
     let products = dbHelpers.getAllProducts()
     
-    // Filter by category if specified
+        // Filter by category if specified
     if (category && category !== 'all') {
-      products = products.filter(product => product.category_id === category)
+      products = products.filter((product: any) => product.category_id === category)
     }
     
     // Filter by search term if specified
     if (search) {
       const searchLower = search.toLowerCase()
-      products = products.filter(product => 
+      products = products.filter((product: any) =>
         product.name?.toLowerCase().includes(searchLower) ||
         product.description?.toLowerCase().includes(searchLower) ||
         product.applications?.toLowerCase().includes(searchLower) ||

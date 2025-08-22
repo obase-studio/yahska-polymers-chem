@@ -3,7 +3,19 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { ContentEditor } from "@/components/admin/content-editor"
 
 export default function ContentPage() {
-  const contentSections = {
+  const contentSections: Record<string, Array<{
+    id: string
+    title: string
+    description: string
+    fields: Array<{
+      key: string
+      label: string
+      type: 'text' | 'textarea' | 'rich_text' | 'number' | 'select' | 'image' | 'link' | 'boolean'
+      options?: string[]
+      placeholder?: string
+      help?: string
+    }>
+  }>> = {
     home: [
       {
         id: 'hero',
@@ -13,28 +25,28 @@ export default function ContentPage() {
           { 
             key: 'headline', 
             label: 'Main Headline', 
-            type: 'text',
+            type: 'text' as const,
             placeholder: 'Welcome to Yahska Polymers',
             help: 'The main title that appears prominently on the homepage'
           },
           { 
             key: 'subheadline', 
             label: 'Sub Headline', 
-            type: 'textarea',
+            type: 'textarea' as const,
             placeholder: 'Leading Chemical Solutions for Industrial Excellence',
             help: 'Supporting text that appears below the main headline'
           },
           { 
             key: 'cta_text', 
             label: 'CTA Button Text', 
-            type: 'text',
+            type: 'text' as const,
             placeholder: 'Get Started Today',
             help: 'Text for the main call-to-action button'
           },
           { 
             key: 'hero_image', 
             label: 'Hero Background Image', 
-            type: 'image',
+            type: 'image' as const,
             help: 'Background image for the hero section'
           }
         ]
@@ -47,28 +59,28 @@ export default function ContentPage() {
           { 
             key: 'years_experience', 
             label: 'Years of Experience', 
-            type: 'number',
+            type: 'number' as const,
             placeholder: '20',
             help: 'Number of years in business'
           },
           { 
             key: 'happy_clients', 
             label: 'Happy Clients', 
-            type: 'number',
+            type: 'number' as const,
             placeholder: '500',
             help: 'Number of satisfied clients'
           },
           { 
             key: 'product_range', 
             label: 'Product Range', 
-            type: 'number',
+            type: 'number' as const,
             placeholder: '100',
             help: 'Number of products in our range'
           },
           { 
             key: 'quality_assured', 
             label: 'Quality Assured', 
-            type: 'text',
+            type: 'text' as const,
             placeholder: 'ISO 9001:2015',
             help: 'Quality certification or assurance text'
           }
@@ -82,28 +94,28 @@ export default function ContentPage() {
           { 
             key: 'company_story', 
             label: 'Company Story', 
-            type: 'rich_text',
+            type: 'rich_text' as const,
             placeholder: 'Tell your company story here...',
             help: 'Detailed company history and background (supports HTML)'
           },
           { 
             key: 'mission', 
             label: 'Mission Statement', 
-            type: 'textarea',
+            type: 'textarea' as const,
             placeholder: 'Our mission is to...',
             help: 'Company mission statement'
           },
           { 
             key: 'vision', 
             label: 'Vision Statement', 
-            type: 'textarea',
+            type: 'textarea' as const,
             placeholder: 'Our vision is to...',
             help: 'Company vision statement'
           },
           { 
             key: 'values', 
             label: 'Core Values', 
-            type: 'textarea',
+            type: 'textarea' as const,
             placeholder: 'Quality, Innovation, Integrity...',
             help: 'List of core company values'
           }
@@ -117,28 +129,28 @@ export default function ContentPage() {
           { 
             key: 'address', 
             label: 'Company Address', 
-            type: 'textarea',
+            type: 'textarea' as const,
             placeholder: 'Enter your company address',
             help: 'Full company address'
           },
           { 
             key: 'phone', 
             label: 'Phone Number', 
-            type: 'text',
+            type: 'text' as const,
             placeholder: '+91 98250 12345',
             help: 'Main contact phone number'
           },
           { 
             key: 'email', 
             label: 'Email Address', 
-            type: 'text',
+            type: 'text' as const,
             placeholder: 'info@yahskapolymers.com',
             help: 'Main contact email address'
           },
           { 
             key: 'business_hours', 
             label: 'Business Hours', 
-            type: 'textarea',
+            type: 'textarea' as const,
             placeholder: 'Monday - Friday: 9:00 AM - 6:00 PM',
             help: 'Business operating hours'
           }
@@ -154,28 +166,28 @@ export default function ContentPage() {
           { 
             key: 'company_description', 
             label: 'Company Description', 
-            type: 'rich_text',
+            type: 'rich_text' as const,
             placeholder: 'Detailed company description...',
             help: 'Comprehensive company overview'
           },
           { 
             key: 'founded_year', 
             label: 'Founded Year', 
-            type: 'number',
+            type: 'number' as const,
             placeholder: '2005',
             help: 'Year the company was established'
           },
           { 
             key: 'headquarters', 
             label: 'Headquarters', 
-            type: 'text',
+            type: 'text' as const,
             placeholder: 'Mumbai, Maharashtra',
             help: 'Company headquarters location'
           },
           { 
             key: 'team_size', 
             label: 'Team Size', 
-            type: 'number',
+            type: 'number' as const,
             placeholder: '150',
             help: 'Number of employees'
           }
@@ -189,21 +201,21 @@ export default function ContentPage() {
           { 
             key: 'ceo_name', 
             label: 'CEO Name', 
-            type: 'text',
+            type: 'text' as const,
             placeholder: 'Enter CEO name',
             help: 'Name of the Chief Executive Officer'
           },
           { 
             key: 'ceo_bio', 
             label: 'CEO Biography', 
-            type: 'textarea',
+            type: 'textarea' as const,
             placeholder: 'CEO background and experience...',
             help: 'Brief biography of the CEO'
           },
           { 
             key: 'ceo_image', 
             label: 'CEO Photo', 
-            type: 'image',
+            type: 'image' as const,
             help: 'CEO profile photograph'
           }
         ]
@@ -218,21 +230,21 @@ export default function ContentPage() {
           { 
             key: 'products_headline', 
             label: 'Products Page Headline', 
-            type: 'text',
+            type: 'text' as const,
             placeholder: 'Our Product Range',
             help: 'Main title for the products page'
           },
           { 
             key: 'products_description', 
             label: 'Products Description', 
-            type: 'textarea',
+            type: 'textarea' as const,
             placeholder: 'Description of your product range...',
             help: 'Overview of your product offerings'
           },
           { 
             key: 'show_pricing', 
             label: 'Show Product Pricing', 
-            type: 'boolean',
+            type: 'boolean' as const,
             help: 'Enable to display product pricing on the website'
           }
         ]
@@ -247,21 +259,21 @@ export default function ContentPage() {
           { 
             key: 'portfolio_headline', 
             label: 'Portfolio Headline', 
-            type: 'text',
+            type: 'text' as const,
             placeholder: 'Our Project Portfolio',
             help: 'Main title for the projects page'
           },
           { 
             key: 'portfolio_description', 
             label: 'Portfolio Description', 
-            type: 'textarea',
+            type: 'textarea' as const,
             placeholder: 'Description of your project portfolio...',
             help: 'Overview of your completed projects'
           },
           { 
             key: 'show_stats', 
             label: 'Show Project Statistics', 
-            type: 'boolean',
+            type: 'boolean' as const,
             help: 'Enable to display project statistics on the page'
           }
         ]

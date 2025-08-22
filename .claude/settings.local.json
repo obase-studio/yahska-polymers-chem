@@ -6,7 +6,9 @@
       "Bash(npm run dev:*)",
       "Bash(sqlite3:*)",
       "Bash(npm install:*)",
-      "Bash(rm:*)"
+      "Bash(rm:*)",
+      "Bash(grep:*)",
+      "Bash(find:*)"
     ],
     "deny": [],
     "ask": []
