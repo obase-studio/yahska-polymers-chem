@@ -55,6 +55,12 @@ export function Navigation() {
               </DropdownMenu>
 
               <Link
+                href="/projects"
+                className="text-foreground hover:text-primary px-3 py-2 text-sm font-medium transition-colors duration-200"
+              >
+                Projects
+              </Link>
+              <Link
                 href="/clients"
                 className="text-foreground hover:text-primary px-3 py-2 text-sm font-medium transition-colors duration-200"
               >
@@ -135,6 +141,13 @@ export function Navigation() {
                 </div>
               </div>
 
+              <Link
+                href="/projects"
+                className="text-foreground hover:text-primary hover:bg-muted block px-3 py-3 rounded-md text-base font-medium transition-all duration-200"
+                onClick={toggleMenu}
+              >
+                Projects
+              </Link>
               <Link
                 href="/clients"
                 className="text-foreground hover:text-primary hover:bg-muted block px-3 py-3 rounded-md text-base font-medium transition-all duration-200"

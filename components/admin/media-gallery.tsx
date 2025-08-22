@@ -1,62 +1,70 @@
 "use client"
 
 import { useState } from "react"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Badge } from "@/components/ui/badge"
-import { Card, CardContent } from "@/components/ui/card"
-import { Image, File, Copy, Trash2, Edit } from "lucide-react"
-import { useRouter } from "next/navigation"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { Search, Filter, Download, Trash2, Eye, Copy, ExternalLink, File } from "lucide-react"
+import Image from "next/image"
 
-interface MediaGalleryProps {
-  mediaFiles: any[]
+interface MediaFile {
+  id: number
+  filename: string
+  original_name: string
+  file_path: string
+  file_size: number
+  mime_type: string
+  alt_text: string
+  uploaded_at: string
 }
 
+interface MediaGalleryProps {
+  mediaFiles: MediaFile[]
+}
+
+// Media categories for filtering
+const MEDIA_CATEGORIES = [
+  { value: "all", label: "All Media" },
+  { value: "client-logos", label: "Client Logos" },
+  { value: "approval-logos", label: "Approval Authority Logos" },
+  { value: "project-photos-metro-rail", label: "Metro Rail Projects" },
+  { value: "project-photos-road-projects", label: "Road Projects" },
+  { value: "project-photos-buildings-factories", label: "Buildings & Factories" },
+  { value: "project-photos-bullet", label: "Bullet Train Projects" },
+  { value: "project-photos-others", label: "Other Projects" }
+]
+
 export function MediaGallery({ mediaFiles }: MediaGalleryProps) {
-  const [selectedFile, setSelectedFile] = useState<any>(null)
-  const [editingAlt, setEditingAlt] = useState<number | null>(null)
-  const [altText, setAltText] = useState("")
-  const router = useRouter()
+  const [searchTerm, setSearchTerm] = useState("")
+  const [selectedCategory, setSelectedCategory] = useState("all")
+  const [selectedFile, setSelectedFile] = useState<MediaFile | null>(null)
 
-  const copyToClipboard = (text: string) => {
-    navigator.clipboard.writeText(text)
+  // Filter media files based on search and category
+  const filteredFiles = mediaFiles.filter(file => {
+    const matchesSearch = file.original_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                         file.alt_text.toLowerCase().includes(searchTerm.toLowerCase())
+    
+    const matchesCategory = selectedCategory === "all" || 
+                           file.file_path.includes(selectedCategory)
+    
+    return matchesSearch && matchesCategory
+  })
+
+  // Get category from file path
+  const getCategoryFromPath = (filePath: string) => {
+    if (filePath.includes('client-logos')) return 'Client Logos'
+    if (filePath.includes('approval-logos')) return 'Approval Authority Logos'
+    if (filePath.includes('project-photos/metro-rail')) return 'Metro Rail Projects'
+    if (filePath.includes('project-photos/road-projects')) return 'Road Projects'
+    if (filePath.includes('project-photos/buildings-factories')) return 'Buildings & Factories'
+    if (filePath.includes('project-photos/bullet')) return 'Bullet Train Projects'
+    if (filePath.includes('project-photos/others')) return 'Other Projects'
+    return 'Other'
   }
 
-  const handleDeleteFile = async (fileId: number) => {
-    if (!confirm("Are you sure you want to delete this file?")) return
-
-    try {
-      const response = await fetch(`/api/admin/media/${fileId}`, {
-        method: "DELETE"
-      })
-
-      if (response.ok) {
-        router.refresh()
-      }
-    } catch (error) {
-      console.error("Error deleting file:", error)
-    }
-  }
-
-  const updateAltText = async (fileId: number) => {
-    try {
-      const response = await fetch(`/api/admin/media/${fileId}`, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify({ alt_text: altText })
-      })
-
-      if (response.ok) {
-        setEditingAlt(null)
-        router.refresh()
-      }
-    } catch (error) {
-      console.error("Error updating alt text:", error)
-    }
-  }
-
+  // Format file size
   const formatFileSize = (bytes: number) => {
     if (bytes === 0) return '0 Bytes'
     const k = 1024
@@ -65,123 +73,257 @@ export function MediaGallery({ mediaFiles }: MediaGalleryProps) {
     return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i]
   }
 
-  const isImage = (mimeType: string) => mimeType.startsWith('image/')
+  // Copy file path to clipboard
+  const copyFilePath = (filePath: string) => {
+    navigator.clipboard.writeText(filePath)
+  }
 
-  if (mediaFiles.length === 0) {
-    return (
-      <div className="text-center py-12">
-        <div className="bg-muted/50 w-24 h-24 rounded-full flex items-center justify-center mx-auto mb-4">
-          <Image className="h-12 w-12 text-muted-foreground" />
-        </div>
-        <h3 className="text-lg font-medium mb-2">No media files yet</h3>
-        <p className="text-muted-foreground">
-          Upload your first image or document to get started.
-        </p>
-      </div>
-    )
+  // Download file
+  const downloadFile = (file: MediaFile) => {
+    const link = document.createElement('a')
+    link.href = file.file_path
+    link.download = file.original_name
+    document.body.appendChild(link)
+    link.click()
+    document.body.removeChild(link)
+  }
+
+  // Delete file (placeholder for future implementation)
+  const deleteFile = (fileId: number) => {
+    if (confirm('Are you sure you want to delete this file?')) {
+      // TODO: Implement delete functionality
+      console.log('Delete file:', fileId)
+    }
   }
 
   return (
-    <div className="space-y-4">
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-        {mediaFiles.map((file: any) => (
-          <Card key={file.id} className="overflow-hidden">
-            <CardContent className="p-0">
-              {/* File Preview */}
-              <div className="aspect-square bg-muted/50 flex items-center justify-center">
-                {isImage(file.mime_type) ? (
-                  <img
-                    src={file.file_path}
-                    alt={file.alt_text || file.original_name}
-                    className="w-full h-full object-cover"
-                  />
-                ) : (
-                  <File className="h-16 w-16 text-muted-foreground" />
-                )}
-              </div>
+    <div className="space-y-6">
+      {/* Search and Filter Controls */}
+      <div className="flex flex-col sm:flex-row gap-4">
+        <div className="relative flex-1">
+          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
+          <Input
+            placeholder="Search media files..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            className="pl-10"
+          />
+        </div>
+        <Select value={selectedCategory} onValueChange={setSelectedCategory}>
+          <SelectTrigger className="w-full sm:w-48">
+            <SelectValue placeholder="Select category" />
+          </SelectTrigger>
+          <SelectContent>
+            {MEDIA_CATEGORIES.map((category) => (
+              <SelectItem key={category.value} value={category.value}>
+                {category.label}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+      </div>
 
-              {/* File Info */}
-              <div className="p-4 space-y-3">
-                <div>
-                  <h4 className="font-medium text-sm truncate" title={file.original_name}>
-                    {file.original_name}
-                  </h4>
-                  <p className="text-xs text-muted-foreground">
-                    {formatFileSize(file.file_size)}
-                  </p>
-                </div>
+      {/* Results Summary */}
+      <div className="flex items-center justify-between">
+        <p className="text-sm text-muted-foreground">
+          Showing {filteredFiles.length} of {mediaFiles.length} media files
+        </p>
+        <div className="flex items-center gap-2">
+          <Filter className="h-4 w-4 text-muted-foreground" />
+          <span className="text-sm text-muted-foreground">
+            {selectedCategory === "all" ? "All Categories" : 
+             MEDIA_CATEGORIES.find(c => c.value === selectedCategory)?.label}
+          </span>
+        </div>
+      </div>
 
-                <div className="flex items-center gap-1">
-                  <Badge variant="outline" className="text-xs">
-                    {file.mime_type.split('/')[1].toUpperCase()}
-                  </Badge>
-                </div>
-
-                {/* Alt Text */}
-                {isImage(file.mime_type) && (
-                  <div className="space-y-2">
-                    {editingAlt === file.id ? (
-                      <div className="flex gap-1">
-                        <Input
-                          value={altText}
-                          onChange={(e) => setAltText(e.target.value)}
-                          placeholder="Alt text"
-                          className="text-xs h-8"
-                        />
-                        <Button
-                          size="sm"
-                          className="h-8 px-2"
-                          onClick={() => updateAltText(file.id)}
-                        >
-                          Save
-                        </Button>
-                      </div>
+      {/* Media Grid */}
+      {filteredFiles.length === 0 ? (
+        <div className="text-center py-12">
+          <p className="text-muted-foreground">No media files found matching your criteria.</p>
+        </div>
+      ) : (
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+          {filteredFiles.map((file) => {
+            const isImage = file.mime_type.startsWith('image/')
+            const category = getCategoryFromPath(file.file_path)
+            
+            return (
+              <Card key={file.id} className="group hover:shadow-lg transition-shadow duration-300">
+                <CardHeader className="p-4 pb-2">
+                  <div className="flex items-start justify-between">
+                    <Badge variant="secondary" className="text-xs">
+                      {category}
+                    </Badge>
+                    <div className="opacity-0 group-hover:opacity-100 transition-opacity duration-200 flex gap-1">
+                      <Button
+                        size="sm"
+                        variant="ghost"
+                        onClick={() => setSelectedFile(file)}
+                        className="h-8 w-8 p-0"
+                      >
+                        <Eye className="h-4 w-4" />
+                      </Button>
+                      <Button
+                        size="sm"
+                        variant="ghost"
+                        onClick={() => copyFilePath(file.file_path)}
+                        className="h-8 w-8 p-0"
+                      >
+                        <Copy className="h-4 w-4" />
+                      </Button>
+                      <Button
+                        size="sm"
+                        variant="ghost"
+                        onClick={() => downloadFile(file)}
+                        className="h-8 w-8 p-0"
+                      >
+                        <Download className="h-4 w-4" />
+                      </Button>
+                    </div>
+                  </div>
+                </CardHeader>
+                
+                <CardContent className="p-4 pt-0">
+                  {/* Media Preview */}
+                  <div className="aspect-square bg-muted rounded-lg overflow-hidden mb-3 flex items-center justify-center">
+                    {isImage ? (
+                      <Image
+                        src={file.file_path}
+                        alt={file.alt_text}
+                        width={200}
+                        height={200}
+                        className="w-full h-full object-cover"
+                      />
                     ) : (
-                      <div className="flex items-center justify-between">
-                        <span className="text-xs text-muted-foreground truncate">
-                          {file.alt_text || "No alt text"}
-                        </span>
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          className="h-6 w-6 p-0"
-                          onClick={() => {
-                            setEditingAlt(file.id)
-                            setAltText(file.alt_text || "")
-                          }}
-                        >
-                          <Edit className="h-3 w-3" />
-                        </Button>
+                      <div className="text-center text-muted-foreground">
+                        <File className="h-12 w-12 mx-auto mb-2" />
+                        <p className="text-xs">{file.mime_type}</p>
                       </div>
                     )}
                   </div>
-                )}
+                  
+                  {/* File Info */}
+                  <div className="space-y-2">
+                    <h4 className="font-medium text-sm truncate" title={file.original_name}>
+                      {file.original_name}
+                    </h4>
+                    <p className="text-xs text-muted-foreground line-clamp-2">
+                      {file.alt_text}
+                    </p>
+                    <div className="flex items-center justify-between text-xs text-muted-foreground">
+                      <span>{formatFileSize(file.file_size)}</span>
+                      <span>{new Date(file.uploaded_at).toLocaleDateString()}</span>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            )
+          })}
+        </div>
+      )}
 
+      {/* Media Preview Modal */}
+      {selectedFile && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+          <div className="bg-background rounded-lg max-w-4xl w-full max-h-[90vh] overflow-y-auto">
+            <div className="p-6">
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="text-lg font-semibold">Media Preview</h3>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => setSelectedFile(null)}
+                >
+                  ×
+                </Button>
+              </div>
+              
+              <div className="space-y-4">
+                {/* Media Display */}
+                <div className="flex justify-center">
+                  {selectedFile.mime_type.startsWith('image/') ? (
+                    <Image
+                      src={selectedFile.file_path}
+                      alt={selectedFile.alt_text}
+                      width={600}
+                      height={400}
+                      className="max-w-full h-auto rounded-lg"
+                    />
+                  ) : (
+                    <div className="text-center text-muted-foreground py-12">
+                      <File className="h-24 w-24 mx-auto mb-4" />
+                      <p>Preview not available for this file type</p>
+                    </div>
+                  )}
+                </div>
+                
+                {/* File Details */}
+                <div className="grid grid-cols-2 gap-4 text-sm">
+                  <div>
+                    <span className="font-medium">Filename:</span>
+                    <p className="text-muted-foreground">{selectedFile.original_name}</p>
+                  </div>
+                  <div>
+                    <span className="font-medium">Category:</span>
+                    <p className="text-muted-foreground">{getCategoryFromPath(selectedFile.file_path)}</p>
+                  </div>
+                  <div>
+                    <span className="font-medium">File Size:</span>
+                    <p className="text-muted-foreground">{formatFileSize(selectedFile.file_size)}</p>
+                  </div>
+                  <div>
+                    <span className="font-medium">Uploaded:</span>
+                    <p className="text-muted-foreground">
+                      {new Date(selectedFile.uploaded_at).toLocaleString()}
+                    </p>
+                  </div>
+                  <div className="col-span-2">
+                    <span className="font-medium">Description:</span>
+                    <p className="text-muted-foreground">{selectedFile.alt_text}</p>
+                  </div>
+                  <div className="col-span-2">
+                    <span className="font-medium">File Path:</span>
+                    <div className="flex items-center gap-2">
+                      <code className="text-xs bg-muted px-2 py-1 rounded flex-1">
+                        {selectedFile.file_path}
+                      </code>
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        onClick={() => copyFilePath(selectedFile.file_path)}
+                      >
+                        <Copy className="h-4 w-4" />
+                      </Button>
+                    </div>
+                  </div>
+                </div>
+                
                 {/* Actions */}
-                <div className="flex gap-1">
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    className="flex-1 text-xs h-8"
-                    onClick={() => copyToClipboard(file.file_path)}
-                  >
-                    <Copy className="h-3 w-3 mr-1" />
-                    Copy URL
+                <div className="flex gap-2 pt-4 border-t">
+                  <Button onClick={() => downloadFile(selectedFile)}>
+                    <Download className="mr-2 h-4 w-4" />
+                    Download
+                  </Button>
+                  <Button variant="outline" asChild>
+                    <a href={selectedFile.file_path} target="_blank" rel="noopener noreferrer">
+                      <ExternalLink className="mr-2 h-4 w-4" />
+                      Open
+                    </a>
                   </Button>
                   <Button
-                    variant="outline"
-                    size="sm"
-                    className="h-8 px-2"
-                    onClick={() => handleDeleteFile(file.id)}
+                    variant="destructive"
+                    onClick={() => deleteFile(selectedFile.id)}
                   >
-                    <Trash2 className="h-3 w-3 text-destructive" />
+                    <Trash2 className="mr-2 h-4 w-4" />
+                    Delete
                   </Button>
                 </div>
               </div>
-            </CardContent>
-          </Card>
-        ))}
-      </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   )
 }
