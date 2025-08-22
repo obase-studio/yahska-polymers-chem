@@ -29,18 +29,7 @@ export function initDatabase() {
     )
   `)
 
-  // Content history table
-  db.exec(`
-    CREATE TABLE IF NOT EXISTS content_history (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      page TEXT NOT NULL,
-      section TEXT NOT NULL,
-      content_key TEXT NOT NULL,
-      content_value TEXT,
-      updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-      updated_by TEXT DEFAULT 'admin'
-    )
-  `)
+
 
   // Products table
   db.exec(`
@@ -460,34 +449,11 @@ export const dbHelpers = {
   },
 
   setContent: (page: string, section: string, contentKey: string, contentValue: string) => {
-    // First, save current content to history if it exists
-    const currentContent = db.prepare('SELECT content_value FROM site_content WHERE page = ? AND section = ? AND content_key = ?').get(page, section, contentKey)
-    
-    if (currentContent && currentContent.content_value !== contentValue) {
-      // Save to content history
-      const historyStmt = db.prepare(`
-        INSERT INTO content_history (page, section, content_key, content_value, updated_at, updated_by)
-        VALUES (?, ?, ?, ?, CURRENT_TIMESTAMP, 'admin')
-      `)
-      historyStmt.run(page, section, contentKey, currentContent.content_value)
-    }
-    
-    // Update current content
     const stmt = db.prepare(`
       INSERT OR REPLACE INTO site_content (page, section, content_key, content_value, updated_at) 
       VALUES (?, ?, ?, ?, CURRENT_TIMESTAMP)
     `)
     return stmt.run(page, section, contentKey, contentValue)
-  },
-
-  getContentHistory: (page: string, section: string) => {
-    const stmt = db.prepare(`
-      SELECT * FROM content_history 
-      WHERE page = ? AND section = ? 
-      ORDER BY updated_at DESC 
-      LIMIT 10
-    `)
-    return stmt.all(page, section)
   },
 
   // Products
