@@ -1,0 +1,41 @@
+import { NextRequest, NextResponse } from "next/server"
+import { authenticateAdmin, createSession } from "@/lib/auth"
+import { initDatabase } from "@/lib/database"
+
+export async function POST(request: NextRequest) {
+  try {
+    // Initialize database if not already done
+    initDatabase()
+    
+    const { username, password } = await request.json()
+
+    if (!username || !password) {
+      return NextResponse.json(
+        { error: "Username and password are required" },
+        { status: 400 }
+      )
+    }
+
+    const admin = await authenticateAdmin(username, password)
+
+    if (!admin) {
+      return NextResponse.json(
+        { error: "Invalid credentials" },
+        { status: 401 }
+      )
+    }
+
+    await createSession(username)
+
+    return NextResponse.json(
+      { message: "Login successful" },
+      { status: 200 }
+    )
+  } catch (error) {
+    console.error("Login error:", error)
+    return NextResponse.json(
+      { error: "Internal server error" },
+      { status: 500 }
+    )
+  }
+}
