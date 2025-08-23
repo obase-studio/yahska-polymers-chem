@@ -572,7 +572,7 @@ export class DatabaseEnhancements {
   // Database statistics
   public getDatabaseStats(): any {
     const stats = {
-      size: this.db.exec('PRAGMA page_size * PRAGMA page_count')[0],
+      size: (this.db.exec('PRAGMA page_size * PRAGMA page_count') as any)[0],
       tables: this.db.prepare("SELECT name FROM sqlite_master WHERE type='table'").all(),
       indexes: this.db.prepare("SELECT name FROM sqlite_master WHERE type='index'").all(),
       triggers: this.db.prepare("SELECT name FROM sqlite_master WHERE type='trigger'").all()
@@ -626,13 +626,13 @@ export class DatabaseMigration {
 
   public async backupDatabase(backupPath: string): Promise<void> {
     const backup = new Database(backupPath)
-    await this.db.backup(backup)
+    await (this.db as any).backup(backup)
     backup.close()
   }
 
   public async restoreDatabase(backupPath: string): Promise<void> {
     const backup = new Database(backupPath)
-    await backup.backup(this.db)
+    await (backup as any).backup(this.db)
     backup.close()
   }
 }

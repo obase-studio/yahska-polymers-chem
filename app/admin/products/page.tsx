@@ -1,7 +1,7 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
-import { Plus, Edit, Trash2, Eye } from "lucide-react"
+import { Plus, Edit, Eye } from "lucide-react"
 import Link from "next/link"
 import { dbHelpers } from "@/lib/database"
 import { DeleteProductButton } from "@/components/admin/delete-product-button"
@@ -72,16 +72,16 @@ export default async function ProductsPage() {
                     </p>
                     <div className="flex items-center gap-4">
                       <span className="text-lg font-semibold text-primary">{product.price}</span>
-                      {product.applications && (
+                      {product.applications && product.applications.length > 0 && (
                         <div className="flex gap-1">
-                          {JSON.parse(product.applications).slice(0, 2).map((app: string, index: number) => (
+                          {product.applications.slice(0, 2).map((app: string, index: number) => (
                             <Badge key={index} variant="outline" className="text-xs">
                               {app}
                             </Badge>
                           ))}
-                          {JSON.parse(product.applications).length > 2 && (
+                          {product.applications.length > 2 && (
                             <Badge variant="outline" className="text-xs">
-                              +{JSON.parse(product.applications).length - 2} more
+                              +{product.applications.length - 2} more
                             </Badge>
                           )}
                         </div>

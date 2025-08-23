@@ -1,4 +1,4 @@
-import { dbHelpers } from './database'
+import { dbHelpers, getDatabase } from './database'
 
 // Enhanced Product Categories based on 11 categories mentioned
 export const ENHANCED_PRODUCT_CATEGORIES = [
@@ -448,6 +448,7 @@ export const SAMPLE_PROJECTS = [
 export async function populateProductCategories() {
   try {
     console.log('Populating enhanced product categories...')
+    const db = getDatabase()
     
     for (const category of ENHANCED_PRODUCT_CATEGORIES) {
       try {

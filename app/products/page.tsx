@@ -6,9 +6,16 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Badge } from "@/components/ui/badge"
-import { Search, ArrowRight, Mail, Phone, ExternalLink, Loader2 } from "lucide-react"
+import { Search, ArrowRight, Mail, Phone, ExternalLink, Loader2, RefreshCw } from "lucide-react"
 import Link from "next/link"
 import { Footer } from "@/components/footer"
+import { ContentItem } from "@/lib/database-client"
+
+// Function to get specific content value
+function getContentValue(contentItems: ContentItem[], key: string): string | undefined {
+  const item = contentItems.find(item => item.content_key === key);
+  return item?.content_value;
+}
 
 interface Product {
   id: number
@@ -16,8 +23,8 @@ interface Product {
   description: string
   category_id: string
   category_name: string
-  applications: string
-  features: string
+  applications: string[]
+  features: string[]
   usage: string
   advantages: string
   technical_specifications: string
@@ -33,12 +40,45 @@ interface Category {
 }
 
 export default function ProductsPage() {
+  const [contentItems, setContentItems] = useState<ContentItem[]>([])
   const [selectedCategory, setSelectedCategory] = useState("all")
   const [searchTerm, setSearchTerm] = useState("")
   const [products, setProducts] = useState<Product[]>([])
   const [categories, setCategories] = useState<Category[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+  const [refreshing, setRefreshing] = useState(false)
+
+  // Fetch content from API
+  useEffect(() => {
+    const fetchContent = async () => {
+      try {
+        const response = await fetch('/api/content?page=products')
+        const result = await response.json()
+        
+        if (result.success) {
+          setContentItems(result.data.content)
+        }
+      } catch (err) {
+        console.error('Error fetching content:', err)
+      }
+    }
+    
+    fetchContent()
+  }, [])
+
+  // Get content values
+  const productOverview = contentItems.find(item => 
+    item.section === 'product_overview' && item.content_key === 'content'
+  )?.content_value || '';
+  
+  const productCategories = contentItems.find(item => 
+    item.section === 'categories' && item.content_key === 'content'
+  )?.content_value || '';
+  
+  const qualityStandards = contentItems.find(item => 
+    item.section === 'quality_standards' && item.content_key === 'content'
+  )?.content_value || '';
 
   // Fetch products from API
   useEffect(() => {
@@ -53,7 +93,11 @@ export default function ProductsPage() {
           params.append('search', searchTerm)
         }
         
-        const response = await fetch(`/api/products?${params.toString()}`)
+        // Add cache busting to ensure fresh data
+        params.append('_t', Date.now().toString())
+        const response = await fetch(`/api/products?${params.toString()}`, {
+          cache: 'no-store'
+        })
         const result = await response.json()
         
         if (result.success) {
@@ -73,13 +117,37 @@ export default function ProductsPage() {
     fetchProducts()
   }, [selectedCategory, searchTerm])
 
-  // Parse JSON fields safely
-  const parseJsonField = (field: string | null) => {
-    if (!field) return []
+  // Force refresh function
+  const handleRefresh = async () => {
+    setRefreshing(true)
+    setError(null)
     try {
-      return JSON.parse(field)
-    } catch {
-      return []
+      const params = new URLSearchParams()
+      if (selectedCategory !== 'all') {
+        params.append('category', selectedCategory)
+      }
+      if (searchTerm) {
+        params.append('search', searchTerm)
+      }
+      
+      // Add cache busting to ensure fresh data
+      params.append('_t', Date.now().toString())
+      const response = await fetch(`/api/products?${params.toString()}`, {
+        cache: 'no-store'
+      })
+      const result = await response.json()
+      
+      if (result.success) {
+        setProducts(result.data.products)
+        setCategories(result.data.categories)
+      } else {
+        setError(result.error || 'Failed to refresh products')
+      }
+    } catch (err) {
+      setError('Failed to refresh products')
+      console.error('Error refreshing products:', err)
+    } finally {
+      setRefreshing(false)
     }
   }
 
@@ -106,8 +174,7 @@ export default function ProductsPage() {
               Our Product Range
             </h1>
             <p className="text-xl text-muted-foreground max-w-3xl mx-auto leading-relaxed">
-              Premium chemical solutions for construction, concrete admixtures, and industrial applications with over 20
-              years of manufacturing excellence.
+              {productOverview || 'Premium chemical solutions for construction, concrete admixtures, and industrial applications with over 20 years of manufacturing excellence.'}
             </p>
           </div>
         </div>
@@ -144,6 +211,16 @@ export default function ProductsPage() {
                   {category.name}
                 </Button>
               ))}
+              <Button
+                variant="outline"
+                onClick={handleRefresh}
+                size="sm"
+                disabled={refreshing}
+                className="ml-auto"
+              >
+                <RefreshCw className={`h-4 w-4 mr-2 ${refreshing ? 'animate-spin' : ''}`} />
+                {refreshing ? 'Refreshing...' : 'Refresh'}
+              </Button>
             </div>
           </div>
         </div>
@@ -161,7 +238,7 @@ export default function ProductsPage() {
                 Product Categories
               </h2>
               <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
-                Explore our comprehensive range of chemical solutions organized by industry application
+                {productCategories || 'Explore our comprehensive range of chemical solutions organized by industry application'}
               </p>
             </div>
 
@@ -242,9 +319,6 @@ export default function ProductsPage() {
           {!loading && !error && (
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
               {filteredProducts.map((product) => {
-                const applications = parseJsonField(product.applications)
-                const features = parseJsonField(product.features)
-                
                 return (
                   <Card key={product.id} className="hover:shadow-lg transition-shadow duration-300 flex flex-col h-full">
                     <CardHeader className="flex-shrink-0">
@@ -265,37 +339,37 @@ export default function ProductsPage() {
                     </CardHeader>
                     <CardContent className="flex flex-col flex-grow">
                       <div className="space-y-4 flex-grow">
-                        {applications.length > 0 && (
+                        {product.applications && product.applications.length > 0 && (
                           <div>
                             <h4 className="font-semibold text-sm text-foreground mb-2">Applications:</h4>
                             <div className="flex flex-wrap gap-1">
-                              {applications.slice(0, 3).map((app, appIndex) => (
+                              {product.applications.slice(0, 3).map((app: string, appIndex: number) => (
                                 <Badge key={appIndex} variant="outline" className="text-xs">
                                   {app}
                                 </Badge>
                               ))}
-                              {applications.length > 3 && (
+                              {product.applications.length > 3 && (
                                 <Badge variant="outline" className="text-xs">
-                                  +{applications.length - 3} more
+                                  +{product.applications.length - 3} more
                                 </Badge>
                               )}
                             </div>
                           </div>
                         )}
                         
-                        {features.length > 0 && (
+                        {product.features && product.features.length > 0 && (
                           <div>
                             <h4 className="font-semibold text-sm text-foreground mb-2">Key Features:</h4>
                             <ul className="text-sm text-muted-foreground space-y-1">
-                              {features.slice(0, 3).map((feature, featureIndex) => (
+                              {product.features.slice(0, 3).map((feature: string, featureIndex: number) => (
                                 <li key={featureIndex} className="flex items-center">
                                   <div className="w-1.5 h-1.5 bg-accent rounded-full mr-2 flex-shrink-0" />
                                   {feature}
                                 </li>
                               ))}
-                              {features.length > 3 && (
+                              {product.features.length > 3 && (
                                 <li className="text-xs text-muted-foreground">
-                                  +{features.length - 3} more features
+                                  +{product.features.length - 3} more features
                                 </li>
                               )}
                             </ul>

@@ -1,19 +1,16 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  // Basic production optimizations
-  trailingSlash: true,
-  
   // Image optimization (keep simple)
   images: {
     unoptimized: true,
   },
 
-  // Development settings (keep simple)
+  // Development settings
   eslint: {
-    ignoreDuringBuilds: true,
+    ignoreDuringBuilds: false,
   },
   typescript: {
-    ignoreBuildErrors: true,
+    ignoreBuildErrors: false,
   },
 }
 

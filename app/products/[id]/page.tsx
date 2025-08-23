@@ -6,7 +6,7 @@ import { Navigation } from "@/components/navigation"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
-import { ArrowLeft, Mail, Phone, ExternalLink, Loader2, AlertCircle } from "lucide-react"
+import { ArrowLeft, Mail, Phone, Loader2, AlertCircle } from "lucide-react"
 import Link from "next/link"
 import { Footer } from "@/components/footer"
 

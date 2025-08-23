@@ -8,7 +8,7 @@ import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Badge } from "@/components/ui/badge"
-import { X, Plus } from "lucide-react"
+import { X, Plus, Upload, FileText } from "lucide-react"
 
 interface ProductFormProps {
   categories: any[]
@@ -23,6 +23,7 @@ export function ProductForm({ categories, product, isEdit = false }: ProductForm
     price: product?.price || "",
     category_id: product?.category_id || "",
     image_url: product?.image_url || "",
+    specification_pdf: product?.specification_pdf || "",
     applications: product?.applications ? JSON.parse(product.applications) : [],
     features: product?.features ? JSON.parse(product.features) : []
   })
@@ -30,6 +31,7 @@ export function ProductForm({ categories, product, isEdit = false }: ProductForm
   const [newApplication, setNewApplication] = useState("")
   const [newFeature, setNewFeature] = useState("")
   const [isLoading, setIsLoading] = useState(false)
+  const [uploadingPdf, setUploadingPdf] = useState(false)
   const router = useRouter()
 
   const addApplication = () => {
@@ -45,7 +47,7 @@ export function ProductForm({ categories, product, isEdit = false }: ProductForm
   const removeApplication = (index: number) => {
     setFormData(prev => ({
       ...prev,
-      applications: prev.applications.filter((_, i) => i !== index)
+      applications: prev.applications.filter((_: string, i: number) => i !== index)
     }))
   }
 
@@ -62,8 +64,39 @@ export function ProductForm({ categories, product, isEdit = false }: ProductForm
   const removeFeature = (index: number) => {
     setFormData(prev => ({
       ...prev,
-      features: prev.features.filter((_, i) => i !== index)
+      features: prev.features.filter((_: string, i: number) => i !== index)
     }))
+  }
+
+  const handlePdfUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0]
+    if (!file) return
+
+    setUploadingPdf(true)
+    try {
+      const formData = new FormData()
+      formData.append('file', file)
+
+      const response = await fetch('/api/admin/upload-pdf', {
+        method: 'POST',
+        body: formData,
+      })
+
+      const result = await response.json()
+      if (result.success) {
+        setFormData(prev => ({
+          ...prev,
+          specification_pdf: result.data.url
+        }))
+      } else {
+        alert(result.error || 'Failed to upload PDF')
+      }
+    } catch (error) {
+      console.error('Error uploading PDF:', error)
+      alert('Error uploading PDF')
+    } finally {
+      setUploadingPdf(false)
+    }
   }
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -151,6 +184,52 @@ export function ProductForm({ categories, product, isEdit = false }: ProductForm
         </div>
       </div>
 
+      {/* PDF Specification Upload */}
+      <div className="space-y-4">
+        <Label>Specification PDF</Label>
+        <div className="flex items-center gap-4">
+          <div className="flex-1">
+            <div className="flex items-center gap-2">
+              <Input
+                type="file"
+                accept=".pdf"
+                onChange={handlePdfUpload}
+                disabled={uploadingPdf}
+                className="file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-primary file:text-primary-foreground hover:file:bg-primary/90"
+              />
+              {uploadingPdf && (
+                <div className="text-sm text-muted-foreground">Uploading...</div>
+              )}
+            </div>
+            {formData.specification_pdf && (
+              <div className="mt-2 flex items-center gap-2 text-sm text-muted-foreground">
+                <FileText className="h-4 w-4" />
+                <a 
+                  href={formData.specification_pdf} 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="text-primary hover:underline"
+                >
+                  View Current PDF
+                </a>
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => setFormData(prev => ({ ...prev, specification_pdf: "" }))}
+                  className="h-6 w-6 p-0"
+                >
+                  <X className="h-3 w-3" />
+                </Button>
+              </div>
+            )}
+          </div>
+        </div>
+        <p className="text-xs text-muted-foreground">
+          Upload PDF specification document (max 10MB)
+        </p>
+      </div>
+
       <div className="space-y-2">
         <Label htmlFor="description">Description</Label>
         <Textarea
@@ -178,7 +257,7 @@ export function ProductForm({ categories, product, isEdit = false }: ProductForm
           </Button>
         </div>
         <div className="flex flex-wrap gap-2">
-          {formData.applications.map((app, index) => (
+          {formData.applications.map((app: string, index: number) => (
             <Badge key={index} variant="secondary" className="flex items-center gap-1">
               {app}
               <X
@@ -205,7 +284,7 @@ export function ProductForm({ categories, product, isEdit = false }: ProductForm
           </Button>
         </div>
         <div className="flex flex-wrap gap-2">
-          {formData.features.map((feature, index) => (
+          {formData.features.map((feature: string, index: number) => (
             <Badge key={index} variant="secondary" className="flex items-center gap-1">
               {feature}
               <X

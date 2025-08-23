@@ -15,7 +15,8 @@ import {
   Menu,
   X,
   ChevronDown,
-  ExternalLink
+  ExternalLink,
+  Tags
 } from "lucide-react"
 import { cn } from "@/lib/utils"
 
@@ -23,6 +24,7 @@ const navigation = [
   { name: "Dashboard", href: "/admin/dashboard", icon: LayoutDashboard },
   { name: "Content", href: "/admin/content", icon: FileText },
   { name: "Products", href: "/admin/products", icon: Package },
+  { name: "Categories", href: "/admin/categories", icon: Tags },
   { name: "Clients", href: "/admin/clients", icon: Users },
   { name: "SEO", href: "/admin/seo", icon: Search },
   { name: "Media", href: "/admin/media", icon: Image },

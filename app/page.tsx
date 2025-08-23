@@ -1,11 +1,80 @@
+"use client"
+
+import { useState, useEffect } from "react"
 import { Navigation } from "@/components/navigation"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { ArrowRight, Award, Users, Globe, CheckCircle } from "lucide-react"
 import Link from "next/link"
 import { Footer } from "@/components/footer"
+import { ContentItem } from "@/lib/database-client"
 
 export default function HomePage() {
+  const [contentItems, setContentItems] = useState<ContentItem[]>([])
+  const [loading, setLoading] = useState(true)
+
+  // Fetch content from API
+  useEffect(() => {
+    const fetchContent = async () => {
+      try {
+        setLoading(true)
+        const response = await fetch('/api/content?page=home')
+        const result = await response.json()
+        
+        if (result.success) {
+          setContentItems(result.data.content)
+        }
+      } catch (err) {
+        console.error('Error fetching home content:', err)
+      } finally {
+        setLoading(false)
+      }
+    }
+    
+    fetchContent()
+  }, [])
+
+  // Get content values
+  const heroHeadline = contentItems.find(item => 
+    item.section === 'hero' && item.content_key === 'headline'
+  )?.content_value || 'Leading Chemical Solutions for Industrial Excellence';
+  
+  const companyDescription = contentItems.find(item => 
+    item.section === 'company_overview' && item.content_key === 'company_description'
+  )?.content_value || 'Yahska Polymers delivers premium construction chemicals, concrete admixtures, and specialized chemical solutions for over two decades of industry leadership.';
+  
+  const productCategoriesDescription = contentItems.find(item => 
+    item.section === 'product_categories' && item.content_key === 'description'
+  )?.content_value || 'Comprehensive chemical solutions across multiple industries with uncompromising quality standards';
+  
+  const whyChooseUsDescription = contentItems.find(item => 
+    item.section === 'why_choose_us' && item.content_key === 'description'
+  )?.content_value || 'Two decades of excellence in chemical manufacturing and customer satisfaction';
+  
+  const featuredClientsDescription = contentItems.find(item => 
+    item.section === 'featured_clients' && item.content_key === 'description'
+  )?.content_value || 'Trusted by leading companies across industries for our reliable chemical solutions';
+  
+  const industriesDescription = contentItems.find(item => 
+    item.section === 'industries' && item.content_key === 'description'
+  )?.content_value || 'Comprehensive chemical solutions across diverse industrial sectors';
+  
+  const ctaHeadline = contentItems.find(item => 
+    item.section === 'cta' && item.content_key === 'headline'
+  )?.content_value || 'Ready to Partner with Industry Leaders?';
+  
+  const ctaDescription = contentItems.find(item => 
+    item.section === 'cta' && item.content_key === 'description'
+  )?.content_value || 'Get in touch with our experts to discuss your chemical solution requirements and receive a customized quote.';
+
+  // Extract key points from company description for display
+  const getDescriptionSummary = (fullDescription: string) => {
+    if (fullDescription.includes('leading construction chemicals manufacturer')) {
+      return 'Leading construction chemicals manufacturer based in Ahmedabad, proudly serving the Indian construction industry with innovative and reliable solutions for over two decades.';
+    }
+    return fullDescription.split('\n')[0] || 'Yahska Polymers delivers premium construction chemicals, concrete admixtures, and specialized chemical solutions for over two decades of industry leadership.';
+  };
+
   return (
     <div className="min-h-screen bg-background">
       <Navigation />
@@ -19,12 +88,10 @@ export default function HomePage() {
                 className="text-4xl lg:text-6xl font-black text-foreground mb-6"
                 style={{ fontFamily: "var(--font-heading)" }}
               >
-                Leading Chemical Solutions for
-                <span className="text-primary"> Industrial Excellence</span>
+                {heroHeadline}
               </h1>
               <p className="text-xl text-muted-foreground mb-8 leading-relaxed">
-                Yahska Polymers delivers premium construction chemicals, concrete admixtures, and specialized chemical
-                solutions for over two decades of industry leadership.
+                {getDescriptionSummary(companyDescription)}
               </p>
               <div className="flex flex-col sm:flex-row gap-4">
                 <Button asChild size="lg" className="bg-primary hover:bg-primary/90">
@@ -84,7 +151,7 @@ export default function HomePage() {
               Our Product Categories
             </h2>
             <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
-              Comprehensive chemical solutions across multiple industries with uncompromising quality standards
+              {productCategoriesDescription}
             </p>
           </div>
 
@@ -204,7 +271,7 @@ export default function HomePage() {
               Why Choose Yahska Polymers
             </h2>
             <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
-              Two decades of excellence in chemical manufacturing and customer satisfaction
+              {whyChooseUsDescription}
             </p>
           </div>
 
@@ -254,7 +321,7 @@ export default function HomePage() {
               Featured Client Partnership
             </h2>
             <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
-              Trusted by leading companies across industries for our reliable chemical solutions
+              {featuredClientsDescription}
             </p>
           </div>
 
@@ -324,7 +391,7 @@ export default function HomePage() {
               Industries We Serve
             </h2>
             <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
-              Comprehensive chemical solutions across diverse industrial sectors
+              {industriesDescription}
             </p>
           </div>
 
@@ -378,10 +445,10 @@ export default function HomePage() {
       <section className="py-20 bg-primary text-primary-foreground">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <h2 className="text-3xl lg:text-4xl font-bold mb-4" style={{ fontFamily: "var(--font-heading)" }}>
-            Ready to Partner with Industry Leaders?
+            {ctaHeadline}
           </h2>
           <p className="text-xl mb-8 opacity-90 max-w-2xl mx-auto">
-            Get in touch with our experts to discuss your chemical solution requirements and receive a customized quote.
+            {ctaDescription}
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Button asChild size="lg" variant="secondary">

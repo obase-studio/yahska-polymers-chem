@@ -1,8 +1,12 @@
 import { NextRequest, NextResponse } from "next/server"
-import { dbHelpers } from "@/lib/database"
+import { dbHelpers, initDatabase } from "@/lib/database"
+export const dynamic = 'force-dynamic'
 
 export async function GET(request: NextRequest) {
   try {
+    // Initialize database
+    initDatabase();
+    
     const { searchParams } = new URL(request.url)
     const page = searchParams.get('page')
     const section = searchParams.get('section')
@@ -27,7 +31,12 @@ export async function GET(request: NextRequest) {
 
 export async function POST(request: NextRequest) {
   try {
+    // Initialize database
+    initDatabase();
+    
     const { page, section, content_key, content_value } = await request.json()
+    
+    console.log('Admin content POST - Received data:', { page, section, content_key, content_value: content_value?.substring(0, 100) + '...' })
     
     if (!page || !section || !content_key) {
       return NextResponse.json(
@@ -36,16 +45,29 @@ export async function POST(request: NextRequest) {
       )
     }
     
-    dbHelpers.setContent(page, section, content_key, content_value)
+    // Save to database
+    const result = dbHelpers.setContent(page, section, content_key, content_value)
+    console.log('Admin content POST - Database result:', result)
     
-    return NextResponse.json(
-      { message: "Content saved successfully" },
-      { status: 200 }
-    )
+    // Verify the save worked by reading it back
+    const verification = dbHelpers.getContent(page, section)
+    console.log('Admin content POST - Verification read:', verification?.length, 'items')
+    
+    return NextResponse.json({ 
+      message: "Content saved successfully",
+      timestamp: new Date().toISOString()
+    }, { 
+      status: 200, 
+      headers: { 
+        'Cache-Control': 'no-store, no-cache, must-revalidate',
+        'Pragma': 'no-cache',
+        'Expires': '0'
+      } 
+    })
   } catch (error) {
     console.error("Save content error:", error)
     return NextResponse.json(
-      { error: "Failed to save content" },
+      { error: "Failed to save content", details: error instanceof Error ? error.message : String(error) },
       { status: 500 }
     )
   }

@@ -2,8 +2,7 @@
 
 import type React from "react"
 import { Footer } from "@/components/footer"
-
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { Navigation } from "@/components/navigation"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
@@ -13,8 +12,62 @@ import { Textarea } from "@/components/ui/textarea"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Checkbox } from "@/components/ui/checkbox"
 import { MapPin, Phone, Mail, Clock, Send, MessageSquare, FileText, Users } from "lucide-react"
+import { ContentItem } from "@/lib/database-client"
 
 export default function ContactPage() {
+  const [contentItems, setContentItems] = useState<ContentItem[]>([])
+  const [loading, setLoading] = useState(true)
+
+  // Fetch content from API
+  useEffect(() => {
+    const fetchContent = async () => {
+      try {
+        setLoading(true)
+        const response = await fetch('/api/content?page=contact')
+        const result = await response.json()
+        
+        if (result.success) {
+          setContentItems(result.data.content)
+        }
+      } catch (err) {
+        console.error('Error fetching contact content:', err)
+      } finally {
+        setLoading(false)
+      }
+    }
+    
+    fetchContent()
+  }, [])
+
+  // Get content values
+  const contactInfo = contentItems.find(item => 
+    item.section === 'contact_info' && item.content_key === 'content'
+  )?.content_value || '';
+  
+  const businessHours = contentItems.find(item => 
+    item.section === 'business_hours' && item.content_key === 'content'
+  )?.content_value || '';
+  
+  const officeLocations = contentItems.find(item => 
+    item.section === 'office_locations' && item.content_key === 'content'
+  )?.content_value || '';
+  
+  const heroDescription = contentItems.find(item => 
+    item.section === 'hero' && item.content_key === 'description'
+  )?.content_value || 'Get in touch with our experts for customized chemical solutions. We\'re here to help you find the perfect products for your industrial needs.';
+  
+  const formDescription = contentItems.find(item => 
+    item.section === 'contact_form' && item.content_key === 'description'
+  )?.content_value || 'Fill out the form below and our team will get back to you within 24 hours with a customized solution for your requirements.';
+  
+  const ctaHeadline = contentItems.find(item => 
+    item.section === 'cta' && item.content_key === 'headline'
+  )?.content_value || 'Ready to Get Started?';
+  
+  const ctaDescription = contentItems.find(item => 
+    item.section === 'cta' && item.content_key === 'description'
+  )?.content_value || 'Our team of experts is ready to help you find the perfect chemical solutions for your business needs.';
+
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -74,8 +127,7 @@ export default function ContactPage() {
               Contact Us
             </h1>
             <p className="text-xl text-muted-foreground max-w-3xl mx-auto leading-relaxed">
-              Get in touch with our experts for customized chemical solutions. We're here to help you find the perfect
-              products for your industrial needs.
+              {heroDescription}
             </p>
           </div>
         </div>
@@ -94,11 +146,22 @@ export default function ContactPage() {
               </CardHeader>
               <CardContent>
                 <p className="text-muted-foreground text-sm">
-                  Plot No. 123, Industrial Area,
-                  <br />
-                  Ahmedabad - 380015,
-                  <br />
-                  Gujarat, India
+                  {contactInfo ? (
+                    contactInfo.split('\n').map((line, index) => (
+                      <span key={index}>
+                        {line}
+                        {index < contactInfo.split('\n').length - 1 && <br />}
+                      </span>
+                    ))
+                  ) : (
+                    <>
+                      Plot No. 123, Industrial Area,
+                      <br />
+                      Ahmedabad - 380015,
+                      <br />
+                      Gujarat, India
+                    </>
+                  )}
                 </p>
               </CardContent>
             </Card>
@@ -148,11 +211,22 @@ export default function ContactPage() {
               </CardHeader>
               <CardContent>
                 <p className="text-muted-foreground text-sm">
-                  Mon - Fri: 9:00 AM - 6:00 PM
-                  <br />
-                  Saturday: 9:00 AM - 1:00 PM
-                  <br />
-                  Sunday: Closed
+                  {businessHours ? (
+                    businessHours.split('\n').map((line, index) => (
+                      <span key={index}>
+                        {line}
+                        {index < businessHours.split('\n').length - 1 && <br />}
+                      </span>
+                    ))
+                  ) : (
+                    <>
+                      Mon - Fri: 9:00 AM - 6:00 PM
+                      <br />
+                      Saturday: 9:00 AM - 1:00 PM
+                      <br />
+                      Sunday: Closed
+                    </>
+                  )}
                 </p>
               </CardContent>
             </Card>
@@ -170,8 +244,7 @@ export default function ContactPage() {
                 Send Us a Message
               </h2>
               <p className="text-muted-foreground mb-8">
-                Fill out the form below and our team will get back to you within 24 hours with a customized solution for
-                your requirements.
+                {formDescription}
               </p>
 
               <form onSubmit={handleSubmit} className="space-y-6">
@@ -452,10 +525,10 @@ export default function ContactPage() {
       <section className="py-20 bg-primary text-primary-foreground">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <h2 className="text-3xl lg:text-4xl font-bold mb-4" style={{ fontFamily: "var(--font-heading)" }}>
-            Ready to Get Started?
+            {ctaHeadline}
           </h2>
           <p className="text-xl mb-8 opacity-90 max-w-2xl mx-auto">
-            Our team of experts is ready to help you find the perfect chemical solutions for your business needs.
+            {ctaDescription}
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Button asChild size="lg" variant="secondary">

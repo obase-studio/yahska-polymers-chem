@@ -9,6 +9,8 @@ import { Search, ExternalLink, Building2, Train, Factory, Award, Users, MapPin }
 import Image from "next/image"
 import { Footer } from "@/components/footer"
 
+// Fetch content via API to avoid server-only imports
+
 interface MediaFile {
   id: number
   filename: string
@@ -23,6 +25,10 @@ interface MediaFile {
 }
 
 export default function ProjectsPage() {
+  const [projectOverview, setProjectOverview] = useState("")
+  const [projectCategories, setProjectCategories] = useState("")
+  const [projectAchievements, setProjectAchievements] = useState("")
+  
   const [mediaFiles, setMediaFiles] = useState<MediaFile[]>([])
   const [loading, setLoading] = useState(true)
   const [searchTerm, setSearchTerm] = useState("")
@@ -30,6 +36,7 @@ export default function ProjectsPage() {
 
   useEffect(() => {
     fetchMediaFiles()
+    fetchContent()
   }, [])
 
   const fetchMediaFiles = async () => {
@@ -43,6 +50,21 @@ export default function ProjectsPage() {
       console.error('Error fetching media files:', error)
     } finally {
       setLoading(false)
+    }
+  }
+
+  const fetchContent = async () => {
+    try {
+      const res = await fetch('/api/content?page=projects')
+      const data = await res.json()
+      if (data.success) {
+        const items = data.data.content as Array<any>
+        setProjectOverview(items.find((i) => i.section === 'project_overview' && i.content_key === 'content')?.content_value || '')
+        setProjectCategories(items.find((i) => i.section === 'categories' && i.content_key === 'content')?.content_value || '')
+        setProjectAchievements(items.find((i) => i.section === 'achievements' && i.content_key === 'content')?.content_value || '')
+      }
+    } catch (e) {
+      // ignore
     }
   }
 
@@ -116,7 +138,7 @@ export default function ProjectsPage() {
             Our Project Portfolio
           </h1>
           <p className="text-xl text-muted-foreground max-w-3xl mx-auto leading-relaxed">
-            Showcasing our expertise across diverse industrial and infrastructure projects
+            {projectOverview || 'Showcasing our expertise across diverse industrial and infrastructure projects'}
           </p>
         </div>
       </section>

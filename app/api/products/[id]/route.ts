@@ -1,51 +1,40 @@
-import { NextRequest, NextResponse } from 'next/server'
-import { dbHelpers } from '@/lib/database'
+import { NextRequest, NextResponse } from 'next/server';
+import { dbHelpers } from '@/lib/database';
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
+  context: { params: Promise<{ id: string }> }
 ) {
-  const { id } = await params
   try {
-    const productId = parseInt(id)
+    const { params } = context;
+    const resolvedParams = await params;
+    const productId = parseInt(resolvedParams.id);
     
     if (isNaN(productId)) {
-      return NextResponse.json(
-        { 
-          success: false, 
-          error: 'Invalid product ID' 
-        },
-        { status: 400 }
-      )
+      return NextResponse.json({ 
+        success: false, 
+        error: 'Invalid product ID' 
+      }, { status: 400 });
     }
-
-    // Get product by ID
-    const product = dbHelpers.getProductById(productId)
+    
+    const product = dbHelpers.getProductById(productId);
     
     if (!product) {
-      return NextResponse.json(
-        { 
-          success: false, 
-          error: 'Product not found' 
-        },
-        { status: 404 }
-      )
-    }
-
-    return NextResponse.json({
-      success: true,
-      data: product
-    })
-    
-  } catch (error) {
-    console.error('Error fetching product:', error)
-    return NextResponse.json(
-      { 
+      return NextResponse.json({ 
         success: false, 
-        error: 'Failed to fetch product',
-        details: error instanceof Error ? error.message : 'Unknown error'
-      },
-      { status: 500 }
-    )
+        error: 'Product not found' 
+      }, { status: 404 });
+    }
+    
+    return NextResponse.json({ 
+      success: true, 
+      data: { product } 
+    });
+  } catch (error: any) {
+    console.error('Error fetching product details:', error);
+    return NextResponse.json({ 
+      success: false, 
+      error: error.message || 'Failed to fetch product details' 
+    }, { status: 500 });
   }
 }
