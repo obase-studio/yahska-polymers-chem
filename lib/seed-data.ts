@@ -1,4 +1,4 @@
-import { dbHelpers, getDatabase } from './database'
+import { supabaseHelpers as dbHelpers } from './supabase-helpers'
 
 // Enhanced Product Categories based on 11 categories mentioned
 export const ENHANCED_PRODUCT_CATEGORIES = [
@@ -448,16 +448,12 @@ export const SAMPLE_PROJECTS = [
 export async function populateProductCategories() {
   try {
     console.log('Populating enhanced product categories...')
-    const db = getDatabase()
+    // Using Supabase instead of SQLite
     
     for (const category of ENHANCED_PRODUCT_CATEGORIES) {
       try {
-        // Update existing categories
-        const stmt = db.prepare(`
-          INSERT OR REPLACE INTO product_categories (id, name, description, sort_order) 
-          VALUES (?, ?, ?, ?)
-        `)
-        stmt.run(category.id, category.name, category.description, category.sort_order)
+        // Use Supabase helper instead of direct SQL
+        await dbHelpers.createCategory(category)
       } catch (error) {
         console.error(`Error inserting category ${category.id}:`, error)
       }
