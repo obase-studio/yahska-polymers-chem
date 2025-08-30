@@ -3,7 +3,7 @@ import { cookies } from 'next/headers'
 import bcrypt from 'bcryptjs'
 import { supabaseHelpers } from './supabase-helpers'
 
-const secret = new TextEncoder().encode('your-secret-key-change-this-in-production')
+const secret = new TextEncoder().encode(process.env.JWT_SECRET || 'fallback-dev-key-not-for-production')
 
 export async function createSession(username: string) {
   const token = await new SignJWT({ username })
