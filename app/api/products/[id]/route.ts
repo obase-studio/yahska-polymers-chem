@@ -28,7 +28,7 @@ export async function GET(
     
     return NextResponse.json({ 
       success: true, 
-      data: { product } 
+      data: product 
     });
   } catch (error: any) {
     console.error('Error fetching product details:', error);

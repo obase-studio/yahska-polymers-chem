@@ -1,0 +1,6 @@
+id,name,description,icon_url,sort_order,is_active
+bullet-train,Bullet Train,,,0,True
+metro-rail,Metro / Rail,,,0,True
+roads,Roads,,,0,True
+buildings-factories,Buildings & Factories,,,0,True
+others,Others,,,0,True

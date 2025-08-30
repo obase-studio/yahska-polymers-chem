@@ -1,0 +1,4 @@
+field_name,field_value,field_type,category,is_active
+address_unit_1,"S. No 407, Khata No 1217, Bh Sarvodaya Hotel, Moraiya, Changodar, Ahmedabad – 382213",text,contact,True
+address_unit_2,"C-1/127, Phase I, Nr Tiger Surgical, GIDC Vatva, Ahmedabad – 382245 M: +91-8890913222 Email: admin@yahskapolymers.com",text,contact,True
+phone,M: +91-8890913222,text,contact,True

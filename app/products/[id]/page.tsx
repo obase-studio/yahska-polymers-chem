@@ -16,8 +16,8 @@ interface Product {
   description: string
   category_id: string
   category_name: string
-  applications: string
-  features: string
+  applications: string[]
+  features: string[]
   usage: string
   advantages: string
   technical_specifications: string
@@ -57,14 +57,9 @@ export default function ProductDetailPage() {
     }
   }, [productId])
 
-  // Parse JSON fields safely
-  const parseJsonField = (field: string | null) => {
-    if (!field) return []
-    try {
-      return JSON.parse(field)
-    } catch {
-      return []
-    }
+  // Safely get array fields
+  const getArrayField = (field: string[] | null) => {
+    return Array.isArray(field) ? field : []
   }
 
   if (loading) {
@@ -100,8 +95,8 @@ export default function ProductDetailPage() {
     )
   }
 
-  const applications = parseJsonField(product.applications)
-  const features = parseJsonField(product.features)
+  const applications = getArrayField(product.applications)
+  const features = getArrayField(product.features)
 
   return (
     <div className="min-h-screen bg-background">

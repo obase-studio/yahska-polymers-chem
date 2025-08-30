@@ -1,0 +1,17 @@
+field_name,field_value,field_type,category,is_active,updated_at
+company_description,"Leading manufacturer of construction chemicals, concrete admixtures, textile chemicals, and dyestuff chemicals with over 20 years of experience in industrial solutions.",text,about,1,2025-08-22 09:26:03
+company_name,Yahska Polymers Private Limited,text,about,1,2025-08-22 09:26:03
+established_year,2003,text,about,1,2025-08-22 09:26:03
+mission,To provide innovative chemical solutions that enhance construction quality and efficiency while maintaining the highest standards of safety and environmental responsibility.,text,about,1,2025-08-22 09:26:03
+vision,"To be the most trusted partner in chemical manufacturing, driving innovation in construction and industrial applications across India and beyond.",text,about,1,2025-08-22 09:26:03
+email,info@yahskapolymers.com,text,contact,1,2025-08-22 09:26:03
+head_office_address,"Ahmedabad, Gujarat, India",text,contact,1,2025-08-22 09:26:03
+phone,+91-XXXX-XXXXXX,text,contact,1,2025-08-22 09:26:03
+website,www.yahskapolymers.com,text,contact,1,2025-08-22 09:26:03
+active_projects,100+,text,general,1,2025-08-22 09:26:03
+employee_count,50+,text,general,1,2025-08-22 09:26:03
+manufacturing_facilities,2,text,general,1,2025-08-22 09:26:03
+product_categories,11,text,general,1,2025-08-22 09:26:03
+total_experience,20+ years,text,general,1,2025-08-22 09:26:03
+iso_certified,true,text,quality,1,2025-08-22 09:26:03
+quality_policy,"Committed to delivering high-quality chemical solutions through continuous innovation, strict quality control, and customer-focused approach.",text,quality,1,2025-08-22 09:26:03

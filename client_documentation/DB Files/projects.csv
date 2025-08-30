@@ -1,0 +1,39 @@
+name,description,category,location,client_name,completion_date,project_value,key_features,challenges,solutions,image_url,gallery_images,is_featured,is_active,sort_order
+NHSRCL Mumbai–Ahmedabad High Speed Rail – Package C8,MAHSR supply to packages C8 (SCC-VRS JV) and D2 (L&T).,bullet-train,,SCC-VRS JV,,,[],,,,[],False,True,0
+NHSRCL Mumbai–Ahmedabad High Speed Rail – Sabarmati Depot D-2,MAHSR supply to packages C8 (SCC-VRS JV) and D2 (L&T).,bullet-train,,Larsen & Toubro,,,[],,,,[],False,True,0
+Mumbai Metro,Mumbai Metro,metro-rail,,,,,[],,,,[],False,True,0
+Ahmedabad–Gandhinagar Metro,Ahmedabad–Gandhinagar Metro,metro-rail,,,,,[],,,,[],False,True,0
+Surat Metro,Surat Metro,metro-rail,,,,,[],,,,[],False,True,0
+Jaipur Metro,Jaipur Metro,metro-rail,,,,,[],,,,[],False,True,0
+North Western Railways (Track double laning),North Western Railways (Track double laning),metro-rail,,,,,[],,,,[],False,True,0
+National Capital Region Transport Corporation,National Capital Region Transport Corporation,metro-rail,,,,,[],,,,[],False,True,0
+"Northern Railways (Tunnelling, Structures and Track double laning)","Northern Railways (Tunnelling, Structures and Track double laning)",metro-rail,,,,,[],,,,[],False,True,0
+Vadodara–Mumbai 8-lane PQC Expressway,Vadodara–Mumbai 8-lane PQC Expressway,roads,,,,,[],,,,[],False,True,0
+Mumbai–Nagpur Expressway Samruddhi Mahamarg (PQC 8-lane),Mumbai–Nagpur Expressway Samruddhi Mahamarg (PQC 8-lane),roads,,,,,[],,,,[],False,True,0
+Delhi–Vadodara Greenfield Eight-lane PQC Expressway,Delhi–Vadodara Greenfield Eight-lane PQC Expressway,roads,,,,,[],,,,[],False,True,0
+Construction & Improvement of CC Roads (BMC),Construction & Improvement of CC Roads (BMC),roads,,,,,[],,,,[],False,True,0
+Khambatki Ghat 6 Lane Tunnel Project,Khambatki Ghat 6 Lane Tunnel Project,roads,,,,,[],,,,[],False,True,0
+Girvi–Phaltan Project (MSIDC),Girvi–Phaltan Project (MSIDC),roads,,,,,[],,,,[],False,True,0
+Samakhiali–Santalpur 6 Lane Road Project (IRB Infra),Samakhiali–Santalpur 6 Lane Road Project (IRB Infra),roads,,,,,[],,,,[],False,True,0
+Bharuch–Dahej Access Controlled Expressway (GHV Projects),Bharuch–Dahej Access Controlled Expressway (GHV Projects),roads,,,,,[],,,,[],False,True,0
+Ahmedabad–Dholera 6 Lane Expressway (GHV India),Ahmedabad–Dholera 6 Lane Expressway (GHV India),roads,,,,,[],,,,[],False,True,0
+Daman Devka Beach Road Project (RKC Infrabuilt),Daman Devka Beach Road Project (RKC Infrabuilt),roads,,,,,[],,,,[],False,True,0
+Khed–Sinnar Road Project (Aadit Infra),Khed–Sinnar Road Project (Aadit Infra),roads,,,,,[],,,,[],False,True,0
+"Tata Semiconductor Fab Facility, Dholera (L&T, Tata Projects)","Tata Semiconductor Fab Facility, Dholera (L&T, Tata Projects)",buildings-factories,,,,,[],,,,[],False,True,0
+"Micron Semiconductor Fab Facility, Sanand (Tata Projects)","Micron Semiconductor Fab Facility, Sanand (Tata Projects)",buildings-factories,,,,,[],,,,[],False,True,0
+"Adani Power / Solar Precast Elements, Mundra (Buildcast Solution - Adani)","Adani Power / Solar Precast Elements, Mundra (Buildcast Solution - Adani)",buildings-factories,,,,,[],,,,[],False,True,0
+"Coke Oven Plant at AMNS, Hazira (ITD Cementation, Rohan Builders)","Coke Oven Plant at AMNS, Hazira (ITD Cementation, Rohan Builders)",buildings-factories,,,,,[],,,,[],False,True,0
+"Reliance Life Sciences, Nashik (L&T)","Reliance Life Sciences, Nashik (L&T)",buildings-factories,,,,,[],,,,[],False,True,0
+"Hindustan Zinc Ltd Expansion, Udaipur (L&T)","Hindustan Zinc Ltd Expansion, Udaipur (L&T)",buildings-factories,,,,,[],,,,[],False,True,0
+"Gati Shakti Vidhyalaya for RVNL, Vadodara (PSP Projects)","Gati Shakti Vidhyalaya for RVNL, Vadodara (PSP Projects)",buildings-factories,,,,,[],,,,[],False,True,0
+"Railway Locomotive Manufacturing Unit, Dahod (GHV Projects)","Railway Locomotive Manufacturing Unit, Dahod (GHV Projects)",buildings-factories,,,,,[],,,,[],False,True,0
+"SMC New High-rise Building, Surat (PSP Projects)","SMC New High-rise Building, Surat (PSP Projects)",buildings-factories,,,,,[],,,,[],False,True,0
+"Polycab Factory, Halol (Shapoorji Pallonji)","Polycab Factory, Halol (Shapoorji Pallonji)",buildings-factories,,,,,[],,,,[],False,True,0
+"Fintech Towers at GIFT City, Ahmedabad (Savvy ATS)","Fintech Towers at GIFT City, Ahmedabad (Savvy ATS)",buildings-factories,,,,,[],,,,[],False,True,0
+"New Government Hospital Building, Nagpur (Yashnand Engineers & Contractors)","New Government Hospital Building, Nagpur (Yashnand Engineers & Contractors)",buildings-factories,,,,,[],,,,[],False,True,0
+"Ambuja Cement Plant, Marwar Mundwa (Ambuja Cements Ltd)","Ambuja Cement Plant, Marwar Mundwa (Ambuja Cements Ltd)",buildings-factories,,,,,[],,,,[],False,True,0
+"EWS & LIG Housing, Pune (Yashnand Engineers & Contractors)","EWS & LIG Housing, Pune (Yashnand Engineers & Contractors)",buildings-factories,,,,,[],,,,[],False,True,0
+New building at IIM Ahmedabad (PSP Projects),New building at IIM Ahmedabad (PSP Projects),buildings-factories,,,,,[],,,,[],False,True,0
+"Jamrani Dam, Uttarakhand (Afcons Infra)","Jamrani Dam, Uttarakhand (Afcons Infra)",others,,,,,[],,,,[],False,True,0
+"Upper High Level Canal (UHLC), Mahi Bajaj Sagar Project, Banswara (SCC Infra)","Upper High Level Canal (UHLC), Mahi Bajaj Sagar Project, Banswara (SCC Infra)",others,,,,,[],,,,[],False,True,0
+Dholera Smart City (L&T),Dholera Smart City (L&T),others,,,,,[],,,,[],False,True,0

@@ -56,12 +56,23 @@ export const supabaseHelpers = {
   getProductById: async (id: number) => {
     const { data, error } = await supabase
       .from('products')
-      .select('*')
+      .select(`
+        *,
+        product_categories!products_category_id_fkey(name)
+      `)
       .eq('id', id)
       .single()
     
     if (error) throw error
-    return data ? parseProductData(data) : null
+    if (!data) return null
+    
+    // Add category_name to the product data
+    const productWithCategory = {
+      ...data,
+      category_name: data.product_categories?.name || data.category_id
+    }
+    
+    return parseProductData(productWithCategory)
   },
 
   updateProduct: async (id: number, product: any) => {

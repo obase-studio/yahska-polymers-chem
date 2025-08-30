@@ -1,0 +1,6 @@
+id,name,description,icon_url,sort_order,is_active
+bullet_train,Bullet Train,High-speed rail projects including NHSRCL Mumbai-Ahmedabad corridor,,1,1
+metro_rail,Metro & Rail,"Metro systems, railway infrastructure, and urban transit projects",,2,1
+roads,Roads,"Highway construction, expressways, and road infrastructure projects",,3,1
+buildings_infra,Buildings & Infrastructure,"Commercial buildings, industrial facilities, and infrastructure development",,4,1
+others,Others,"Airports, dams, canals, and other specialized construction projects",,5,1
