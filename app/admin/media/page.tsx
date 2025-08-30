@@ -1,10 +1,10 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { MediaUpload } from "@/components/admin/media-upload"
 import { MediaGallery } from "@/components/admin/media-gallery"
-import { dbHelpers } from "@/lib/database"
+import { supabaseHelpers } from "@/lib/supabase-helpers"
 
 export default async function MediaPage() {
-  const mediaFiles = dbHelpers.getAllMediaFiles()
+  const mediaFiles = await supabaseHelpers.getAllMediaFiles()
 
   return (
     <div className="space-y-6">

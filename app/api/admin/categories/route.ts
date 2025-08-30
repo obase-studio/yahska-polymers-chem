@@ -1,12 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { dbHelpers, initDatabase } from '@/lib/database'
+import { supabaseHelpers } from '@/lib/supabase-helpers'
 
 export async function GET() {
   try {
-    initDatabase()
-    
     // Get categories with product counts
-    const categories = dbHelpers.getAllCategoriesWithCounts()
+    const categories = await supabaseHelpers.getAllCategoriesWithCounts()
     
     return NextResponse.json({
       success: true,
@@ -23,8 +21,6 @@ export async function GET() {
 
 export async function POST(request: NextRequest) {
   try {
-    initDatabase()
-    
     const { id, name, description, sort_order } = await request.json()
     
     if (!id || !name || !description) {
@@ -35,7 +31,7 @@ export async function POST(request: NextRequest) {
     }
     
     // Check if category ID already exists
-    const existing = dbHelpers.getCategoryById(id)
+    const existing = await supabaseHelpers.getCategoryById(id)
     if (existing) {
       return NextResponse.json(
         { success: false, error: 'Category ID already exists' },
@@ -43,7 +39,7 @@ export async function POST(request: NextRequest) {
       )
     }
     
-    const result = dbHelpers.createCategory({
+    const result = await supabaseHelpers.createCategory({
       id,
       name,
       description,
@@ -52,7 +48,7 @@ export async function POST(request: NextRequest) {
     
     return NextResponse.json({
       success: true,
-      data: { id: result.lastInsertRowid }
+      data: { id: result?.[0]?.id }
     })
   } catch (error: any) {
     console.error('Error creating category:', error)

@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { dbHelpers } from '@/lib/database';
+import { supabaseHelpers } from '@/lib/supabase-helpers';
 
 export async function GET(request: NextRequest) {
   try {
@@ -7,8 +7,8 @@ export async function GET(request: NextRequest) {
     const category = searchParams.get('category');
     const search = searchParams.get('search');
     
-    let products = dbHelpers.getAllProducts();
-    const categories = dbHelpers.getAllCategories();
+    let products = await supabaseHelpers.getAllProducts();
+    const categories = await supabaseHelpers.getAllCategories();
     
     // Filter by category if provided
     if (category && category !== 'all') {

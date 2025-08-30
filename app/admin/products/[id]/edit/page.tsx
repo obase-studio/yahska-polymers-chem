@@ -3,7 +3,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { ArrowLeft } from "lucide-react"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
-import { dbHelpers } from "@/lib/database"
+import { supabaseHelpers } from "@/lib/supabase-helpers"
 import { notFound } from "next/navigation"
 
 interface EditProductPageProps {
@@ -12,8 +12,8 @@ interface EditProductPageProps {
 
 export default async function EditProductPage({ params }: EditProductPageProps) {
   const { id } = await params
-  const categories = dbHelpers.getAllCategories()
-  const product = dbHelpers.getProductById(parseInt(id))
+  const categories = await supabaseHelpers.getAllCategories()
+  const product = await supabaseHelpers.getProductById(parseInt(id))
 
   if (!product) {
     notFound()

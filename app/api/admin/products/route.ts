@@ -1,11 +1,11 @@
 import { NextRequest, NextResponse } from "next/server"
 import { requireAuth } from "@/lib/auth"
-import { dbHelpers } from "@/lib/database"
+import { supabaseHelpers } from "@/lib/supabase-helpers"
 
 export async function GET() {
   try {
     await requireAuth()
-    const products = dbHelpers.getAllProducts()
+    const products = await supabaseHelpers.getAllProducts()
     return NextResponse.json(products)
   } catch (error) {
     return NextResponse.json(
@@ -20,10 +20,10 @@ export async function POST(request: NextRequest) {
     await requireAuth()
     const product = await request.json()
     
-    const result = dbHelpers.createProduct(product)
+    const result = await supabaseHelpers.createProduct(product)
     
     return NextResponse.json(
-      { message: "Product created successfully", id: result.lastInsertRowid },
+      { message: "Product created successfully", id: result?.[0]?.id },
       { status: 201 }
     )
   } catch (error) {
