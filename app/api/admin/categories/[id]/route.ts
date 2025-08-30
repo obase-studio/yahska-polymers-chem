@@ -72,7 +72,7 @@ export async function DELETE(request: NextRequest, context: Context) {
     
     return NextResponse.json({
       success: true,
-      data: { deleted: result?.length > 0 }
+      data: { deleted: !!result }
     })
   } catch (error: any) {
     console.error('Error deleting category:', error)
