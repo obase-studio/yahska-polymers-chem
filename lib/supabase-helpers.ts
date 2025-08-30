@@ -407,37 +407,6 @@ export const supabaseHelpers = {
     
     if (error) throw error
     return data || []
-  },
-
-  // Create methods for seed data (temporary compatibility)
-  createClient: async (clientData: any) => {
-    const { data, error } = await supabase
-      .from('clients')
-      .insert(clientData)
-      .select()
-    
-    if (error) throw error
-    return data
-  },
-
-  createApproval: async (approvalData: any) => {
-    const { data, error } = await supabase
-      .from('approvals')
-      .insert(approvalData)
-      .select()
-    
-    if (error) throw error
-    return data
-  },
-
-  createProject: async (projectData: any) => {
-    const { data, error } = await supabase
-      .from('projects')
-      .insert(projectData)
-      .select()
-    
-    if (error) throw error
-    return data
   }
 }
 
