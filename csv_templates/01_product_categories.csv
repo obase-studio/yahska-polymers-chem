@@ -1,0 +1,13 @@
+id,name,description,sort_order,is_active
+accelerators,Accelerators,Concrete and mortar accelerating admixtures,1,1
+admixtures,Admixtures,General concrete and mortar admixtures,2,1
+corrosion_inhibitor,Corrosion Inhibitor,Anti-corrosion agents for reinforcement protection,3,1
+curing_compound,Curing Compound,Concrete curing and protection compounds,4,1
+floor_hardeners,Floor Hardeners,Surface hardening agents for concrete floors,5,1
+grouts,Grouts,Specialized grouting materials,6,1
+integral_waterproofing,Integral Waterproofing,Waterproofing additives for concrete,7,1
+mould_release_agent,Mould Release Agent,Release agents for concrete forms,8,1
+misc_admixtures,Misc Admixtures,Miscellaneous concrete additives,9,1
+structural_bonding,Structural Bonding,Bonding agents for structural applications,10,1
+others,Others,Other chemical products,11,1
+concrete_chemicals,Concrete Chemicals,General concrete chemical solutions,12,1

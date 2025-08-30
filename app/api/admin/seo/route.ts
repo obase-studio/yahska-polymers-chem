@@ -1,11 +1,11 @@
 import { NextRequest, NextResponse } from "next/server"
-import { dbHelpers } from "@/lib/database"
+import { supabaseHelpers } from "@/lib/supabase-helpers"
 
 export async function POST(request: NextRequest) {
   try {
     const { page, ...seoData } = await request.json()
     
-    dbHelpers.setSEOSettings(page, seoData)
+    await supabaseHelpers.setSEOSettings(page, seoData)
     
     return NextResponse.json(
       { message: "SEO settings saved successfully" },

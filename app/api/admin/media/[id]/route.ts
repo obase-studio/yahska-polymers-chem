@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server"
-import { dbHelpers } from "@/lib/database"
+import { supabaseHelpers } from "@/lib/supabase-helpers"
 import { unlink } from "fs/promises"
 import { join } from "path"
 
@@ -35,7 +35,7 @@ export async function DELETE(
     const { id } = await params
     
     // Get file info before deleting
-    const files = dbHelpers.getAllMediaFiles()
+    const files = await supabaseHelpers.getAllMediaFiles()
     const file = files.find((f: any) => f.id === parseInt(id))
     
     if (file) {
@@ -48,7 +48,7 @@ export async function DELETE(
       }
       
       // Delete from database
-      dbHelpers.deleteMediaFile(parseInt(id))
+      await supabaseHelpers.deleteMediaFile(parseInt(id))
     }
     
     return NextResponse.json(

@@ -1,0 +1,13 @@
+id,name,description,sort_order,is_active
+admixtures,Admixtures,,0,True
+accelerators,Accelerators,,0,True
+misc-admixtures,Misc Admixtures,,0,True
+integral-waterproofing,Integral Waterproofing,,0,True
+curing-compound,Curing Compound,,0,True
+grouts,Grouts,,0,True
+floor-hardeners,Floor Hardeners,,0,True
+micro-silica,Micro Silica,,0,True
+structural-bonding,Structural Bonding,,0,True
+corrosion-inhibitor,Corrosion Inhibitor,,0,True
+mould-release-agent,Mould Release Agent,,0,True
+other,Other,,0,True

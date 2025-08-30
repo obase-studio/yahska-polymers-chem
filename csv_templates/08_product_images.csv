@@ -1,0 +1,10 @@
+product_id,image_url,image_type,alt_text,sort_order,is_active
+1,/images/products/yp-accelerator-main.jpg,main,YP Accelerator main product image,1,1
+1,/images/products/yp-accelerator-packaging.jpg,gallery,YP Accelerator product packaging,2,1
+1,/images/products/yp-accelerator-application.jpg,gallery,YP Accelerator application in construction,3,1
+2,/images/products/anticorr-cn-main.jpg,main,AntiCorr CN main product image,1,1
+2,/images/products/anticorr-cn-usage.jpg,gallery,AntiCorr CN usage demonstration,2,1
+3,/images/products/supercure-main.jpg,main,SuperCure CC375 main product image,1,1
+3,/images/products/supercure-application.jpg,gallery,SuperCure CC375 application process,2,1
+4,/images/products/floor-hardener-main.jpg,main,YP Floor HD M main product image,1,1
+4,/images/products/floor-hardener-result.jpg,gallery,Floor hardener finished result,2,1

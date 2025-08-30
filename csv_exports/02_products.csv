@@ -1,0 +1,108 @@
+name,description,price,category_id,applications,features,image_url,is_active,usage,advantages,technical_specifications,packaging_info,safety_information,product_code,specification_pdf,created_at,updated_at
+AntiCorr CN,Corrosion Inhibiting Admixture based on Nitrite,,corrosion_inhibitor,"[""Added to new concrete for corrosion protection of steel\r"",""Ideal for marine, coastal, and chloride-exposed structures""]","[""Forms protective layer on steel reinforcement\r"",""Minimizes corrosion from chlorides and aggressive agents""]",,1,"Added to new concrete for corrosion protection of steel
+Ideal for marine, coastal, and chloride-exposed structures","Forms protective layer on steel reinforcement
+Minimizes corrosion from chlorides and aggressive agents",,,,YP-ACCN,,2025-08-22 16:52:40,2025-08-22 17:03:52
+AntiCorr FG,Bipolar corrosion inhibiting concrete admixture,,corrosion_inhibitor,"[""Extends life of reinforced concrete in corrosive environments\r"",""Used in repair and protection of RCC structures""]","[""Protects both anodic and cathodic zones of rebar\r"",""Reduces corrosion without increasing concrete resistivity""]",,1,"Extends life of reinforced concrete in corrosive environments
+Used in repair and protection of RCC structures","Protects both anodic and cathodic zones of rebar
+Reduces corrosion without increasing concrete resistivity",,,,YP-ACFG,,2025-08-22 16:52:40,2025-08-22 17:03:52
+Super P UT,High range superplasticiser for workability and integral waterproofing,,admixtures,"[""Concrete where 5 to 20% water reduction is desired\r"",""Concrete where normal setting times are required""]","[""Provides better slump retention\r"",""Provides excellent workability\r""]",,1,"Concrete where 5 to 20% water reduction is desired
+Concrete where normal setting times are required","Provides better slump retention
+Provides excellent workability",,,,YP-SPUT,,2025-08-22 16:52:40,2025-08-22 17:03:52
+SuperCure CC375,"Heat reflective, white pigmented, water-based wax emulsion-based curing compound",,curing_compound,"[""Curing large exposed concrete areas like highways and runways.​\r"",""Suitable for canal linings and other expansive surfaces.​""]","[""Reduces plastic cracking and surface dusting.​\r"",""Ensures designed strength attainment and minimizes shrinkage""]",,1,"Curing large exposed concrete areas like highways and runways.​
+Suitable for canal linings and other expansive surfaces.​","Reduces plastic cracking and surface dusting.​
+Ensures designed strength attainment and minimizes shrinkage",,,,YP-SCCC375,,2025-08-22 16:52:40,2025-08-22 17:03:52
+SuperCure D120,"Resin-based, white pigmented curing compound with superb water retention efficiency",,curing_compound,"[""Curing freshly laid concrete surfaces.​\r"",""Sealing and dustproofing floors and walls.""]","[""Minimizes shrinkage cracks by retaining moisture.​\r"",""Compatible with various over-coatings""]",,1,"Curing freshly laid concrete surfaces.​
+Sealing and dustproofing floors and walls.","Minimizes shrinkage cracks by retaining moisture.​
+Compatible with various over-coatings",,,,YP-SCD120,,2025-08-22 16:52:40,2025-08-22 17:03:52
+SuperCure X150,Aluminised synthetic resin-based for PQC,,curing_compound,"[""Curing compound for PQC roads and runways\r"",""Ideal for large exposed concrete surfaces""]","[""Reduces water loss, preventing shrinkage cracks\r"",""Improves surface strength and durability""]",,1,"Curing compound for PQC roads and runways
+Ideal for large exposed concrete surfaces","Reduces water loss, preventing shrinkage cracks
+Improves surface strength and durability",,,,YP-SCX150,,2025-08-22 16:52:40,2025-08-22 17:03:52
+Test Superplasticizer,High-performance concrete admixture for testing,,admixtures,"[""Testing"",""Development"",""Quality Assurance""]","[""High performance"",""Easy to use"",""Cost effective""]",,1,,,,,,,,2025-08-22 16:52:40,2025-08-22 17:03:52
+YP Accelerator,Accelerating admixture to reduce setting time of concrete,,accelerators,"[""Precast and prestressed concrete requiring high early strength\r"",""Cold weather concreting to accelerate strength gain""]","[""Allows for early stripping and re-use of forms.​\r"",""Facilitates faster finishing operations on flatwork surfaces""]",,1,"Precast and prestressed concrete requiring high early strength
+Cold weather concreting to accelerate strength gain","Allows for early stripping and re-use of forms.​
+Facilitates faster finishing operations on flatwork surfaces",,,,YP-YPA,,2025-08-22 16:52:40,2025-08-22 17:03:52
+YP Bond EP,Epoxy resin concrete bonding agent,,structural_bonding,"[""Bonds old concrete to new concrete\r"",""Used in structural concrete repairs""]","[""Allows longer concrete placement without risk of delamination.\r"",""Provides bond strength higher than concrete’s tensile strength""]",,1,"Bonds old concrete to new concrete
+Used in structural concrete repairs","Allows longer concrete placement without risk of delamination.
+Provides bond strength higher than concrete’s tensile strength",,,,YP-YPBEP,,2025-08-22 16:52:40,2025-08-22 17:03:52
+YP Crystal IP,Crystalline waterproofing admixture for mortar and concrete,,integral_waterproofing,"[""Waterproofing concrete basements, tanks, and substructures\r"",""Suitable for water-retaining and water-excluding structures""]","[""Self-heals micro-cracks through crystal growth\r"",""Provides long-term integral waterproofing durability""]",,1,"Waterproofing concrete basements, tanks, and substructures
+Suitable for water-retaining and water-excluding structures","Self-heals micro-cracks through crystal growth
+Provides long-term integral waterproofing durability",,,,YP-YPCIP,,2025-08-22 16:52:40,2025-08-22 17:03:52
+YP EGA 100,Plasticised expanding grout admixture,,misc_admixtures,"[""Bed and duct grouting for machinery and precast units\r"",""Non-shrink infilling and precision jointing applications""]","[""Gaseous expansion compensates for plastic shrinkage and settlement\r"",""Provides the grout with high fluidity at a low water-to-cement ratio, making placement or injection effortless.""]",,1,"Bed and duct grouting for machinery and precast units
+Non-shrink infilling and precision jointing applications","Gaseous expansion compensates for plastic shrinkage and settlement
+Provides the grout with high fluidity at a low water-to-cement ratio, making placement or injection effortless.",,,,YP-YPEGA100,,2025-08-22 16:52:40,2025-08-22 17:03:52
+YP Floor HD NM,Non-Metallic Monolithic Surface Hardener for Concrete Floors,,floor_hardeners,"[""Heavy-duty industrial floors like workshops and machine shops.\r"",""High-traffic zones such as loading bays and trucking lanes.""]","[""Provides a hard, abrasion resistant surface\r"",""Forms monolithic bond with base concrete""]",,1,"Heavy-duty industrial floors like workshops and machine shops.
+High-traffic zones such as loading bays and trucking lanes.","Provides a hard, abrasion resistant surface
+Forms monolithic bond with base concrete",,,,YP-YPFHDNM,,2025-08-22 16:52:40,2025-08-22 17:03:52
+YP Grout EPLV,"High Strength, Low Viscosity Epoxy Grout",,grouts,"[""Underplate grouting to substantial structural elements.\r"",""Structural infill where very high strength is required.""]","[""High compressive, tensile, and flexural strengths.​\r"",""Resistant to repetitive dynamic loads""]",,1,"Underplate grouting to substantial structural elements.
+Structural infill where very high strength is required.","High compressive, tensile, and flexural strengths.​
+Resistant to repetitive dynamic loads",,,,YP-YPGEPLV,,2025-08-22 16:52:40,2025-08-22 17:03:52
+YP Grout MC,"General purpose, non-shrink, cementitious microconcrete",,grouts,"[""Structural concrete repairs in congested areas\r"",""Jacketing and encasement of columns/beams""]","[""Non-shrink with high strength gain\r"",""Flowable—no vibration needed""]",,1,"Structural concrete repairs in congested areas
+Jacketing and encasement of columns/beams","Non-shrink with high strength gain
+Flowable—no vibration needed",,,,YP-YPGMC,,2025-08-22 16:52:40,2025-08-22 17:03:52
+YP Grout NS2,"Free flow, high strength, non-shrink,
+cementitious precision grout",,grouts,"[""Grouting under base plates of heavy machinery\r"",""Anchoring bolts, rods, and steel inserts\r"",""Filling voids in structural concrete repairs""]","[""Non-shrink—ensures full contact and load transfer\r"",""High early and final compressive strength\r"",""Free-flowing—fills complex gaps with ease""]",,1,"Grouting under base plates of heavy machinery
+Anchoring bolts, rods, and steel inserts
+Filling voids in structural concrete repairs","Non-shrink—ensures full contact and load transfer
+High early and final compressive strength
+Free-flowing—fills complex gaps with ease",,,,YP-YPGNS2,,2025-08-22 16:52:40,2025-08-22 17:03:52
+YP Grout NS85,"High-flow, dual shrinkage-compensated cementitious grout with rapid strength gain and high ultimate strength",,grouts,"[""Grouting baseplates and soleplates of large machinery subject to moderate dynamic loads.​\r"",""Grouting precast wall panels, beams, columns, and structural building members""]","[""Non-metallic dual expansion system compensates for shrinkage in both plastic and hardened states.​\r"",""Excellent initial flow and flow retention suitable for large and small grout pours""]",,1,"Grouting baseplates and soleplates of large machinery subject to moderate dynamic loads.​
+Grouting precast wall panels, beams, columns, and structural building members","Non-metallic dual expansion system compensates for shrinkage in both plastic and hardened states.​
+Excellent initial flow and flow retention suitable for large and small grout pours",,,,YP-YPGNS85,,2025-08-22 16:52:40,2025-08-22 17:03:52
+YP LW+,Integral waterproofing and plasticizing admixture for concrete and mortar,,misc_admixtures,"[""Waterproofing roof slabs, screeds, basements, and water-retaining structures.​\r"",""Enhancing durability of external plastering, bathrooms, and repair works.""]","[""Improves watertightness and reduces permeability in concrete and mortar.​\r"",""Enhances workability and minimizes shrinkage cracks without increasing water content""]",,1,"Waterproofing roof slabs, screeds, basements, and water-retaining structures.​
+Enhancing durability of external plastering, bathrooms, and repair works.","Improves watertightness and reduces permeability in concrete and mortar.​
+Enhances workability and minimizes shrinkage cracks without increasing water content",,,,YP-YPLW,,2025-08-22 16:52:40,2025-08-22 17:03:52
+YP Retarder,Retarding plasticiser for concrete,,others,"[""Facilitates extended workability for mass concrete placements, reducing cold joint formation\r"",""Delays setting time in elevated temperatures, allowing adequate placement and finishing""]","[""Provides predictable extension of setting time, enhancing scheduling flexibility.​\r"",""Enhances concrete flow without increasing water content, leading to better placement""]",,1,"Facilitates extended workability for mass concrete placements, reducing cold joint formation
+Delays setting time in elevated temperatures, allowing adequate placement and finishing","Provides predictable extension of setting time, enhancing scheduling flexibility.​
+Enhances concrete flow without increasing water content, leading to better placement",,,,YP-YPR,,2025-08-22 16:52:40,2025-08-22 17:03:52
+YP Shotset 30,Alkali Free liquid accelerator for sprayed concrete for shotcreting,,others,"[""Tunnel linings and underground excavations\r"",""Rock and slope stabilization""]","[""Fast setting with high early strength gain\r"",""Low rebound loss for material efficiency""]",,1,"Tunnel linings and underground excavations
+Rock and slope stabilization","Fast setting with high early strength gain
+Low rebound loss for material efficiency",,,,YP-YPS30,,2025-08-22 16:52:40,2025-08-22 17:03:52
+YP SmoothCoat,"Single-component, polymer-modified, cementitious fairing coat",,misc_admixtures,"[""Filling surface defects like blowholes and pinholes\r"",""Finishing repaired areas for uniform appearance""]","[""Excellent adhesion to concrete\r"",""Smooth, paint-ready finish""]",,1,"Filling surface defects like blowholes and pinholes
+Finishing repaired areas for uniform appearance","Excellent adhesion to concrete
+Smooth, paint-ready finish",,,,YP-YPSC,,2025-08-22 16:52:40,2025-08-22 17:03:52
+YPC 120X,PCE based superplasticiser for High Grade and Self Compacting Concrete,,admixtures,"[""Production of self compacting concrete\r"",""Production of high grade concrete""]","[""Increased early and ultimate compressive strengths\r"",""No bleeding in concrete""]",,1,"Production of self compacting concrete
+Production of high grade concrete","Increased early and ultimate compressive strengths
+No bleeding in concrete",,,,YP-YPC120X,,2025-08-22 16:52:40,2025-08-22 17:03:52
+YPC 40X,PCE based superplasticiser for High Grade Precast Concrete,,admixtures,"[""Production of precast concrete with high early strength\r"",""Pre-stressed & post-stressed concretes""]","[""Increased early and ultimate compressive strengths\r"",""No bleeding in concrete""]",,1,"Production of precast concrete with high early strength
+Pre-stressed & post-stressed concretes","Increased early and ultimate compressive strengths
+No bleeding in concrete",,,,YP-YPC40X,,2025-08-22 16:52:40,2025-08-22 17:03:52
+YPC IB20,PCE based superplasticiser for workability and integral waterproofing of concrete for site specific plants,,admixtures,"[""Suitable for site specific project plant\r"",""Concretes which must be easy to lay""]","[""Improved workability allowing easier, quicker placing and compaction\r"",""Higher cohesion minimizing risk of segregation & bleeding""]",,1,"Suitable for site specific project plant
+Concretes which must be easy to lay","Improved workability allowing easier, quicker placing and compaction
+Higher cohesion minimizing risk of segregation & bleeding",,,,YP-YPCIB20,,2025-08-22 16:52:40,2025-08-22 17:03:52
+YPC RB70,PCE based admixture for wide range of Pavement Quality Concrete (PQC) grades,,admixtures,"[""Suitable for PQC concrete\r"",""To produce strong and lifetime pavement""]","[""Improved workability allowing easier, quicker placing and compaction.\r"",""Improved quality with denser concrete with reduced porosity and hence more durable""]",,1,"Suitable for PQC concrete
+To produce strong and lifetime pavement","Improved workability allowing easier, quicker placing and compaction.
+Improved quality with denser concrete with reduced porosity and hence more durable",,,,YP-YPCRB70,,2025-08-22 16:52:40,2025-08-22 17:03:52
+YPC X22,PCE based superplasticiser for workability and integral waterproofing of concrete,,admixtures,"[""Concrete  requiring  long  workability  retention\r"",""High performance concrete for durability""]","[""Improved workability allowing easier, quicker placing and compaction\r"",""Higher cohesion minimizing risk of segregation & bleeding""]",,1,"Concrete  requiring  long  workability  retention
+High performance concrete for durability","Improved workability allowing easier, quicker placing and compaction
+Higher cohesion minimizing risk of segregation & bleeding",,,,YP-YPCX22,,2025-08-22 16:52:40,2025-08-22 17:03:52
+MR100,"High performance environmental friendly
+mould release agent",,corrosion_inhibitor,"[""Facilitates clean stripping of various formwork types.​\r"",""Ensures high-quality, fair-faced concrete finishes""]","[""Minimizes surface blemishes and staining on concrete.​\r"",""Reduces cleaning time between formwork reuses""]",,1,"Facilitates clean stripping of various formwork types.​
+Ensures high-quality, fair-faced concrete finishes","Minimizes surface blemishes and staining on concrete.​
+Reduces cleaning time between formwork reuses",,,,YP-MR100,,2025-08-22 16:52:40,2025-08-22 16:52:40
+MR50w,New generation water emulsion mould release agent,,curing_compound,"[""Provides easy, stain-free release for concrete molds.​\r"",""Suitable for all types of molds and formwork.​""]","[""Non-staining formula eliminates unsightly oil marks.​\r"",""Concentrated, water-based solution reduces cost.""]",,1,"Provides easy, stain-free release for concrete molds.​
+Suitable for all types of molds and formwork.​","Non-staining formula eliminates unsightly oil marks.​
+Concentrated, water-based solution reduces cost.",,,,YP-MR50,,2025-08-22 16:52:40,2025-08-22 16:52:40
+YP Antiwashout,Underwater Concrete Stabilizer,,others,"[""Underwater foundations for bridges and marine structures\r"",""Construction of breakwaters and coastal installations""]","[""Prevents segregation and washout, ensuring concrete integrity underwater\r"",""Eliminates the need for vibration due to extended workability""]",,1,"Underwater foundations for bridges and marine structures
+Construction of breakwaters and coastal installations","Prevents segregation and washout, ensuring concrete integrity underwater
+Eliminates the need for vibration due to extended workability",,,,YP-YPA,,2025-08-22 16:52:40,2025-08-22 16:52:40
+YP CP Lube,Pump Priming Aid,,others,"[""Pumping of Standard concrete & shotcretes""]","[""Economical compared to use of cement slurry.\r"",""No adverse effect on concrete set time.\r""]",,1,Pumping of Standard concrete & shotcretes,"Economical compared to use of cement slurry.
+No adverse effect on concrete set time.",,,,YP-YPCPL,,2025-08-22 16:52:40,2025-08-22 16:52:40
+YP DF 100,Soil Stabilization Powder Polymer,,corrosion_inhibitor,"[""Horizontal Directional Drilling (HDD), Piling, D-Wall, etc""]","[""Strengthens the bore by increasing cohesiveness in loose particles \r"",""Controls the fluid loss, thus reducing the overall cost\r""]",,1,"Horizontal Directional Drilling (HDD), Piling, D-Wall, etc","Strengthens the bore by increasing cohesiveness in loose particles 
+Controls the fluid loss, thus reducing the overall cost",,,,YP-YPDF100,,2025-08-22 16:52:40,2025-08-22 16:52:40
+YP Floor HD M,Metallic Monolithic Surface Hardener for Concrete Floors,,floor_hardeners,"[""Heavy-duty floors in foundries and steel plants\r"",""High-impact zones like loading docks and truck lanes""]","[""Superior abrasion and impact resistance\r"",""Metallic finish withstands extreme wear conditions""]",,1,"Heavy-duty floors in foundries and steel plants
+High-impact zones like loading docks and truck lanes","Superior abrasion and impact resistance
+Metallic finish withstands extreme wear conditions",,,,YP-YPFHDM,,2025-08-22 16:52:40,2025-08-22 16:52:40
+YP Micro Silica,Densified Silica Fume,,concrete_chemicals,"[""High-strength concrete\r"",""Waterproof structures like tunnels and basements""]","[""Increases strength and durability of concrete\r"",""Reduces permeability and improves chemical resistance""]",,1,"High-strength concrete
+Waterproof structures like tunnels and basements","Increases strength and durability of concrete
+Reduces permeability and improves chemical resistance",,,,YP-YPMS,,2025-08-22 16:52:40,2025-08-22 16:52:40
+YP Polysulphide PG,Two component pour grade Polysulphide sealant,,structural_bonding,"[""Precast concrete elements\r"",""Rigid pavements of highways, airport runways,\r"",""etc""]","[""Excellent adhesion with most common construction\r"",""materials\r"",""High movement accommodation""]",,1,"Precast concrete elements
+Rigid pavements of highways, airport runways,
+etc","Excellent adhesion with most common construction
+materials
+High movement accommodation",,,,YP-YPPPG,,2025-08-22 16:52:40,2025-08-22 16:52:40
+YP SBR 100,"Water resistant, styrene butadiene rubber based bonding agent and mortar additive",,corrosion_inhibitor,"[""Bonding agent for concrete and plaster repair\r"",""Modifier for waterproof screeds and mortars""]","[""Improves bond strength and flexibility\r"",""Enhances water resistance and durability""]",,1,"Bonding agent for concrete and plaster repair
+Modifier for waterproof screeds and mortars","Improves bond strength and flexibility
+Enhances water resistance and durability",,,,YP-YPSBR100,,2025-08-22 16:52:40,2025-08-22 16:52:40
+YP TileMaster V,"Cementitious, polymer based general purpose tile fixing adhesive",,grouts,"[""Fixing ceramic and vitrified tiles on floors and walls\r"",""Tiling on internal surfaces like kitchens and bathrooms""]","[""Strong bond with vertical and horizontal surfaces\r"",""Easy mixing and application with good open time""]",,1,"Fixing ceramic and vitrified tiles on floors and walls
+Tiling on internal surfaces like kitchens and bathrooms","Strong bond with vertical and horizontal surfaces
+Easy mixing and application with good open time",,,,YP-YPTMV,,2025-08-22 16:52:40,2025-08-22 16:52:40

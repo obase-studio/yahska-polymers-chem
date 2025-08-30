@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { dbHelpers, initDatabase } from '@/lib/database'
+import { supabaseHelpers } from '@/lib/supabase-helpers'
 
 interface Context {
   params: Promise<{ id: string }>
@@ -7,7 +7,6 @@ interface Context {
 
 export async function PUT(request: NextRequest, context: Context) {
   try {
-    initDatabase()
     
     const { params } = context
     const resolvedParams = await params
@@ -23,7 +22,7 @@ export async function PUT(request: NextRequest, context: Context) {
     }
     
     // Check if category exists
-    const existing = dbHelpers.getCategoryById(categoryId)
+    const existing = await supabaseHelpers.getCategoryById(categoryId)
     if (!existing) {
       return NextResponse.json(
         { success: false, error: 'Category not found' },
@@ -31,7 +30,7 @@ export async function PUT(request: NextRequest, context: Context) {
       )
     }
     
-    const result = dbHelpers.updateCategory(categoryId, {
+    const result = await supabaseHelpers.updateCategory(categoryId, {
       name,
       description,
       sort_order: sort_order || existing.sort_order
@@ -39,7 +38,7 @@ export async function PUT(request: NextRequest, context: Context) {
     
     return NextResponse.json({
       success: true,
-      data: { updated: result.changes > 0 }
+      data: { updated: result?.length > 0 }
     })
   } catch (error: any) {
     console.error('Error updating category:', error)
@@ -52,14 +51,13 @@ export async function PUT(request: NextRequest, context: Context) {
 
 export async function DELETE(request: NextRequest, context: Context) {
   try {
-    initDatabase()
     
     const { params } = context
     const resolvedParams = await params
     const categoryId = resolvedParams.id
     
     // Check if category has products
-    const productCount = dbHelpers.getProductCountByCategory(categoryId)
+    const productCount = await supabaseHelpers.getProductCountByCategory(categoryId)
     if (productCount > 0) {
       return NextResponse.json(
         { 
@@ -70,11 +68,11 @@ export async function DELETE(request: NextRequest, context: Context) {
       )
     }
     
-    const result = dbHelpers.deleteCategory(categoryId)
+    const result = await supabaseHelpers.deleteCategory(categoryId)
     
     return NextResponse.json({
       success: true,
-      data: { deleted: result.changes > 0 }
+      data: { deleted: result?.length > 0 }
     })
   } catch (error: any) {
     console.error('Error deleting category:', error)

@@ -1,0 +1,17 @@
+field_name,field_value,field_type,category,is_active
+company_name,Yahska Polymers,text,general,1
+established_year,2015,text,general,1
+company_description,"Leading manufacturer and supplier of specialized concrete chemicals and construction admixtures",text,general,1
+mission,"To provide innovative chemical solutions that enhance the durability and performance of construction projects",text,about,1
+vision,"To be the most trusted name in construction chemicals across India and beyond",text,about,1
+head_office_address,"Plot No. 123, Industrial Area, Vadodara, Gujarat - 390001",text,contact,1
+phone,+91-9876543210,text,contact,1
+email,info@yahskapolymers.com,text,contact,1
+website,https://www.yahskapolymers.com,text,contact,1
+total_experience,8+ Years,text,statistics,1
+employee_count,50+,text,statistics,1
+manufacturing_facilities,2,text,statistics,1
+product_categories,12+,text,statistics,1
+active_projects,100+,text,statistics,1
+iso_certified,Yes,boolean,quality,1
+quality_policy,"Committed to delivering superior quality products through continuous innovation and strict quality control",text,quality,1

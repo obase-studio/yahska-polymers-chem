@@ -1,9 +1,9 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { SEOForm } from "@/components/admin/seo-form"
-import { dbHelpers } from "@/lib/database"
+import { supabaseHelpers } from "@/lib/supabase-helpers"
 
 export default async function SEOPage() {
-  const seoSettings = dbHelpers.getAllSEOSettings()
+  const seoSettings = await supabaseHelpers.getAllSEOSettings()
 
   const pages = [
     { id: 'home', name: 'Homepage', description: 'Main landing page' },

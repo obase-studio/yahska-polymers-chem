@@ -1,13 +1,10 @@
 export const dynamic = 'force-dynamic'
 
 import { NextRequest, NextResponse } from 'next/server';
-import { dbHelpers, initDatabase } from '@/lib/database';
+import { supabaseHelpers } from '@/lib/supabase-helpers';
 
 export async function GET(request: NextRequest) {
   try {
-    // Initialize database
-    initDatabase();
-    
     const { searchParams } = new URL(request.url);
     const page = searchParams.get('page');
     const section = searchParams.get('section');
@@ -20,8 +17,8 @@ export async function GET(request: NextRequest) {
     }
     
     const content = section 
-      ? dbHelpers.getContent(page, section)
-      : dbHelpers.getContent(page);
+      ? await supabaseHelpers.getContent(page, section)
+      : await supabaseHelpers.getContent(page);
     
     // Find the most recent update timestamp
     const lastUpdated = content && content.length > 0 

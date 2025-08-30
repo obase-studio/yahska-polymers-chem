@@ -1,7 +1,7 @@
 import { SignJWT, jwtVerify } from 'jose'
 import { cookies } from 'next/headers'
 import bcrypt from 'bcryptjs'
-import { dbHelpers } from './database'
+import { supabaseHelpers } from './supabase-helpers'
 
 const secret = new TextEncoder().encode('your-secret-key-change-this-in-production')
 
@@ -45,7 +45,7 @@ export async function deleteSession() {
 }
 
 export async function authenticateAdmin(username: string, password: string) {
-  const admin = dbHelpers.getAdminByUsername(username)
+  const admin = await supabaseHelpers.getAdminByUsername(username)
   
   if (!admin || !bcrypt.compareSync(password, admin.password)) {
     return null

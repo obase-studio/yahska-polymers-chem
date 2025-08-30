@@ -1,11 +1,8 @@
 import { NextRequest, NextResponse } from "next/server"
 import { authenticateAdmin, createSession } from "@/lib/auth"
-import { initDatabase } from "@/lib/database"
 
 export async function POST(request: NextRequest) {
   try {
-    // Initialize database if not already done
-    initDatabase()
     
     const { username, password } = await request.json()
 

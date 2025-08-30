@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { dbHelpers } from '@/lib/database';
+import { supabaseHelpers } from '@/lib/supabase-helpers';
 
 export async function GET(
   request: NextRequest,
@@ -17,7 +17,7 @@ export async function GET(
       }, { status: 400 });
     }
     
-    const product = dbHelpers.getProductById(productId);
+    const product = await supabaseHelpers.getProductById(productId);
     
     if (!product) {
       return NextResponse.json({ 
@@ -28,7 +28,7 @@ export async function GET(
     
     return NextResponse.json({ 
       success: true, 
-      data: { product } 
+      data: product 
     });
   } catch (error: any) {
     console.error('Error fetching product details:', error);

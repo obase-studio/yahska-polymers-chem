@@ -1,0 +1,6 @@
+id,name,description,icon_url,sort_order,is_active
+bullet_train,Bullet Train,High-speed rail infrastructure projects,/icons/bullet-train.svg,1,1
+metro_rail,Metro & Rail,Urban metro and railway infrastructure,/icons/metro-rail.svg,2,1
+roads,Roads,Highway and expressway construction,/icons/roads.svg,3,1
+buildings_infra,Buildings & Infrastructure,Commercial and industrial construction,/icons/buildings.svg,4,1
+others,Others,Miscellaneous infrastructure projects,/icons/others.svg,5,1

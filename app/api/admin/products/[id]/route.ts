@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server"
 import { requireAuth } from "@/lib/auth"
-import { dbHelpers } from "@/lib/database"
+import { supabaseHelpers } from "@/lib/supabase-helpers"
 
 export async function GET(
   request: NextRequest,
@@ -9,7 +9,7 @@ export async function GET(
   try {
     await requireAuth()
     const { id } = await params
-    const product = dbHelpers.getProductById(parseInt(id))
+    const product = await supabaseHelpers.getProductById(parseInt(id))
     
     if (!product) {
       return NextResponse.json(
@@ -36,7 +36,7 @@ export async function PUT(
     const { id } = await params
     const product = await request.json()
     
-    dbHelpers.updateProduct(parseInt(id), product)
+    await supabaseHelpers.updateProduct(parseInt(id), product)
     
     return NextResponse.json(
       { message: "Product updated successfully" },
@@ -59,7 +59,7 @@ export async function DELETE(
     await requireAuth()
     const { id } = await params
     
-    dbHelpers.deleteProduct(parseInt(id))
+    await supabaseHelpers.deleteProduct(parseInt(id))
     
     return NextResponse.json(
       { message: "Product deleted successfully" },
