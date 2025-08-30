@@ -11,14 +11,14 @@ import {
   ExternalLink
 } from "lucide-react"
 import Link from "next/link"
-import { dbHelpers } from "@/lib/database"
+import { supabaseHelpers } from "@/lib/supabase-helpers"
 
 export default async function AdminDashboard() {
   // Get stats from database
-  const products = dbHelpers.getAllProducts()
-  const testimonials = dbHelpers.getAllTestimonials()
-  const mediaFiles = dbHelpers.getAllMediaFiles()
-  const seoSettings = dbHelpers.getAllSEOSettings()
+  const products = await supabaseHelpers.getAllProducts()
+  const testimonials = await supabaseHelpers.getAllTestimonials()
+  const mediaFiles = await supabaseHelpers.getAllMediaFiles()
+  const seoSettings = await supabaseHelpers.getAllSEOSettings()
 
   const stats = [
     {

@@ -3,12 +3,12 @@ import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Plus, Edit, Eye } from "lucide-react"
 import Link from "next/link"
-import { dbHelpers } from "@/lib/database"
+import { supabaseHelpers } from "@/lib/supabase-helpers"
 import { DeleteProductButton } from "@/components/admin/delete-product-button"
 
 export default async function ProductsPage() {
-  const products = dbHelpers.getAllProducts()
-  const categories = dbHelpers.getAllCategories()
+  const products = await supabaseHelpers.getAllProducts()
+  const categories = await supabaseHelpers.getAllCategories()
 
   return (
     <div className="space-y-6">

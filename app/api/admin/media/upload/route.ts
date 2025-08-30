@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server"
 import { writeFile, mkdir } from "fs/promises"
 import { join } from "path"
-import { dbHelpers } from "@/lib/database"
+import { supabaseHelpers } from "@/lib/supabase-helpers"
 
 export async function POST(request: NextRequest) {
   try {
@@ -44,12 +44,12 @@ export async function POST(request: NextRequest) {
       alt_text: ""
     }
 
-    const result = dbHelpers.saveMediaFile(fileData)
+    const result = await supabaseHelpers.saveMediaFile(fileData)
 
     return NextResponse.json(
       { 
         message: "File uploaded successfully",
-        file: { id: result.lastInsertRowid, ...fileData }
+        file: { id: result?.[0]?.id, ...fileData }
       },
       { status: 201 }
     )

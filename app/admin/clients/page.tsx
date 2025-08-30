@@ -2,11 +2,11 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button"
 import { Plus } from "lucide-react"
 import Link from "next/link"
-import { dbHelpers } from "@/lib/database"
+import { supabaseHelpers } from "@/lib/supabase-helpers"
 import { ClientsList } from "@/components/admin/clients-list"
 
 export default async function ClientsPage() {
-  const testimonials = dbHelpers.getAllTestimonials()
+  const testimonials = await supabaseHelpers.getAllTestimonials()
 
   return (
     <div className="space-y-6">

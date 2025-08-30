@@ -1,11 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { dbHelpers, initDatabase } from '@/lib/database'
+import { supabaseHelpers } from '@/lib/supabase-helpers'
 
 export const dynamic = 'force-dynamic'
 
 export async function POST(request: NextRequest) {
   try {
-    initDatabase()
     
     const { page } = await request.json()
     
@@ -14,7 +13,7 @@ export async function POST(request: NextRequest) {
     }
     
     // Get the latest content for the page
-    const content = dbHelpers.getContent(page)
+    const content = await supabaseHelpers.getContent(page)
     const lastUpdated = content && content.length > 0 
       ? Math.max(...content.map(item => new Date(item.updated_at || 0).getTime()))
       : 0

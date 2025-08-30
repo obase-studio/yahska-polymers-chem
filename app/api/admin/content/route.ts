@@ -1,11 +1,9 @@
 import { NextRequest, NextResponse } from "next/server"
-import { dbHelpers, initDatabase } from "@/lib/database"
+import { supabaseHelpers } from "@/lib/supabase-helpers"
 export const dynamic = 'force-dynamic'
 
 export async function GET(request: NextRequest) {
   try {
-    // Initialize database
-    initDatabase();
     
     const { searchParams } = new URL(request.url)
     const page = searchParams.get('page')
@@ -18,7 +16,7 @@ export async function GET(request: NextRequest) {
       )
     }
     
-    const content = dbHelpers.getContent(page, section || undefined)
+    const content = await supabaseHelpers.getContent(page, section || undefined)
     return NextResponse.json(content)
   } catch (error) {
     console.error("Get content error:", error)
@@ -31,8 +29,6 @@ export async function GET(request: NextRequest) {
 
 export async function POST(request: NextRequest) {
   try {
-    // Initialize database
-    initDatabase();
     
     const { page, section, content_key, content_value } = await request.json()
     
@@ -46,11 +42,11 @@ export async function POST(request: NextRequest) {
     }
     
     // Save to database
-    const result = dbHelpers.setContent(page, section, content_key, content_value)
+    const result = await supabaseHelpers.setContent(page, section, content_key, content_value)
     console.log('Admin content POST - Database result:', result)
     
     // Verify the save worked by reading it back
-    const verification = dbHelpers.getContent(page, section)
+    const verification = await supabaseHelpers.getContent(page, section)
     console.log('Admin content POST - Verification read:', verification?.length, 'items')
     
     return NextResponse.json({ 

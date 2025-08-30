@@ -3,10 +3,10 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { ArrowLeft } from "lucide-react"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
-import { dbHelpers } from "@/lib/database"
+import { supabaseHelpers } from "@/lib/supabase-helpers"
 
 export default async function NewProductPage() {
-  const categories = dbHelpers.getAllCategories()
+  const categories = await supabaseHelpers.getAllCategories()
 
   return (
     <div className="space-y-6">
