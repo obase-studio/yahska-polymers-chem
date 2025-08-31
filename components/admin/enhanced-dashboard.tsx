@@ -289,13 +289,13 @@ export function EnhancedDashboard({
                     {stat.changeType === 'positive' && (
                       <TrendingUp className="h-4 w-4 text-green-600 mr-1" />
                     )}
-                    {stat.changeType === 'negative' && (
+                    {stat.changeType === 'neutral' && stat.change.startsWith('-') && (
                       <TrendingDown className="h-4 w-4 text-red-600 mr-1" />
                     )}
                     <span className={cn(
                       "text-sm font-medium",
                       stat.changeType === 'positive' ? "text-green-600" :
-                      stat.changeType === 'negative' ? "text-red-600" : "text-gray-600"
+                      (stat.changeType === 'neutral' && stat.change.startsWith('-')) ? "text-red-600" : "text-gray-600"
                     )}>
                       {stat.change}
                     </span>
