@@ -8,20 +8,27 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Search, ExternalLink, Building2, Train, Factory, Award, Users, MapPin } from "lucide-react"
 import Image from "next/image"
 import { Footer } from "@/components/footer"
+import { Navigation } from "@/components/navigation"
 
 // Fetch content via API to avoid server-only imports
 
-interface MediaFile {
+interface Project {
   id: number
-  filename: string
-  original_name: string
-  file_path: string
-  file_size: number
-  mime_type: string
-  alt_text: string
+  name: string
+  description: string
   category: string
-  subcategory: string
-  uploaded_at: string
+  location: string
+  client_name: string
+  completion_date: string
+  project_value: number
+  key_features: string[]
+  challenges: string
+  solutions: string
+  image_url: string
+  gallery_images: string[]
+  is_featured: boolean
+  is_active: boolean
+  sort_order: number
 }
 
 export default function ProjectsPage() {
@@ -29,27 +36,48 @@ export default function ProjectsPage() {
   const [projectCategories, setProjectCategories] = useState("")
   const [projectAchievements, setProjectAchievements] = useState("")
   
-  const [mediaFiles, setMediaFiles] = useState<MediaFile[]>([])
+  const [projects, setProjects] = useState<Project[]>([])
+  const [categories, setCategories] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
   const [searchTerm, setSearchTerm] = useState("")
   const [selectedCategory, setSelectedCategory] = useState("all")
 
   useEffect(() => {
-    fetchMediaFiles()
+    fetchProjects()
+    fetchCategories()
     fetchContent()
-  }, [])
+  }, [selectedCategory, searchTerm])
 
-  const fetchMediaFiles = async () => {
+  const fetchProjects = async () => {
     try {
-      const response = await fetch('/api/admin/media')
+      setLoading(true)
+      const params = new URLSearchParams()
+      if (selectedCategory !== 'all') params.set('category', selectedCategory)
+      if (searchTerm) params.set('search', searchTerm)
+      
+      const response = await fetch(`/api/projects?${params}`)
       if (response.ok) {
         const data = await response.json()
-        setMediaFiles(data.data || [])
+        setProjects(data.data || [])
       }
     } catch (error) {
-      console.error('Error fetching media files:', error)
+      console.error('Error fetching projects:', error)
     } finally {
       setLoading(false)
+    }
+  }
+
+  const fetchCategories = async () => {
+    try {
+      const response = await fetch('/api/admin/categories')
+      if (response.ok) {
+        const data = await response.json()
+        if (data.success) {
+          setCategories(data.data || [])
+        }
+      }
+    } catch (error) {
+      console.error('Error fetching categories:', error)
     }
   }
 
@@ -70,18 +98,16 @@ export default function ProjectsPage() {
 
   const getCategoryIcon = (category: string) => {
     switch (category) {
+      case 'bullet-train':
+        return <Train className="h-5 w-5" />
       case 'metro-rail':
         return <Train className="h-5 w-5" />
-      case 'road-projects':
+      case 'roads':
         return <MapPin className="h-5 w-5" />
       case 'buildings-factories':
         return <Building2 className="h-5 w-5" />
-      case 'industrial':
+      case 'others':
         return <Factory className="h-5 w-5" />
-      case 'awards':
-        return <Award className="h-5 w-5" />
-      case 'client-logos':
-        return <Users className="h-5 w-5" />
       default:
         return <Building2 className="h-5 w-5" />
     }
@@ -89,32 +115,21 @@ export default function ProjectsPage() {
 
   const getCategoryName = (category: string) => {
     switch (category) {
+      case 'bullet-train':
+        return 'High Speed Rail'
       case 'metro-rail':
-        return 'Metro & Rail Projects'
-      case 'road-projects':
-        return 'Road Projects'
+        return 'Metro & Rail'
+      case 'roads':
+        return 'Roads & Highways'
       case 'buildings-factories':
         return 'Buildings & Factories'
-      case 'industrial':
-        return 'Industrial Projects'
-      case 'awards':
-        return 'Awards & Recognition'
-      case 'client-logos':
-        return 'Client Logos'
+      case 'others':
+        return 'Other Projects'
       default:
         return category.charAt(0).toUpperCase() + category.slice(1).replace(/-/g, ' ')
     }
   }
 
-  const filteredFiles = mediaFiles.filter(file => {
-    const matchesSearch = file.original_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         file.alt_text.toLowerCase().includes(searchTerm.toLowerCase())
-    const matchesCategory = selectedCategory === 'all' || file.category === selectedCategory
-    return matchesSearch && matchesCategory
-  })
-
-  const projectFiles = filteredFiles.filter(file => file.category !== 'client-logos')
-  const clientLogos = filteredFiles.filter(file => file.category === 'client-logos')
 
   if (loading) {
     return (
@@ -131,6 +146,7 @@ export default function ProjectsPage() {
 
   return (
     <div className="min-h-screen bg-background">
+      <Navigation />
       {/* Header */}
       <section className="py-20 bg-gradient-to-br from-primary/10 via-primary/5 to-background">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
@@ -163,11 +179,11 @@ export default function ProjectsPage() {
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="all">All Categories</SelectItem>
+                <SelectItem value="bullet-train">High Speed Rail</SelectItem>
                 <SelectItem value="metro-rail">Metro & Rail</SelectItem>
-                <SelectItem value="road-projects">Road Projects</SelectItem>
+                <SelectItem value="roads">Roads & Highways</SelectItem>
                 <SelectItem value="buildings-factories">Buildings & Factories</SelectItem>
-                <SelectItem value="industrial">Industrial</SelectItem>
-                <SelectItem value="awards">Awards</SelectItem>
+                <SelectItem value="others">Other Projects</SelectItem>
               </SelectContent>
             </Select>
           </div>
@@ -175,29 +191,97 @@ export default function ProjectsPage() {
           {/* Projects Grid */}
           <div className="mb-16">
             <h2 className="text-2xl font-bold mb-6">Project Gallery</h2>
+            {projects.length === 0 && !loading && (
+              <div className="text-center py-12">
+                <p className="text-muted-foreground">No projects found matching your criteria.</p>
+              </div>
+            )}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {projectFiles.map((file) => (
-                <Card key={file.id} className="overflow-hidden hover:shadow-lg transition-shadow">
-                  <div className="aspect-video relative overflow-hidden">
-                    <Image
-                      src={file.file_path}
-                      alt={file.alt_text || file.original_name}
-                      fill
-                      className="object-cover hover:scale-105 transition-transform duration-300"
-                    />
+              {projects.map((project) => (
+                <Card key={project.id} className="overflow-hidden hover:shadow-lg transition-all duration-300 hover:-translate-y-1">
+                  <div className="aspect-video relative overflow-hidden bg-muted">
+                    {project.image_url ? (
+                      <Image
+                        src={project.image_url}
+                        alt={project.name}
+                        fill
+                        className="object-cover hover:scale-105 transition-transform duration-300"
+                      />
+                    ) : (
+                      <div className="flex items-center justify-center h-full">
+                        <Building2 className="h-16 w-16 text-muted-foreground/50" />
+                      </div>
+                    )}
                     <div className="absolute top-2 right-2">
                       <Badge variant="secondary" className="flex items-center gap-1">
-                        {getCategoryIcon(file.category)}
-                        {getCategoryName(file.category)}
+                        {getCategoryIcon(project.category)}
+                        {getCategoryName(project.category)}
                       </Badge>
                     </div>
+                    {project.is_featured && (
+                      <div className="absolute top-2 left-2">
+                        <Badge variant="default" className="bg-primary/90">
+                          Featured
+                        </Badge>
+                      </div>
+                    )}
                   </div>
-                  <CardContent className="p-4">
-                    <h3 className="font-semibold text-lg mb-2">{file.alt_text || file.original_name}</h3>
-                    <p className="text-muted-foreground text-sm mb-3">
-                      {new Date(file.uploaded_at).toLocaleDateString()}
-                    </p>
-                    <Button variant="outline" size="sm" className="w-full">
+                  <CardContent className="p-6">
+                    <div className="space-y-3">
+                      <div>
+                        <h3 className="font-bold text-lg mb-2 line-clamp-2">{project.name}</h3>
+                        <p className="text-muted-foreground text-sm line-clamp-3 mb-3">
+                          {project.description}
+                        </p>
+                      </div>
+                      
+                      <div className="space-y-2">
+                        {project.client_name && (
+                          <div className="flex items-center gap-2 text-sm">
+                            <Users className="h-4 w-4 text-muted-foreground" />
+                            <span className="text-muted-foreground">Client:</span>
+                            <span className="font-medium">{project.client_name}</span>
+                          </div>
+                        )}
+                        
+                        {project.location && (
+                          <div className="flex items-center gap-2 text-sm">
+                            <MapPin className="h-4 w-4 text-muted-foreground" />
+                            <span className="text-muted-foreground">Location:</span>
+                            <span className="font-medium">{project.location}</span>
+                          </div>
+                        )}
+                        
+                        {project.completion_date && (
+                          <div className="flex items-center gap-2 text-sm">
+                            <span className="text-muted-foreground">Completed:</span>
+                            <span className="font-medium">
+                              {new Date(project.completion_date).getFullYear()}
+                            </span>
+                          </div>
+                        )}
+                      </div>
+
+                      {project.key_features && project.key_features.length > 0 && (
+                        <div className="pt-3 border-t">
+                          <p className="text-sm font-medium mb-2">Key Features:</p>
+                          <div className="flex flex-wrap gap-1">
+                            {project.key_features.slice(0, 3).map((feature, index) => (
+                              <Badge key={index} variant="outline" className="text-xs">
+                                {feature}
+                              </Badge>
+                            ))}
+                            {project.key_features.length > 3 && (
+                              <Badge variant="outline" className="text-xs">
+                                +{project.key_features.length - 3} more
+                              </Badge>
+                            )}
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                    
+                    <Button variant="outline" size="sm" className="w-full mt-4 hover:bg-primary hover:text-primary-foreground transition-colors">
                       <ExternalLink className="h-4 w-4 mr-2" />
                       View Details
                     </Button>
@@ -207,27 +291,24 @@ export default function ProjectsPage() {
             </div>
           </div>
 
-          {/* Client Logos */}
-          <div>
-            <h2 className="text-2xl font-bold mb-6">Our Clients</h2>
-            <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-6">
-              {clientLogos.map((file) => (
-                <Card key={file.id} className="p-4 text-center hover:shadow-md transition-shadow">
-                  <div className="aspect-square relative mb-3">
-                    <Image
-                      src={file.file_path}
-                      alt={file.alt_text || file.original_name}
-                      fill
-                      className="object-contain"
-                    />
-                  </div>
-                  <p className="text-sm text-muted-foreground font-medium">
-                    {file.alt_text || file.original_name}
-                  </p>
-                </Card>
-              ))}
+          {/* Client Section - Show unique client names from projects */}
+          {projects.length > 0 && (
+            <div>
+              <h2 className="text-2xl font-bold mb-6">Our Clients</h2>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                {[...new Set(projects.filter(p => p.client_name).map(p => p.client_name))].slice(0, 12).map((clientName, index) => (
+                  <Card key={index} className="p-4 text-center hover:shadow-md transition-shadow">
+                    <div className="flex items-center justify-center h-16 mb-2">
+                      <Users className="h-8 w-8 text-primary/60" />
+                    </div>
+                    <p className="text-sm font-medium text-foreground">
+                      {clientName}
+                    </p>
+                  </Card>
+                ))}
+              </div>
             </div>
-          </div>
+          )}
         </div>
       </section>
 
