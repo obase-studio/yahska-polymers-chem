@@ -1,7 +1,7 @@
 "use client"
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { ContentEditor } from "@/components/admin/content-editor"
+import { ContentEditorWithMedia } from "@/components/admin/content-editor-with-media"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { useState } from "react"
 
@@ -16,6 +16,7 @@ export default function ContentPage() {
           title: 'Hero Section',
           description: 'Main headline and hero content',
           fields: [
+            { key: 'hero_image', label: 'Hero Background Image', type: 'image' as const },
             { key: 'headline', label: 'Main Headline', type: 'text' as const },
             { key: 'description', label: 'Hero Description', type: 'textarea' as const }
           ]
@@ -75,6 +76,14 @@ export default function ContentPage() {
     if (page === 'about') {
       return [
         {
+          id: 'hero',
+          title: 'About Hero Section',
+          description: 'Hero image and intro text for about page',
+          fields: [
+            { key: 'hero_image', label: 'About Hero Image', type: 'image' as const }
+          ]
+        },
+        {
           id: 'company_overview',
           title: 'Company Overview',
           description: 'Main about text (first paragraph shows in hero)',
@@ -128,6 +137,14 @@ export default function ContentPage() {
     if (page === 'products') {
       return [
         {
+          id: 'hero',
+          title: 'Products Hero Section',
+          description: 'Hero image for products page',
+          fields: [
+            { key: 'hero_image', label: 'Products Hero Image', type: 'image' as const }
+          ]
+        },
+        {
           id: 'product_overview',
           title: 'Products Overview',
           description: 'Intro paragraph for products hero',
@@ -156,6 +173,14 @@ export default function ContentPage() {
 
     if (page === 'projects') {
       return [
+        {
+          id: 'hero',
+          title: 'Projects Hero Section',
+          description: 'Hero image for projects page',
+          fields: [
+            { key: 'hero_image', label: 'Projects Hero Image', type: 'image' as const }
+          ]
+        },
         {
           id: 'project_overview',
           title: 'Projects Overview',
@@ -187,9 +212,10 @@ export default function ContentPage() {
     return [
       {
         id: 'hero',
-        title: 'Hero',
-        description: 'Contact page headline/description',
+        title: 'Contact Hero Section',
+        description: 'Contact page hero image and headline',
         fields: [
+          { key: 'hero_image', label: 'Contact Hero Image', type: 'image' as const },
           { key: 'description', label: 'Hero Description', type: 'textarea' as const }
         ]
       },
@@ -274,7 +300,7 @@ export default function ContentPage() {
               <CardDescription>{section.description}</CardDescription>
             </CardHeader>
             <CardContent>
-              <ContentEditor section={section} page={selectedPage} />
+              <ContentEditorWithMedia section={section} page={selectedPage} />
             </CardContent>
           </Card>
         ))}

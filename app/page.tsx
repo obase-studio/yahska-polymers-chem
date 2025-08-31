@@ -4,16 +4,18 @@ import { useState, useEffect } from "react"
 import { Navigation } from "@/components/navigation"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { ArrowRight, Award, Users, Globe, CheckCircle } from "lucide-react"
+import { ArrowRight, Award, Users, Globe, CheckCircle, Building2, Palette, Factory, Wrench, Truck, Zap } from "lucide-react"
 import Link from "next/link"
 import { Footer } from "@/components/footer"
 import { ContentItem } from "@/lib/database-client"
 
 export default function HomePage() {
   const [contentItems, setContentItems] = useState<ContentItem[]>([])
+  const [heroImage, setHeroImage] = useState<string | null>(null)
+  const [categoryImages, setCategoryImages] = useState<Record<string, string>>({})
   const [loading, setLoading] = useState(true)
 
-  // Fetch content from API
+  // Fetch content and images from API
   useEffect(() => {
     const fetchContent = async () => {
       try {
@@ -23,6 +25,41 @@ export default function HomePage() {
         
         if (result.success) {
           setContentItems(result.data.content)
+          
+          // Load hero image
+          const heroImageResponse = await fetch('/api/admin/page-images?page=home&section=hero_image')
+          if (heroImageResponse.ok) {
+            const heroImageData = await heroImageResponse.json()
+            if (heroImageData?.media_files?.file_path) {
+              setHeroImage(heroImageData.media_files.file_path)
+            }
+          }
+          
+          // Load category images
+          const categoryImagePromises = [
+            { category: 'construction', section: 'construction_image' },
+            { category: 'concrete', section: 'concrete_image' },
+            { category: 'textile', section: 'textile_image' },
+            { category: 'dyestuff', section: 'dyestuff_image' }
+          ].map(async ({ category, section }) => {
+            const response = await fetch(`/api/admin/page-images?page=home&section=${section}`)
+            if (response.ok) {
+              const data = await response.json()
+              if (data?.media_files?.file_path) {
+                return { category, url: data.media_files.file_path }
+              }
+            }
+            return null
+          })
+          
+          const categoryResults = await Promise.all(categoryImagePromises)
+          const categoryImageMap: Record<string, string> = {}
+          categoryResults.forEach(result => {
+            if (result) {
+              categoryImageMap[result.category] = result.url
+            }
+          })
+          setCategoryImages(categoryImageMap)
         }
       } catch (err) {
         console.error('Error fetching home content:', err)
@@ -37,42 +74,43 @@ export default function HomePage() {
   // Get content values
   const heroHeadline = contentItems.find(item => 
     item.section === 'hero' && item.content_key === 'headline'
-  )?.content_value || 'Leading Chemical Solutions for Industrial Excellence';
+  )?.content_value || (loading ? 'Loading...' : 'Leading Chemical Solutions for Industrial Excellence');
   
   const companyDescription = contentItems.find(item => 
     item.section === 'company_overview' && item.content_key === 'company_description'
-  )?.content_value || 'Yahska Polymers delivers premium construction chemicals, concrete admixtures, and specialized chemical solutions for over two decades of industry leadership.';
+  )?.content_value || '';
   
   const productCategoriesDescription = contentItems.find(item => 
     item.section === 'product_categories' && item.content_key === 'description'
-  )?.content_value || 'Comprehensive chemical solutions across multiple industries with uncompromising quality standards';
+  )?.content_value || '';
   
   const whyChooseUsDescription = contentItems.find(item => 
     item.section === 'why_choose_us' && item.content_key === 'description'
-  )?.content_value || 'Two decades of excellence in chemical manufacturing and customer satisfaction';
+  )?.content_value || '';
   
   const featuredClientsDescription = contentItems.find(item => 
     item.section === 'featured_clients' && item.content_key === 'description'
-  )?.content_value || 'Trusted by leading companies across industries for our reliable chemical solutions';
+  )?.content_value || '';
   
   const industriesDescription = contentItems.find(item => 
     item.section === 'industries' && item.content_key === 'description'
-  )?.content_value || 'Comprehensive chemical solutions across diverse industrial sectors';
+  )?.content_value || '';
   
   const ctaHeadline = contentItems.find(item => 
     item.section === 'cta' && item.content_key === 'headline'
-  )?.content_value || 'Ready to Partner with Industry Leaders?';
+  )?.content_value || '';
   
   const ctaDescription = contentItems.find(item => 
     item.section === 'cta' && item.content_key === 'description'
-  )?.content_value || 'Get in touch with our experts to discuss your chemical solution requirements and receive a customized quote.';
+  )?.content_value || '';
 
   // Extract key points from company description for display
   const getDescriptionSummary = (fullDescription: string) => {
+    if (!fullDescription) return '';
     if (fullDescription.includes('leading construction chemicals manufacturer')) {
       return 'Leading construction chemicals manufacturer based in Ahmedabad, proudly serving the Indian construction industry with innovative and reliable solutions for over two decades.';
     }
-    return fullDescription.split('\n')[0] || 'Yahska Polymers delivers premium construction chemicals, concrete admixtures, and specialized chemical solutions for over two decades of industry leadership.';
+    return fullDescription.split('\n')[0] || fullDescription;
   };
 
   return (
@@ -106,11 +144,17 @@ export default function HomePage() {
               </div>
             </div>
             <div className="relative">
-              <img
-                src="/placeholder.svg?height=500&width=600"
-                alt="Yahska Polymers Manufacturing Facility"
-                className="rounded-lg shadow-2xl"
-              />
+              {heroImage ? (
+                <img
+                  src={heroImage}
+                  alt="Yahska Polymers Manufacturing Facility"
+                  className="rounded-lg shadow-2xl"
+                />
+              ) : (
+                <div className="aspect-video bg-muted rounded-lg shadow-2xl flex items-center justify-center">
+                  <p className="text-muted-foreground">Loading hero image...</p>
+                </div>
+              )}
             </div>
           </div>
         </div>
@@ -157,6 +201,19 @@ export default function HomePage() {
 
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
             <Card className="hover:shadow-lg transition-shadow duration-300">
+              <div className="aspect-video overflow-hidden rounded-t-lg">
+                {categoryImages.construction ? (
+                  <img
+                    src={categoryImages.construction}
+                    alt="Construction Chemicals"
+                    className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
+                  />
+                ) : (
+                  <div className="w-full h-full bg-muted flex items-center justify-center">
+                    <p className="text-muted-foreground text-sm">Construction Chemicals</p>
+                  </div>
+                )}
+              </div>
               <CardHeader>
                 <CardTitle className="text-primary">Construction Chemicals</CardTitle>
                 <CardDescription>Advanced solutions for construction and infrastructure projects</CardDescription>
@@ -180,6 +237,19 @@ export default function HomePage() {
             </Card>
 
             <Card className="hover:shadow-lg transition-shadow duration-300">
+              <div className="aspect-video overflow-hidden rounded-t-lg">
+                {categoryImages.concrete ? (
+                  <img
+                    src={categoryImages.concrete}
+                    alt="Concrete Admixtures"
+                    className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
+                  />
+                ) : (
+                  <div className="w-full h-full bg-muted flex items-center justify-center">
+                    <p className="text-muted-foreground text-sm">Concrete Admixtures</p>
+                  </div>
+                )}
+              </div>
               <CardHeader>
                 <CardTitle className="text-primary">Concrete Admixtures</CardTitle>
                 <CardDescription>High-performance additives for enhanced concrete properties</CardDescription>
@@ -203,6 +273,19 @@ export default function HomePage() {
             </Card>
 
             <Card className="hover:shadow-lg transition-shadow duration-300">
+              <div className="aspect-video overflow-hidden rounded-t-lg">
+                {categoryImages.textile ? (
+                  <img
+                    src={categoryImages.textile}
+                    alt="Textile Chemicals"
+                    className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
+                  />
+                ) : (
+                  <div className="w-full h-full bg-muted flex items-center justify-center">
+                    <p className="text-muted-foreground text-sm">Textile Chemicals</p>
+                  </div>
+                )}
+              </div>
               <CardHeader>
                 <CardTitle className="text-primary">Textile Chemicals</CardTitle>
                 <CardDescription>Specialized chemicals for textile processing and finishing</CardDescription>
@@ -226,6 +309,19 @@ export default function HomePage() {
             </Card>
 
             <Card className="hover:shadow-lg transition-shadow duration-300">
+              <div className="aspect-video overflow-hidden rounded-t-lg">
+                {categoryImages.dyestuff ? (
+                  <img
+                    src={categoryImages.dyestuff}
+                    alt="Dyestuff Chemicals"
+                    className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
+                  />
+                ) : (
+                  <div className="w-full h-full bg-muted flex items-center justify-center">
+                    <p className="text-muted-foreground text-sm">Dyestuff Chemicals</p>
+                  </div>
+                )}
+              </div>
               <CardHeader>
                 <CardTitle className="text-primary">Dyestuff Chemicals</CardTitle>
                 <CardDescription>Premium chemicals for dyeing and color applications</CardDescription>
@@ -398,42 +494,42 @@ export default function HomePage() {
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6">
             <div className="text-center p-6 bg-background rounded-lg hover:shadow-md transition-shadow">
               <div className="bg-primary/10 w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-4">
-                <div className="w-6 h-6 bg-primary rounded"></div>
+                <Building2 className="w-6 h-6 text-primary" />
               </div>
               <h3 className="font-semibold text-sm">Construction</h3>
             </div>
 
             <div className="text-center p-6 bg-background rounded-lg hover:shadow-md transition-shadow">
               <div className="bg-primary/10 w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-4">
-                <div className="w-6 h-6 bg-primary rounded"></div>
+                <Palette className="w-6 h-6 text-primary" />
               </div>
               <h3 className="font-semibold text-sm">Textiles</h3>
             </div>
 
             <div className="text-center p-6 bg-background rounded-lg hover:shadow-md transition-shadow">
               <div className="bg-primary/10 w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-4">
-                <div className="w-6 h-6 bg-primary rounded"></div>
+                <Palette className="w-6 h-6 text-primary" />
               </div>
               <h3 className="font-semibold text-sm">Paint & Coatings</h3>
             </div>
 
             <div className="text-center p-6 bg-background rounded-lg hover:shadow-md transition-shadow">
               <div className="bg-primary/10 w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-4">
-                <div className="w-6 h-6 bg-primary rounded"></div>
+                <Wrench className="w-6 h-6 text-primary" />
               </div>
               <h3 className="font-semibold text-sm">Steel & Metal</h3>
             </div>
 
             <div className="text-center p-6 bg-background rounded-lg hover:shadow-md transition-shadow">
               <div className="bg-primary/10 w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-4">
-                <div className="w-6 h-6 bg-primary rounded"></div>
+                <Factory className="w-6 h-6 text-primary" />
               </div>
               <h3 className="font-semibold text-sm">Cement</h3>
             </div>
 
             <div className="text-center p-6 bg-background rounded-lg hover:shadow-md transition-shadow">
               <div className="bg-primary/10 w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-4">
-                <div className="w-6 h-6 bg-primary rounded"></div>
+                <Truck className="w-6 h-6 text-primary" />
               </div>
               <h3 className="font-semibold text-sm">Infrastructure</h3>
             </div>

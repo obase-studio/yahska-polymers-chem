@@ -2,7 +2,7 @@
 
 import type React from "react"
 import { Footer } from "@/components/footer"
-import { useState, useEffect } from "react"
+import { useState } from "react"
 import { Navigation } from "@/components/navigation"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
@@ -10,64 +10,9 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Checkbox } from "@/components/ui/checkbox"
-import { MapPin, Phone, Mail, Clock, Send, MessageSquare, FileText, Users } from "lucide-react"
-import { ContentItem } from "@/lib/database-client"
+import { MapPin, Phone, Mail, Send } from "lucide-react"
 
 export default function ContactPage() {
-  const [contentItems, setContentItems] = useState<ContentItem[]>([])
-  const [loading, setLoading] = useState(true)
-
-  // Fetch content from API
-  useEffect(() => {
-    const fetchContent = async () => {
-      try {
-        setLoading(true)
-        const response = await fetch('/api/content?page=contact')
-        const result = await response.json()
-        
-        if (result.success) {
-          setContentItems(result.data.content)
-        }
-      } catch (err) {
-        console.error('Error fetching contact content:', err)
-      } finally {
-        setLoading(false)
-      }
-    }
-    
-    fetchContent()
-  }, [])
-
-  // Get content values
-  const contactInfo = contentItems.find(item => 
-    item.section === 'contact_info' && item.content_key === 'content'
-  )?.content_value || '';
-  
-  const businessHours = contentItems.find(item => 
-    item.section === 'business_hours' && item.content_key === 'content'
-  )?.content_value || '';
-  
-  const officeLocations = contentItems.find(item => 
-    item.section === 'office_locations' && item.content_key === 'content'
-  )?.content_value || '';
-  
-  const heroDescription = contentItems.find(item => 
-    item.section === 'hero' && item.content_key === 'description'
-  )?.content_value || 'Get in touch with our experts for customized chemical solutions. We\'re here to help you find the perfect products for your industrial needs.';
-  
-  const formDescription = contentItems.find(item => 
-    item.section === 'contact_form' && item.content_key === 'description'
-  )?.content_value || 'Fill out the form below and our team will get back to you within 24 hours with a customized solution for your requirements.';
-  
-  const ctaHeadline = contentItems.find(item => 
-    item.section === 'cta' && item.content_key === 'headline'
-  )?.content_value || 'Ready to Get Started?';
-  
-  const ctaDescription = contentItems.find(item => 
-    item.section === 'cta' && item.content_key === 'description'
-  )?.content_value || 'Our team of experts is ready to help you find the perfect chemical solutions for your business needs.';
-
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -75,14 +20,12 @@ export default function ContactPage() {
     company: "",
     industry: "",
     inquiryType: "",
-    productCategory: "",
     message: "",
-    newsletter: false,
   })
 
   const [isSubmitting, setIsSubmitting] = useState(false)
 
-  const handleInputChange = (field: string, value: string | boolean) => {
+  const handleInputChange = (field: string, value: string) => {
     setFormData((prev) => ({ ...prev, [field]: value }))
   }
 
@@ -93,7 +36,7 @@ export default function ContactPage() {
     // Simulate form submission
     await new Promise((resolve) => setTimeout(resolve, 2000))
 
-    console.log("[v0] Form submitted:", formData)
+    console.log("Form submitted:", formData)
     alert("Thank you for your inquiry! We will get back to you within 24 hours.")
 
     // Reset form
@@ -104,9 +47,7 @@ export default function ContactPage() {
       company: "",
       industry: "",
       inquiryType: "",
-      productCategory: "",
       message: "",
-      newsletter: false,
     })
 
     setIsSubmitting(false)
@@ -127,124 +68,24 @@ export default function ContactPage() {
               Contact Us
             </h1>
             <p className="text-xl text-muted-foreground max-w-3xl mx-auto leading-relaxed">
-              {heroDescription}
+              Get in touch with our experts for customized chemical solutions. We're here to help you find the perfect products for your industrial needs.
             </p>
           </div>
         </div>
       </section>
 
-      {/* Contact Information */}
-      <section className="py-16 bg-muted/50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
-            <Card className="text-center">
-              <CardHeader>
-                <div className="bg-primary/10 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <MapPin className="h-8 w-8 text-primary" />
-                </div>
-                <CardTitle className="text-lg">Visit Us</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <p className="text-muted-foreground text-sm">
-                  {contactInfo ? (
-                    contactInfo.split('\n').map((line, index) => (
-                      <span key={index}>
-                        {line}
-                        {index < contactInfo.split('\n').length - 1 && <br />}
-                      </span>
-                    ))
-                  ) : (
-                    <>
-                      Plot No. 123, Industrial Area,
-                      <br />
-                      Ahmedabad - 380015,
-                      <br />
-                      Gujarat, India
-                    </>
-                  )}
-                </p>
-              </CardContent>
-            </Card>
-
-            <Card className="text-center">
-              <CardHeader>
-                <div className="bg-primary/10 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <Phone className="h-8 w-8 text-primary" />
-                </div>
-                <CardTitle className="text-lg">Call Us</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <p className="text-muted-foreground text-sm">
-                  +91 98250 12345
-                  <br />
-                  +91 79 2658 9012
-                  <br />
-                  Toll Free: 1800 123 4567
-                </p>
-              </CardContent>
-            </Card>
-
-            <Card className="text-center">
-              <CardHeader>
-                <div className="bg-primary/10 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <Mail className="h-8 w-8 text-primary" />
-                </div>
-                <CardTitle className="text-lg">Email Us</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <p className="text-muted-foreground text-sm">
-                  info@yahskapolymers.in
-                  <br />
-                  sales@yahskapolymers.in
-                  <br />
-                  support@yahskapolymers.in
-                </p>
-              </CardContent>
-            </Card>
-
-            <Card className="text-center">
-              <CardHeader>
-                <div className="bg-primary/10 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <Clock className="h-8 w-8 text-primary" />
-                </div>
-                <CardTitle className="text-lg">Business Hours</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <p className="text-muted-foreground text-sm">
-                  {businessHours ? (
-                    businessHours.split('\n').map((line, index) => (
-                      <span key={index}>
-                        {line}
-                        {index < businessHours.split('\n').length - 1 && <br />}
-                      </span>
-                    ))
-                  ) : (
-                    <>
-                      Mon - Fri: 9:00 AM - 6:00 PM
-                      <br />
-                      Saturday: 9:00 AM - 1:00 PM
-                      <br />
-                      Sunday: Closed
-                    </>
-                  )}
-                </p>
-              </CardContent>
-            </Card>
-          </div>
-        </div>
-      </section>
-
-      {/* Contact Form and Map */}
+      {/* Main Content */}
       <section className="py-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid lg:grid-cols-2 gap-12">
+            
             {/* Contact Form */}
             <div>
               <h2 className="text-3xl font-bold text-foreground mb-6" style={{ fontFamily: "var(--font-heading)" }}>
                 Send Us a Message
               </h2>
               <p className="text-muted-foreground mb-8">
-                {formDescription}
+                Fill out the form below and our team will get back to you within 24 hours with a customized solution for your requirements.
               </p>
 
               <form onSubmit={handleSubmit} className="space-y-6">
@@ -333,25 +174,6 @@ export default function ContactPage() {
                 </div>
 
                 <div>
-                  <Label htmlFor="productCategory">Product Category of Interest</Label>
-                  <Select
-                    value={formData.productCategory}
-                    onValueChange={(value) => handleInputChange("productCategory", value)}
-                  >
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select product category" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="construction-chemicals">Construction Chemicals</SelectItem>
-                      <SelectItem value="concrete-admixtures">Concrete Admixtures</SelectItem>
-                      <SelectItem value="textile-chemicals">Textile Chemicals</SelectItem>
-                      <SelectItem value="dyestuff-chemicals">Dyestuff Chemicals</SelectItem>
-                      <SelectItem value="custom-solutions">Custom Solutions</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-
-                <div>
                   <Label htmlFor="message">Message *</Label>
                   <Textarea
                     id="message"
@@ -361,17 +183,6 @@ export default function ContactPage() {
                     rows={5}
                     required
                   />
-                </div>
-
-                <div className="flex items-center space-x-2">
-                  <Checkbox
-                    id="newsletter"
-                    checked={formData.newsletter}
-                    onCheckedChange={(checked) => handleInputChange("newsletter", checked as boolean)}
-                  />
-                  <Label htmlFor="newsletter" className="text-sm">
-                    Subscribe to our newsletter for product updates and industry insights
-                  </Label>
                 </div>
 
                 <Button
@@ -392,162 +203,73 @@ export default function ContactPage() {
               </form>
             </div>
 
-            {/* Map and Additional Info */}
+            {/* Contact Information */}
             <div className="space-y-8">
               <div>
-                <h3 className="text-2xl font-bold text-foreground mb-4" style={{ fontFamily: "var(--font-heading)" }}>
-                  Find Us on Map
+                <h3 className="text-2xl font-bold text-foreground mb-6" style={{ fontFamily: "var(--font-heading)" }}>
+                  Get In Touch
                 </h3>
-                <div className="bg-muted rounded-lg h-64 flex items-center justify-center">
-                  <img
-                    src="/placeholder.svg?height=256&width=400&text=Interactive+Map"
-                    alt="Yahska Polymers Location Map"
-                    className="rounded-lg"
-                  />
+                
+                <div className="space-y-6">
+                  <Card>
+                    <CardHeader>
+                      <CardTitle className="flex items-center gap-3">
+                        <MapPin className="h-5 w-5 text-primary" />
+                        Our Locations
+                      </CardTitle>
+                    </CardHeader>
+                    <CardContent className="space-y-4">
+                      <div>
+                        <h4 className="font-semibold mb-2">Unit 1 - Changodar</h4>
+                        <p className="text-muted-foreground text-sm">
+                          S. No 407, Khata No 1217, Bh Sarvodaya Hotel,<br />
+                          Moraiya, Changodar, Ahmedabad – 382213
+                        </p>
+                      </div>
+                      <div>
+                        <h4 className="font-semibold mb-2">Unit 2 - Vatva</h4>
+                        <p className="text-muted-foreground text-sm">
+                          C-1/127, Phase I, Nr Tiger Surgical,<br />
+                          GIDC Vatva, Ahmedabad – 382245
+                        </p>
+                      </div>
+                    </CardContent>
+                  </Card>
+
+                  <Card>
+                    <CardHeader>
+                      <CardTitle className="flex items-center gap-3">
+                        <Phone className="h-5 w-5 text-primary" />
+                        Phone
+                      </CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      <p className="text-muted-foreground">
+                        <a href="tel:+918890913222" className="hover:text-primary">
+                          +91-8890913222
+                        </a>
+                      </p>
+                    </CardContent>
+                  </Card>
+
+                  <Card>
+                    <CardHeader>
+                      <CardTitle className="flex items-center gap-3">
+                        <Mail className="h-5 w-5 text-primary" />
+                        Email
+                      </CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      <p className="text-muted-foreground">
+                        <a href="mailto:admin@yahskapolymers.com" className="hover:text-primary">
+                          admin@yahskapolymers.com
+                        </a>
+                      </p>
+                    </CardContent>
+                  </Card>
                 </div>
-                <p className="text-sm text-muted-foreground mt-2">
-                  Located in the heart of Ahmedabad's industrial area with easy access to major transportation routes.
-                </p>
-              </div>
-
-              <div className="space-y-6">
-                <Card>
-                  <CardHeader>
-                    <div className="flex items-center space-x-3">
-                      <MessageSquare className="h-6 w-6 text-primary" />
-                      <CardTitle className="text-lg">Quick Response</CardTitle>
-                    </div>
-                  </CardHeader>
-                  <CardContent>
-                    <p className="text-muted-foreground text-sm">
-                      Our technical team responds to all inquiries within 24 hours. For urgent requirements, please call
-                      our direct line.
-                    </p>
-                  </CardContent>
-                </Card>
-
-                <Card>
-                  <CardHeader>
-                    <div className="flex items-center space-x-3">
-                      <FileText className="h-6 w-6 text-primary" />
-                      <CardTitle className="text-lg">Technical Documentation</CardTitle>
-                    </div>
-                  </CardHeader>
-                  <CardContent>
-                    <p className="text-muted-foreground text-sm">
-                      Request detailed product specifications, safety data sheets, and application guidelines with your
-                      inquiry.
-                    </p>
-                  </CardContent>
-                </Card>
-
-                <Card>
-                  <CardHeader>
-                    <div className="flex items-center space-x-3">
-                      <Users className="h-6 w-6 text-primary" />
-                      <CardTitle className="text-lg">Expert Consultation</CardTitle>
-                    </div>
-                  </CardHeader>
-                  <CardContent>
-                    <p className="text-muted-foreground text-sm">
-                      Schedule a consultation with our chemical engineers for customized solutions and technical
-                      guidance.
-                    </p>
-                  </CardContent>
-                </Card>
               </div>
             </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Regional Offices */}
-      <section className="py-20 bg-muted/50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-16">
-            <h2
-              className="text-3xl lg:text-4xl font-bold text-foreground mb-4"
-              style={{ fontFamily: "var(--font-heading)" }}
-            >
-              Regional Offices
-            </h2>
-            <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
-              Connect with our regional representatives for localized support and faster service
-            </p>
-          </div>
-
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {[
-              {
-                city: "Mumbai",
-                address: "Office 456, Business Center, Andheri East, Mumbai - 400069",
-                phone: "+91 22 2834 5678",
-                email: "mumbai@yahskapolymers.in",
-              },
-              {
-                city: "Delhi",
-                address: "Suite 789, Corporate Tower, Gurgaon - 122001, Haryana",
-                phone: "+91 11 4567 8901",
-                email: "delhi@yahskapolymers.in",
-              },
-              {
-                city: "Chennai",
-                address: "Floor 3, Industrial Complex, Guindy, Chennai - 600032",
-                phone: "+91 44 2345 6789",
-                email: "chennai@yahskapolymers.in",
-              },
-            ].map((office, index) => (
-              <Card key={index}>
-                <CardHeader>
-                  <CardTitle className="text-primary">{office.city} Office</CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-3">
-                  <div className="flex items-start space-x-2">
-                    <MapPin className="h-4 w-4 text-muted-foreground mt-1 flex-shrink-0" />
-                    <p className="text-sm text-muted-foreground">{office.address}</p>
-                  </div>
-                  <div className="flex items-center space-x-2">
-                    <Phone className="h-4 w-4 text-muted-foreground" />
-                    <p className="text-sm text-muted-foreground">{office.phone}</p>
-                  </div>
-                  <div className="flex items-center space-x-2">
-                    <Mail className="h-4 w-4 text-muted-foreground" />
-                    <p className="text-sm text-muted-foreground">{office.email}</p>
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* CTA Section */}
-      <section className="py-20 bg-primary text-primary-foreground">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h2 className="text-3xl lg:text-4xl font-bold mb-4" style={{ fontFamily: "var(--font-heading)" }}>
-            {ctaHeadline}
-          </h2>
-          <p className="text-xl mb-8 opacity-90 max-w-2xl mx-auto">
-            {ctaDescription}
-          </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Button asChild size="lg" variant="secondary">
-              <a href="tel:+919825012345">
-                <Phone className="mr-2 h-5 w-5" />
-                Call Now
-              </a>
-            </Button>
-            <Button
-              asChild
-              size="lg"
-              variant="outline"
-              className="border-primary-foreground text-primary-foreground hover:bg-primary-foreground hover:text-primary bg-transparent"
-            >
-              <a href="mailto:info@yahskapolymers.in">
-                <Mail className="mr-2 h-5 w-5" />
-                Email Us
-              </a>
-            </Button>
           </div>
         </div>
       </section>

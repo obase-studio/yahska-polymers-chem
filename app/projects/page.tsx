@@ -7,6 +7,7 @@ import { Badge } from "@/components/ui/badge"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Search, ExternalLink, Building2, Train, Factory, Award, Users, MapPin } from "lucide-react"
 import Image from "next/image"
+import Link from "next/link"
 import { Footer } from "@/components/footer"
 import { Navigation } from "@/components/navigation"
 
@@ -281,9 +282,11 @@ export default function ProjectsPage() {
                       )}
                     </div>
                     
-                    <Button variant="outline" size="sm" className="w-full mt-4 hover:bg-primary hover:text-primary-foreground transition-colors">
-                      <ExternalLink className="h-4 w-4 mr-2" />
-                      View Details
+                    <Button asChild variant="outline" size="sm" className="w-full mt-4 hover:bg-primary hover:text-primary-foreground transition-colors">
+                      <Link href={`/projects/${project.id}`}>
+                        <ExternalLink className="h-4 w-4 mr-2" />
+                        View Details
+                      </Link>
                     </Button>
                   </CardContent>
                 </Card>

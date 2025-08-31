@@ -1,4 +1,4 @@
-import { supabase } from './supabase'
+import { supabase, supabaseAdmin } from './supabase'
 import { parseProductData, Product, Category, ContentItem } from './database-client'
 
 // Supabase database helper functions
@@ -17,7 +17,7 @@ export const supabaseHelpers = {
   },
 
   setContent: async (page: string, section: string, contentKey: string, contentValue: string) => {
-    const { data, error } = await supabase
+    const { data, error } = await supabaseAdmin
       .from('site_content')
       .upsert({
         page,
@@ -25,6 +25,8 @@ export const supabaseHelpers = {
         content_key: contentKey,
         content_value: contentValue,
         updated_at: new Date().toISOString()
+      }, {
+        onConflict: 'page,section,content_key'
       })
       .select()
     
@@ -251,6 +253,71 @@ export const supabaseHelpers = {
     
     if (error) throw error
     return data || []
+  },
+
+  // Page images - store as special content entries
+  getPageImage: async (page: string, section: string = 'hero') => {
+    const { data, error } = await supabase
+      .from('site_content')
+      .select('content_value')
+      .eq('page', page)
+      .eq('section', section)
+      .eq('content_key', 'image_id')
+      .single()
+    
+    if (error && error.code !== 'PGRST116') return null // Ignore "not found" errors
+    
+    if (data?.content_value) {
+      // Get the media file details
+      const { data: mediaFile, error: mediaError } = await supabase
+        .from('media_files')
+        .select('*')
+        .eq('id', parseInt(data.content_value))
+        .single()
+      
+      if (!mediaError && mediaFile) {
+        return { media_files: mediaFile }
+      }
+    }
+    
+    return null
+  },
+
+  setPageImage: async (page: string, section: string, mediaFileId: number) => {
+    // Store the media file ID as content
+    const { data, error } = await supabaseAdmin
+      .from('site_content')
+      .upsert({
+        page,
+        section,
+        content_key: 'image_id',
+        content_value: mediaFileId.toString(),
+        updated_at: new Date().toISOString()
+      })
+      .select()
+    
+    if (error) throw error
+    
+    // Return the media file details
+    const { data: mediaFile } = await supabase
+      .from('media_files')
+      .select('*')
+      .eq('id', mediaFileId)
+      .single()
+    
+    return { media_files: mediaFile }
+  },
+
+  removePageImage: async (page: string, section: string) => {
+    const { error } = await supabaseAdmin
+      .from('site_content')
+      .delete()
+      .eq('page', page)
+      .eq('section', section)
+      .eq('content_key', 'image_id')
+    
+    if (error) throw error
+    return true
   },
 
   // SEO settings
