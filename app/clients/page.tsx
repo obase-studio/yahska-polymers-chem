@@ -159,7 +159,9 @@ const testimonials = [
 
 export default function ClientsPage() {
   const [clientLogos, setClientLogos] = useState<MediaFile[]>([]);
+  const [approvalLogos, setApprovalLogos] = useState<MediaFile[]>([]);
   const [loading, setLoading] = useState(true);
+  const [approvalsLoading, setApprovalsLoading] = useState(true);
 
   useEffect(() => {
     const fetchClientLogos = async () => {
@@ -220,7 +222,57 @@ export default function ClientsPage() {
       }
     };
 
+    const fetchApprovalLogos = async () => {
+      try {
+        setApprovalsLoading(true);
+        const response = await fetch("/api/approval-logos");
+
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        const logos = await response.json();
+
+        const fixedLogos = logos.map((logo: any) => {
+          let filePath = decodeURIComponent(logo.file_path || "");
+
+          // Normalize folder name
+          filePath = filePath
+            .replace(/approval%20logos/gi, "approvals")
+            .replace(/approval-logos/gi, "approvals");
+
+          return {
+            ...logo,
+            file_path: encodeURI(filePath),
+          };
+        });
+        setApprovalLogos(fixedLogos);
+      } catch (error) {
+        console.error("Error fetching approval logos:", error);
+        // Fallback: try the admin endpoint
+        try {
+          const fallbackResponse = await fetch("/api/admin/media");
+          if (fallbackResponse.ok) {
+            const mediaFiles = await fallbackResponse.json();
+            const logos = mediaFiles
+              .filter((file: MediaFile) =>
+                file.file_path.includes("approval-logos")
+              )
+              .sort((a: MediaFile, b: MediaFile) =>
+                a.original_name.localeCompare(b.original_name)
+              );
+            setApprovalLogos(logos);
+          }
+        } catch (fallbackError) {
+          console.error("Fallback also failed:", fallbackError);
+        }
+      } finally {
+        setApprovalsLoading(false);
+      }
+    };
+
     fetchClientLogos();
+    fetchApprovalLogos();
   }, []);
 
   return (
@@ -405,6 +457,113 @@ export default function ClientsPage() {
               <div className="text-3xl font-bold text-primary mb-2">20+</div>
               <div className="text-muted-foreground text-sm">
                 Years Experience
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Approvals Section */}
+      <section className="py-20">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-16">
+            <h2
+              className="text-3xl lg:text-4xl font-bold text-foreground mb-4"
+              style={{ fontFamily: "var(--font-heading)" }}
+            >
+              Our Approvals & Certifications
+            </h2>
+            <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
+              Recognized and approved by leading government bodies and
+              regulatory authorities across India
+            </p>
+          </div>
+
+          {approvalsLoading ? (
+            <div className="flex items-center justify-center py-16">
+              <div className="text-center">
+                <Loader2 className="h-8 w-8 animate-spin mx-auto mb-4" />
+                <p className="text-muted-foreground">
+                  Loading approval logos...
+                </p>
+              </div>
+            </div>
+          ) : (
+            <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 xl:grid-cols-8 gap-6">
+              {approvalLogos.map((approval) => (
+                <Card
+                  key={approval.id}
+                  className="hover:shadow-lg transition-all duration-300 hover:scale-105 bg-background border border-border/50"
+                >
+                  <CardContent className="p-6 flex items-center justify-center h-24">
+                    <div className="relative w-full h-full flex items-center justify-center">
+                      <img
+                        src={approval.file_path}
+                        alt={
+                          approval.alt_text ||
+                          approval.original_name.replace(
+                            /\.(jpg|jpeg|png|webp|svg)$/i,
+                            ""
+                          )
+                        }
+                        className="max-w-full max-h-full object-contain filter grayscale hover:grayscale-0 transition-all duration-300"
+                        onError={(e) => {
+                          console.log(
+                            "Approval image failed to load:",
+                            approval.file_path,
+                            e
+                          );
+                          // Fallback to approval name text
+                          const target = e.target as HTMLImageElement;
+                          target.style.display = "none";
+                          const parent = target.parentElement;
+                          if (parent) {
+                            parent.innerHTML = `<div class="text-xs text-center text-muted-foreground p-2">${approval.original_name.replace(
+                              /\.(jpg|jpeg|png|webp|svg)$/i,
+                              ""
+                            )}</div>`;
+                          }
+                        }}
+                        onLoad={() =>
+                          console.log(
+                            "Approval image loaded successfully:",
+                            approval.original_name
+                          )
+                        }
+                      />
+                    </div>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          )}
+
+          {/* Approvals Statistics */}
+          <div className="mt-16 grid grid-cols-2 md:grid-cols-4 gap-8 pt-8 border-t border-border">
+            <div className="text-center">
+              <div className="text-3xl font-bold text-primary mb-2">
+                {approvalLogos.length}+
+              </div>
+              <div className="text-muted-foreground text-sm">
+                Government Approvals
+              </div>
+            </div>
+            <div className="text-center">
+              <div className="text-3xl font-bold text-primary mb-2">8+</div>
+              <div className="text-muted-foreground text-sm">
+                Metro Authorities
+              </div>
+            </div>
+            <div className="text-center">
+              <div className="text-3xl font-bold text-primary mb-2">15+</div>
+              <div className="text-muted-foreground text-sm">
+                Railway Divisions
+              </div>
+            </div>
+            <div className="text-center">
+              <div className="text-3xl font-bold text-primary mb-2">100%</div>
+              <div className="text-muted-foreground text-sm">
+                Compliance Rate
               </div>
             </div>
           </div>
