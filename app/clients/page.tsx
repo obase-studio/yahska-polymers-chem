@@ -136,17 +136,30 @@ export default function ClientsPage() {
     const fetchClientLogos = async () => {
       try {
         setLoading(true)
-        const response = await fetch('/api/admin/media')
-        const mediaFiles = await response.json()
+        const response = await fetch('/api/client-logos')
         
-        // Filter for client logos
-        const logos = mediaFiles
-          .filter((file: MediaFile) => file.file_path.includes('client-logos'))
-          .sort((a: MediaFile, b: MediaFile) => a.original_name.localeCompare(b.original_name))
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`)
+        }
         
+        const logos = await response.json()
+        console.log('Client logos loaded successfully:', logos.length, 'logos')
         setClientLogos(logos)
       } catch (error) {
         console.error('Error fetching client logos:', error)
+        // Fallback: try the admin endpoint
+        try {
+          const fallbackResponse = await fetch('/api/admin/media')
+          if (fallbackResponse.ok) {
+            const mediaFiles = await fallbackResponse.json()
+            const logos = mediaFiles
+              .filter((file: MediaFile) => file.file_path.includes('client-logos'))
+              .sort((a: MediaFile, b: MediaFile) => a.original_name.localeCompare(b.original_name))
+            setClientLogos(logos)
+          }
+        } catch (fallbackError) {
+          console.error('Fallback also failed:', fallbackError)
+        }
       } finally {
         setLoading(false)
       }
@@ -260,13 +273,22 @@ export default function ClientsPage() {
               {clientLogos.map((logo) => (
                 <Card key={logo.id} className="hover:shadow-lg transition-all duration-300 hover:scale-105 bg-background border border-border/50">
                   <CardContent className="p-6 flex items-center justify-center h-24">
-                    <div className="relative w-full h-full">
-                      <Image
+                    <div className="relative w-full h-full flex items-center justify-center">
+                      <img
                         src={logo.file_path}
                         alt={logo.alt_text || logo.original_name.replace(/\.(jpg|jpeg|png|webp)$/i, '')}
-                        fill
-                        className="object-contain filter grayscale hover:grayscale-0 transition-all duration-300"
-                        sizes="(max-width: 768px) 50vw, (max-width: 1200px) 25vw, 12.5vw"
+                        className="max-w-full max-h-full object-contain filter grayscale hover:grayscale-0 transition-all duration-300"
+                        onError={(e) => {
+                          console.error('Image failed to load:', logo.file_path, e)
+                          // Fallback to company name text
+                          const target = e.target as HTMLImageElement
+                          target.style.display = 'none'
+                          const parent = target.parentElement
+                          if (parent) {
+                            parent.innerHTML = `<div class="text-xs text-center text-muted-foreground p-2">${logo.original_name.replace(/\.(jpg|jpeg|png|webp)$/i, '')}</div>`
+                          }
+                        }}
+                        onLoad={() => console.log('Image loaded successfully:', logo.original_name)}
                       />
                     </div>
                   </CardContent>
