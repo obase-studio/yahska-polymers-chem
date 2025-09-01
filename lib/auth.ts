@@ -1,7 +1,5 @@
 import { SignJWT, jwtVerify } from 'jose'
 import { cookies } from 'next/headers'
-import bcrypt from 'bcryptjs'
-import { supabaseHelpers } from './supabase-helpers'
 
 const secret = new TextEncoder().encode(process.env.JWT_SECRET || 'fallback-dev-key-not-for-production')
 
@@ -45,13 +43,15 @@ export async function deleteSession() {
 }
 
 export async function authenticateAdmin(username: string, password: string) {
-  const admin = await supabaseHelpers.getAdminByUsername(username)
+  // Use environment variables for admin credentials (fallback to defaults for demo)
+  const validUsername = process.env.ADMIN_USERNAME || 'admin'
+  const validPassword = process.env.ADMIN_PASSWORD || 'admin'
   
-  if (!admin || !bcrypt.compareSync(password, admin.password)) {
+  if (username !== validUsername || password !== validPassword) {
     return null
   }
 
-  return admin
+  return { id: 1, username: validUsername, role: 'admin' }
 }
 
 export async function requireAuth() {

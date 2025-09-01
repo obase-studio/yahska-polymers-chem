@@ -7,6 +7,7 @@ This PRD outlines the requirements for the Yahska Polymers corporate website, a 
 ## Project Overview
 
 ### Company Background
+
 - **Company**: Yahska Polymers
 - **Industry**: Chemical manufacturing and solutions
 - **Experience**: 20+ years in the industry
@@ -16,6 +17,7 @@ This PRD outlines the requirements for the Yahska Polymers corporate website, a 
 - **Project Portfolio**: Extensive involvement in metro systems, expressways, industrial facilities, smart cities, and bullet train infrastructure
 
 ### Current Status
+
 - Existing Next.js application with basic structure implemented
 - Admin panel for content management available
 - Database structure established for products and media management
@@ -25,6 +27,7 @@ This PRD outlines the requirements for the Yahska Polymers corporate website, a 
 ### 1. Website Sections (As Per Client Documentation)
 
 #### 1.1 About Us Section
+
 - Company history and background
 - Mission and vision statements
 - Leadership team information
@@ -32,8 +35,10 @@ This PRD outlines the requirements for the Yahska Polymers corporate website, a 
 - Manufacturing capabilities
 
 #### 1.2 Products Section
+
 **Reference**: Competitor website https://atplgroup.in/
 **Structure Requirements**:
+
 - Product categories with logos
 - Detailed product pages with:
   - Description
@@ -42,18 +47,22 @@ This PRD outlines the requirements for the Yahska Polymers corporate website, a 
 - Product catalog integration from Excel file
 
 **Product Categories** (Based on existing implementation):
+
 1. **Construction Chemicals**
+
    - Waterproofing compounds
    - Repair mortars
    - Protective coatings
 
 2. **Concrete Admixtures**
+
    - 7 admixture products (as per catalog)
    - Superplasticizers
    - Retarding agents
    - Accelerating agents
 
 3. **Textile Chemicals**
+
    - Dispersing agents
    - Leveling agents
    - Wetting agents
@@ -64,14 +73,17 @@ This PRD outlines the requirements for the Yahska Polymers corporate website, a 
    - Stabilizers
 
 #### 1.3 Projects Section
+
 **Structure**: 5 dropdown categories with comprehensive project portfolios
 
 1. **Bullet Train Projects**
+
    - Mumbai-Ahmedabad High Speed Rail Corridor
    - Advanced construction techniques and infrastructure development
    - High-quality project documentation and technical specifications
 
 2. **Metro & Rail Projects** (15+ documented projects)
+
    - **Mumbai Metro** (J Kumar partnership)
    - **Ahmedabad-Gandhinagar Metro** (multiple construction phases)
    - **Surat Metro** (advanced urban transit system)
@@ -81,6 +93,7 @@ This PRD outlines the requirements for the Yahska Polymers corporate website, a 
    - Technical expertise in elevated tracks, depot facilities, and transit systems
 
 3. **Road Projects** (15+ major expressways and highways)
+
    - **Vadodara-Mumbai 8-lane PQC Expressway** (flagship project)
    - **Delhi-Vadodara PQC 8-lane** (inter-state connectivity)
    - **Mumbai-Nagpur Samruddhi Mahamarg Expressway** (Maharashtra's pride project)
@@ -92,6 +105,7 @@ This PRD outlines the requirements for the Yahska Polymers corporate website, a 
    - Aerial views, interchange construction, and complex road infrastructure
 
 4. **Buildings & Infrastructure** (20+ major projects)
+
    - **Narendra Modi Cricket Stadium, Motera** (world's largest cricket stadium)
    - **Dholera Smart City** (drainage systems, CETP infrastructure)
    - **PMAY Housing Gujarat Housing Board, Surat** (affordable housing)
@@ -113,9 +127,11 @@ This PRD outlines the requirements for the Yahska Polymers corporate website, a 
    - Diverse infrastructure capabilities across sectors
 
 #### 1.4 Approvals Section
+
 **Content**: Government and regulatory authority certifications (12 major approvals)
 
 **Metro and Railway Authorities:**
+
 - **DMRC** (Delhi Metro Rail Corporation)
 - **GMRC** (Gujarat Metro Rail Corporation)
 - **JMRC** (Jaipur Metro Rail Corporation - DMRC)
@@ -127,6 +143,7 @@ This PRD outlines the requirements for the Yahska Polymers corporate website, a 
 - **RVNL** (Rail Vikas Nigam Limited)
 
 **Municipal and Development Authorities:**
+
 - **BMC** (Brihanmumbai Municipal Corporation)
 - **Engineers India Ltd** (government engineering consultant)
 - **LEA Associates** (infrastructure development consultant)
@@ -134,9 +151,11 @@ This PRD outlines the requirements for the Yahska Polymers corporate website, a 
 **Business Impact**: Demonstrates regulatory compliance and government project approvals across India's major infrastructure development authorities
 
 #### 1.5 Clients Section
+
 **Content**: Comprehensive client portfolio (38+ major companies)
 
 **Tier 1 Infrastructure Companies:**
+
 - **L&T Construction** (India's largest infrastructure company)
 - **Tata Projects** (Tata Group's infrastructure arm)
 - **Shapoorji Pallonji** (major construction conglomerate)
@@ -146,6 +165,7 @@ This PRD outlines the requirements for the Yahska Polymers corporate website, a 
 - **Dilip Buildcon** (highway and infrastructure specialist)
 
 **Regional and Specialized Players:**
+
 - SCC Infra, KRC Infraprojects, DRA Infracon
 - Sadbhav Infra, DCC Infraprojects, IRB Infrastructure
 - Roadway Solutions, Montecarlo Ltd, Raj Infrastructure
@@ -157,22 +177,26 @@ This PRD outlines the requirements for the Yahska Polymers corporate website, a 
 - Cube Construction, Patel Infra
 
 **International Partners:**
+
 - **Gulermak** (Turkish infrastructure company)
 - **Sam India** (international joint ventures)
 
 **Cement and Materials Companies:**
+
 - **Ambuja Cements Ltd** (LafargeHolcim group)
 - **UltraTech Cement** (Aditya Birla Group)
 - **JK Lakshmi Cement** (JK Organization)
 - **Nuvoco Vistas** (cement manufacturer)
 
 **Industrial Conglomerates:**
+
 - **Reliance Industries** (petrochemicals and textiles)
 - **Adani Group** (through Buildcast Solution)
 
 **Business Impact**: Portfolio demonstrates partnerships with India's leading infrastructure developers, cement manufacturers, and industrial conglomerates, showcasing market leadership and trust across diverse sectors.
 
 #### 1.6 Contact Us Section
+
 - Contact information
 - Office locations
 - Inquiry forms
@@ -181,12 +205,14 @@ This PRD outlines the requirements for the Yahska Polymers corporate website, a 
 ### 2. Technical Features
 
 #### 2.1 Content Management System
+
 - Admin panel for content updates
 - Media gallery management
 - Product catalog management
 - SEO content management
 
 #### 2.2 User Experience Features
+
 - **Advanced Search**: Product search with category filtering
 - **Project Filtering**: By category, location, client, and project type
 - **Interactive Galleries**: Image galleries for each project category
@@ -197,6 +223,7 @@ This PRD outlines the requirements for the Yahska Polymers corporate website, a 
 - **Geographic Navigation**: Interactive project location mapping
 
 #### 2.3 Interactive Elements
+
 - **Product Showcase**: Individual product pages with logos, descriptions, usage instructions, and advantages
 - **Project Portfolio**: Interactive galleries with 5 dropdown categories
 - **Client Testimonials**: Partnership showcase with duration and project details
@@ -209,6 +236,7 @@ This PRD outlines the requirements for the Yahska Polymers corporate website, a 
 ## Technical Specifications
 
 ### Current Technology Stack
+
 - **Framework**: Next.js 15.2.4
 - **UI Library**: Radix UI components
 - **Styling**: Tailwind CSS
@@ -217,6 +245,7 @@ This PRD outlines the requirements for the Yahska Polymers corporate website, a 
 - **Authentication**: Custom auth implementation
 
 ### Database Schema (Existing)
+
 - Products table with specifications
 - Media management for images
 - Admin authentication
@@ -225,7 +254,9 @@ This PRD outlines the requirements for the Yahska Polymers corporate website, a 
 ## Content Requirements
 
 ### 1. Product Information
+
 **Source**: Products Catalogue Excel files and client documentation
+
 - **Product Structure**: 7 different admixture types with individual logos
 - **Product Pages**: Each product requires detailed pages with Description, Usage, and Advantages
 - **Technical Specifications**: Comprehensive product data including performance metrics
@@ -234,9 +265,11 @@ This PRD outlines the requirements for the Yahska Polymers corporate website, a 
 - **Visual Identity**: Product logos for easy identification and branding consistency
 
 ### 2. Project Portfolio
+
 **Source**: Comprehensive visual documentation (60+ high-quality project images)
 
 **Image Categories and Quality:**
+
 - **Metro Rail Projects**: 15+ professional construction photos showing completed lines, elevated tracks, depot facilities
 - **Road Projects**: 15+ aerial and ground-level images of major expressways, interchanges, and highway infrastructure
 - **Buildings & Infrastructure**: 20+ images covering stadiums, smart cities, industrial facilities, hospitals, semiconductor plants
@@ -244,6 +277,7 @@ This PRD outlines the requirements for the Yahska Polymers corporate website, a 
 - **Others**: 6+ diverse infrastructure projects including airports, dams, and canals
 
 **Technical Documentation:**
+
 - Project descriptions with technical specifications
 - Construction phases and methodologies
 - Client collaboration details
@@ -251,14 +285,17 @@ This PRD outlines the requirements for the Yahska Polymers corporate website, a 
 - Scale and complexity of projects demonstrated
 
 ### 3. Company Credentials
+
 **Source**: Professional logo assets and partnership documentation
 
 **Approval Authority Logos (12 items):**
+
 - Government and regulatory body certifications
 - Metro, railway, and municipal authority approvals
 - High-resolution logo files for professional presentation
 
 **Client Company Logos (38+ items):**
+
 - Tier 1 infrastructure companies
 - Regional construction specialists
 - Cement and materials manufacturers
@@ -266,6 +303,7 @@ This PRD outlines the requirements for the Yahska Polymers corporate website, a 
 - International partnership logos
 
 **Partnership Documentation:**
+
 - Long-term collaboration history
 - Project-specific partnerships
 - Industry recognition and testimonials
@@ -274,18 +312,21 @@ This PRD outlines the requirements for the Yahska Polymers corporate website, a 
 ## User Experience Requirements
 
 ### 1. Navigation Structure
+
 - Clear hierarchical menu structure
 - Dropdown menus for project categories
 - Breadcrumb navigation
 - Search functionality
 
 ### 2. Visual Design
+
 - Professional corporate design
 - Consistent branding elements
 - High-quality imagery
 - Mobile-responsive layout
 
 ### 3. Performance Requirements
+
 - Fast loading times (<3 seconds)
 - Optimized images and media
 - SEO-friendly URLs
@@ -294,12 +335,14 @@ This PRD outlines the requirements for the Yahska Polymers corporate website, a 
 ## Success Metrics
 
 ### 1. User Engagement
+
 - Time spent on product pages
 - Number of quote requests generated
 - Contact form submissions
 - Product catalog downloads
 
 ### 2. Technical Performance
+
 - Page load speed optimization
 - Search engine ranking improvements
 - Mobile usability scores
@@ -308,16 +351,19 @@ This PRD outlines the requirements for the Yahska Polymers corporate website, a 
 ## Development Phases
 
 ### Phase 1: Content Integration
+
 - Integrate Excel product catalog data
 - Upload and organize project images
 - Set up approval and client logo sections
 
 ### Phase 2: Enhanced Functionality
+
 - Implement advanced search and filtering
 - Create detailed product pages
 - Develop project showcase galleries
 
 ### Phase 3: Optimization
+
 - SEO optimization
 - Performance tuning
 - Mobile responsiveness testing
@@ -326,12 +372,14 @@ This PRD outlines the requirements for the Yahska Polymers corporate website, a 
 ## Maintenance Requirements
 
 ### Content Updates
+
 - Regular product catalog updates
 - New project additions
 - Client logo updates
 - News and announcements
 
 ### Technical Maintenance
+
 - Security updates
 - Performance monitoring
 - Backup management

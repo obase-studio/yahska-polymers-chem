@@ -4,8 +4,8 @@ const path = require('path');
 const fs = require('fs');
 
 // Configuration - UPDATE THESE VALUES
-const SUPABASE_URL = process.env.SUPABASE_URL || 'YOUR_SUPABASE_URL';
-const SUPABASE_SERVICE_KEY = process.env.SUPABASE_SERVICE_KEY || 'YOUR_SUPABASE_SERVICE_KEY'; // Use service key for admin operations
+const SUPABASE_URL = process.env.SUPABASE_URL || 'https://jlbwwbnatmmkcizqprdx.supabase.co';
+const SUPABASE_SERVICE_KEY = process.env.SUPABASE_SERVICE_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImpsYnd3Ym5hdG1ta2NpenFwcmR4Iiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc1NjQ4Nzg4MiwiZXhwIjoyMDcyMDYzODgyfQ.VRsTCJYa_lrRmhaNTInT9FnozS4B-imm0NCPr20ynkw'; // Use service key for admin operations
 
 // Initialize Supabase client
 const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_KEY);
