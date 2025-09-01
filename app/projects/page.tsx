@@ -1,156 +1,185 @@
-"use client"
+"use client";
 
-import { useState, useEffect } from "react"
-import { Navigation } from "@/components/navigation"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Badge } from "@/components/ui/badge"
-import { Search, ExternalLink, Building2, Train, Factory, Award, Users, MapPin, Loader2, RefreshCw } from "lucide-react"
-import Image from "next/image"
-import Link from "next/link"
-import { Footer } from "@/components/footer"
+import { useState, useEffect } from "react";
+import { Navigation } from "@/components/navigation";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Badge } from "@/components/ui/badge";
+import {
+  Search,
+  ExternalLink,
+  Building2,
+  Train,
+  Factory,
+  Award,
+  Users,
+  MapPin,
+  Loader2,
+  RefreshCw,
+} from "lucide-react";
+import Image from "next/image";
+import Link from "next/link";
+import { Footer } from "@/components/footer";
 
 interface Project {
-  id: number
-  name: string
-  description: string
-  category: string
-  location: string
-  client_name: string
-  completion_date: string
-  project_value: number
-  key_features: string[]
-  challenges: string
-  solutions: string
-  image_url: string
-  gallery_images: string[]
-  is_featured: boolean
-  is_active: boolean
-  sort_order: number
+  id: number;
+  name: string;
+  description: string;
+  category: string;
+  location: string;
+  client_name: string;
+  completion_date: string;
+  project_value: number;
+  key_features: string[];
+  challenges: string;
+  solutions: string;
+  image_url: string;
+  gallery_images: string[];
+  is_featured: boolean;
+  is_active: boolean;
+  sort_order: number;
 }
 
 const projectCategories = [
-  { id: 'bullet-train', name: 'High Speed Rail', icon: Train },
-  { id: 'metro-rail', name: 'Metro & Rail', icon: Train },
-  { id: 'roads', name: 'Roads & Highways', icon: MapPin },
-  { id: 'buildings-factories', name: 'Buildings & Factories', icon: Building2 },
-  { id: 'others', name: 'Other Projects', icon: Factory },
-]
+  { id: "bullet-train", name: "High Speed Rail", icon: Train },
+  { id: "metro-rail", name: "Metro & Rail", icon: Train },
+  { id: "roads", name: "Roads & Highways", icon: MapPin },
+  { id: "buildings-factories", name: "Buildings & Factories", icon: Building2 },
+  { id: "others", name: "Other Projects", icon: Factory },
+];
 
 export default function ProjectsPage() {
-  const [projectOverview, setProjectOverview] = useState("")
-  const [projects, setProjects] = useState<Project[]>([])
-  const [loading, setLoading] = useState(true)
-  const [searchTerm, setSearchTerm] = useState("")
-  const [selectedCategory, setSelectedCategory] = useState("all")
-  const [error, setError] = useState<string | null>(null)
-  const [refreshing, setRefreshing] = useState(false)
+  const [projectOverview, setProjectOverview] = useState("");
+  const [projects, setProjects] = useState<Project[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [selectedCategory, setSelectedCategory] = useState("all");
+  const [error, setError] = useState<string | null>(null);
+  const [refreshing, setRefreshing] = useState(false);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        setLoading(true)
+        setLoading(true);
         const [projectsRes, contentRes] = await Promise.all([
-          fetch('/api/projects'),
-          fetch('/api/content?page=projects')
-        ])
-        
-        const projectsData = await projectsRes.json()
-        const contentData = await contentRes.json()
-        
+          fetch("/api/projects"),
+          fetch("/api/content?page=projects"),
+        ]);
+
+        const projectsData = await projectsRes.json();
+        const contentData = await contentRes.json();
+
         if (projectsData.success || projectsData.data) {
-          setProjects(projectsData.data || [])
+          setProjects(projectsData.data || []);
         } else {
-          throw new Error(projectsData.error || 'Failed to fetch projects')
+          throw new Error(projectsData.error || "Failed to fetch projects");
         }
-        
+
         if (contentData.success && contentData.data.content) {
-          const items = contentData.data.content as Array<any>
-          setProjectOverview(items.find((i) => i.section === 'project_overview' && i.content_key === 'content')?.content_value || '')
+          const items = contentData.data.content as Array<any>;
+          setProjectOverview(
+            items.find(
+              (i) =>
+                i.section === "project_overview" && i.content_key === "content"
+            )?.content_value || ""
+          );
         }
       } catch (err) {
-        setError(err instanceof Error ? err.message : 'An error occurred')
-        console.error('Error fetching data:', err)
+        setError(err instanceof Error ? err.message : "An error occurred");
+        console.error("Error fetching data:", err);
       } finally {
-        setLoading(false)
+        setLoading(false);
       }
-    }
+    };
 
-    fetchData()
-  }, [])
+    fetchData();
+  }, []);
 
   const handleRefresh = async () => {
-    setRefreshing(true)
+    setRefreshing(true);
     try {
-      const response = await fetch('/api/projects')
-      const result = await response.json()
-      
+      const response = await fetch("/api/projects");
+      const result = await response.json();
+
       if (result.success || result.data) {
-        setProjects(result.data || [])
+        setProjects(result.data || []);
       } else {
-        setError(result.error || 'Failed to refresh projects')
+        setError(result.error || "Failed to refresh projects");
       }
     } catch (err) {
-      setError('Failed to refresh projects')
-      console.error('Error refreshing projects:', err)
+      setError("Failed to refresh projects");
+      console.error("Error refreshing projects:", err);
     } finally {
-      setRefreshing(false)
+      setRefreshing(false);
     }
-  }
+  };
 
   const getCategoryIcon = (category: string) => {
     switch (category) {
-      case 'bullet-train':
-        return <Train className="h-4 w-4" />
-      case 'metro-rail':
-        return <Train className="h-4 w-4" />
-      case 'roads':
-        return <MapPin className="h-4 w-4" />
-      case 'buildings-factories':
-        return <Building2 className="h-4 w-4" />
-      case 'others':
-        return <Factory className="h-4 w-4" />
+      case "bullet-train":
+        return <Train className="h-4 w-4" />;
+      case "metro-rail":
+        return <Train className="h-4 w-4" />;
+      case "roads":
+        return <MapPin className="h-4 w-4" />;
+      case "buildings-factories":
+        return <Building2 className="h-4 w-4" />;
+      case "others":
+        return <Factory className="h-4 w-4" />;
       default:
-        return <Building2 className="h-4 w-4" />
+        return <Building2 className="h-4 w-4" />;
     }
-  }
+  };
 
   const getCategoryName = (category: string) => {
     switch (category) {
-      case 'bullet-train':
-        return 'High Speed Rail'
-      case 'metro-rail':
-        return 'Metro & Rail'
-      case 'roads':
-        return 'Roads & Highways'
-      case 'buildings-factories':
-        return 'Buildings & Factories'
-      case 'others':
-        return 'Other Projects'
+      case "bullet-train":
+        return "High Speed Rail";
+      case "metro-rail":
+        return "Metro & Rail";
+      case "roads":
+        return "Roads & Highways";
+      case "buildings-factories":
+        return "Buildings & Factories";
+      case "others":
+        return "Other Projects";
       default:
-        return category.charAt(0).toUpperCase() + category.slice(1).replace(/-/g, ' ')
+        return (
+          category.charAt(0).toUpperCase() +
+          category.slice(1).replace(/-/g, " ")
+        );
     }
-  }
+  };
 
   // Get filtered projects
   const filteredProjects = projects
-    .filter(project => project.is_active)
-    .filter(project => selectedCategory === "all" || project.category === selectedCategory)
-    .filter(project => 
-      searchTerm === "" || 
-      project.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      project.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      project.client_name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      project.location?.toLowerCase().includes(searchTerm.toLowerCase())
+    .filter((project) => project.is_active)
+    .filter(
+      (project) =>
+        selectedCategory === "all" || project.category === selectedCategory
     )
+    .filter(
+      (project) =>
+        searchTerm === "" ||
+        project.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        project.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        project.client_name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        project.location?.toLowerCase().includes(searchTerm.toLowerCase())
+    );
 
   // Get project count by category
   const getCategoryProjectCount = (categoryId: string) => {
-    if (categoryId === "all") return projects.filter(p => p.is_active).length
-    return projects.filter(p => p.is_active && p.category === categoryId).length
-  }
-
+    if (categoryId === "all") return projects.filter((p) => p.is_active).length;
+    return projects.filter((p) => p.is_active && p.category === categoryId)
+      .length;
+  };
 
   if (loading) {
     return (
@@ -163,7 +192,7 @@ export default function ProjectsPage() {
           </div>
         </div>
       </div>
-    )
+    );
   }
 
   return (
@@ -181,7 +210,8 @@ export default function ProjectsPage() {
               Our Project Portfolio
             </h1>
             <p className="text-xl text-muted-foreground max-w-3xl mx-auto leading-relaxed">
-              {projectOverview || 'Showcasing our expertise across diverse industrial and infrastructure projects with innovative chemical solutions.'}
+              {projectOverview ||
+                "Showcasing our expertise across diverse industrial and infrastructure projects with innovative chemical solutions."}
             </p>
           </div>
         </div>
@@ -194,8 +224,10 @@ export default function ProjectsPage() {
             {/* Left Sidebar - Categories */}
             <div className="hidden lg:block w-72 flex-shrink-0">
               <div className="bg-card border border-border rounded-lg p-6 sticky top-24">
-                <h3 className="text-lg font-semibold mb-4 text-foreground">Project Categories</h3>
-                
+                <h3 className="text-lg font-semibold mb-4 text-foreground">
+                  Project Categories
+                </h3>
+
                 {/* Search */}
                 <div className="relative mb-6">
                   <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
@@ -212,8 +244,8 @@ export default function ProjectsPage() {
                   <button
                     onClick={() => setSelectedCategory("all")}
                     className={`w-full text-left px-4 py-3 rounded-md transition-colors flex items-center justify-between ${
-                      selectedCategory === "all" 
-                        ? "bg-primary text-primary-foreground" 
+                      selectedCategory === "all"
+                        ? "bg-primary text-primary-foreground"
                         : "hover:bg-muted text-foreground"
                     }`}
                   >
@@ -221,21 +253,30 @@ export default function ProjectsPage() {
                       <Building2 className="h-4 w-4 mr-3" />
                       All Projects
                     </span>
-                    <Badge variant="secondary" className={selectedCategory === "all" ? "bg-primary-foreground/20 text-primary-foreground" : ""}>
+                    <Badge
+                      variant="secondary"
+                      className={
+                        selectedCategory === "all"
+                          ? "bg-primary-foreground/20 text-primary-foreground"
+                          : ""
+                      }
+                    >
                       {getCategoryProjectCount("all")}
                     </Badge>
                   </button>
-                  
+
                   {projectCategories.map((category) => {
-                    const categoryProjectCount = getCategoryProjectCount(category.id)
-                    const IconComponent = category.icon
+                    const categoryProjectCount = getCategoryProjectCount(
+                      category.id
+                    );
+                    const IconComponent = category.icon;
                     return (
                       <button
                         key={category.id}
                         onClick={() => setSelectedCategory(category.id)}
                         className={`w-full text-left px-4 py-3 rounded-md transition-colors flex items-center justify-between ${
-                          selectedCategory === category.id 
-                            ? "bg-primary text-primary-foreground" 
+                          selectedCategory === category.id
+                            ? "bg-primary text-primary-foreground"
                             : "hover:bg-muted text-foreground"
                         }`}
                       >
@@ -243,11 +284,18 @@ export default function ProjectsPage() {
                           <IconComponent className="h-4 w-4 mr-3" />
                           {category.name}
                         </span>
-                        <Badge variant="secondary" className={selectedCategory === category.id ? "bg-primary-foreground/20 text-primary-foreground" : ""}>
+                        <Badge
+                          variant="secondary"
+                          className={
+                            selectedCategory === category.id
+                              ? "bg-primary-foreground/20 text-primary-foreground"
+                              : ""
+                          }
+                        >
                           {categoryProjectCount}
                         </Badge>
                       </button>
-                    )
+                    );
                   })}
                 </div>
 
@@ -289,28 +337,34 @@ export default function ProjectsPage() {
                         className="pl-10"
                       />
                     </div>
-                    
+
                     {/* Mobile Category Buttons */}
                     <div className="flex flex-wrap gap-2">
                       <Button
-                        variant={selectedCategory === "all" ? "default" : "outline"}
+                        variant={
+                          selectedCategory === "all" ? "default" : "outline"
+                        }
                         onClick={() => setSelectedCategory("all")}
                         size="sm"
                       >
                         All ({getCategoryProjectCount("all")})
                       </Button>
                       {projectCategories.map((category) => {
-                        const count = getCategoryProjectCount(category.id)
+                        const count = getCategoryProjectCount(category.id);
                         return (
                           <Button
                             key={category.id}
-                            variant={selectedCategory === category.id ? "default" : "outline"}
+                            variant={
+                              selectedCategory === category.id
+                                ? "default"
+                                : "outline"
+                            }
                             onClick={() => setSelectedCategory(category.id)}
                             size="sm"
                           >
                             {category.name} ({count})
                           </Button>
-                        )
+                        );
                       })}
                     </div>
                   </div>
@@ -321,13 +375,13 @@ export default function ProjectsPage() {
               <div className="flex items-center justify-between mb-6">
                 <div>
                   <h2 className="text-2xl font-bold text-foreground">
-                    {selectedCategory === "all" 
-                      ? "All Projects" 
-                      : getCategoryName(selectedCategory)
-                    }
+                    {selectedCategory === "all"
+                      ? "All Projects"
+                      : getCategoryName(selectedCategory)}
                   </h2>
                   <p className="text-muted-foreground mt-1">
-                    {filteredProjects.length} project{filteredProjects.length !== 1 ? 's' : ''} found
+                    {filteredProjects.length} project
+                    {filteredProjects.length !== 1 ? "s" : ""} found
                     {searchTerm && ` for "${searchTerm}"`}
                   </p>
                 </div>
@@ -356,10 +410,9 @@ export default function ProjectsPage() {
                     No projects found
                   </h3>
                   <p className="text-muted-foreground">
-                    {searchTerm 
+                    {searchTerm
                       ? `Try adjusting your search terms or browse other categories.`
-                      : `No projects available in this category.`
-                    }
+                      : `No projects available in this category.`}
                   </p>
                   {searchTerm && (
                     <Button
@@ -374,7 +427,10 @@ export default function ProjectsPage() {
               ) : (
                 <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
                   {filteredProjects.map((project) => (
-                    <Card key={project.id} className="h-full hover:shadow-lg transition-shadow duration-300">
+                    <Card
+                      key={project.id}
+                      className="h-full hover:shadow-lg transition-shadow duration-300 flex flex-col"
+                    >
                       <div className="aspect-video relative overflow-hidden bg-muted rounded-t-lg">
                         {project.image_url ? (
                           <Image
@@ -389,7 +445,10 @@ export default function ProjectsPage() {
                           </div>
                         )}
                         <div className="absolute top-2 right-2">
-                          <Badge variant="secondary" className="flex items-center gap-1">
+                          <Badge
+                            variant="secondary"
+                            className="flex items-center gap-1"
+                          >
                             {getCategoryIcon(project.category)}
                             {getCategoryName(project.category)}
                           </Badge>
@@ -403,63 +462,96 @@ export default function ProjectsPage() {
                           </div>
                         )}
                       </div>
-                      <CardContent className="p-6">
-                        <div className="space-y-3">
+                      <CardContent className="p-6 flex-1 flex flex-col">
+                        <div className="flex-1 space-y-3">
                           <div>
-                            <h3 className="font-bold text-lg mb-2 line-clamp-2">{project.name}</h3>
+                            <h3 className="font-bold text-lg mb-2 line-clamp-2">
+                              {project.name}
+                            </h3>
                             <p className="text-muted-foreground text-sm line-clamp-3 mb-3">
                               {project.description}
                             </p>
                           </div>
-                          
+
                           <div className="space-y-2">
                             {project.client_name && (
                               <div className="flex items-center gap-2 text-sm">
                                 <Users className="h-4 w-4 text-muted-foreground" />
-                                <span className="text-muted-foreground">Client:</span>
-                                <span className="font-medium">{project.client_name}</span>
+                                <span className="text-muted-foreground">
+                                  Client:
+                                </span>
+                                <span className="font-medium">
+                                  {project.client_name}
+                                </span>
                               </div>
                             )}
-                            
+
                             {project.location && (
                               <div className="flex items-center gap-2 text-sm">
                                 <MapPin className="h-4 w-4 text-muted-foreground" />
-                                <span className="text-muted-foreground">Location:</span>
-                                <span className="font-medium">{project.location}</span>
+                                <span className="text-muted-foreground">
+                                  Location:
+                                </span>
+                                <span className="font-medium">
+                                  {project.location}
+                                </span>
                               </div>
                             )}
-                            
+
                             {project.completion_date && (
                               <div className="flex items-center gap-2 text-sm">
-                                <span className="text-muted-foreground">Completed:</span>
+                                <span className="text-muted-foreground">
+                                  Completed:
+                                </span>
                                 <span className="font-medium">
-                                  {new Date(project.completion_date).getFullYear()}
+                                  {new Date(
+                                    project.completion_date
+                                  ).getFullYear()}
                                 </span>
                               </div>
                             )}
                           </div>
 
-                          {project.key_features && project.key_features.length > 0 && (
-                            <div className="pt-3 border-t">
-                              <p className="text-sm font-medium mb-2">Key Features:</p>
-                              <div className="flex flex-wrap gap-1">
-                                {project.key_features.slice(0, 3).map((feature, index) => (
-                                  <Badge key={index} variant="outline" className="text-xs">
-                                    {feature}
-                                  </Badge>
-                                ))}
-                                {project.key_features.length > 3 && (
-                                  <Badge variant="outline" className="text-xs">
-                                    +{project.key_features.length - 3} more
-                                  </Badge>
-                                )}
+                          {project.key_features &&
+                            project.key_features.length > 0 && (
+                              <div className="pt-3 border-t">
+                                <p className="text-sm font-medium mb-2">
+                                  Key Features:
+                                </p>
+                                <div className="flex flex-wrap gap-1">
+                                  {project.key_features
+                                    .slice(0, 3)
+                                    .map((feature, index) => (
+                                      <Badge
+                                        key={index}
+                                        variant="outline"
+                                        className="text-xs"
+                                      >
+                                        {feature}
+                                      </Badge>
+                                    ))}
+                                  {project.key_features.length > 3 && (
+                                    <Badge
+                                      variant="outline"
+                                      className="text-xs"
+                                    >
+                                      +{project.key_features.length - 3} more
+                                    </Badge>
+                                  )}
+                                </div>
                               </div>
-                            </div>
-                          )}
+                            )}
                         </div>
-                        
-                        <Button asChild className="w-full mt-4" size="sm">
-                          <Link href={`/projects/${project.id}`}>
+
+                        <Button
+                          asChild
+                          className="w-full mt-6 flex items-center justify-center"
+                          size="sm"
+                        >
+                          <Link
+                            href={`/projects/${project.id}`}
+                            className="flex items-center justify-center w-full"
+                          >
                             <ExternalLink className="h-4 w-4 mr-2" />
                             View Details
                           </Link>
@@ -477,11 +569,15 @@ export default function ProjectsPage() {
       {/* Contact CTA Section */}
       <section className="py-20 bg-primary text-primary-foreground">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h2 className="text-3xl lg:text-4xl font-bold mb-4" style={{ fontFamily: "var(--font-heading)" }}>
+          <h2
+            className="text-3xl lg:text-4xl font-bold mb-4"
+            style={{ fontFamily: "var(--font-heading)" }}
+          >
             Ready to Start Your Next Project?
           </h2>
           <p className="text-xl mb-8 opacity-90 max-w-2xl mx-auto">
-            Let our experienced team help you achieve exceptional results with our proven chemical solutions.
+            Let our experienced team help you achieve exceptional results with
+            our proven chemical solutions.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Button asChild size="lg" variant="secondary">
@@ -493,9 +589,7 @@ export default function ProjectsPage() {
               variant="outline"
               className="border-primary-foreground text-primary-foreground hover:bg-primary-foreground hover:text-primary bg-transparent"
             >
-              <Link href="tel:+918890913222">
-                Call Now
-              </Link>
+              <Link href="tel:+918890913222">Call Now</Link>
             </Button>
           </div>
         </div>
@@ -503,5 +597,5 @@ export default function ProjectsPage() {
 
       <Footer />
     </div>
-  )
+  );
 }
