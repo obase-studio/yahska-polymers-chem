@@ -4,7 +4,7 @@ import { useState, useEffect } from "react"
 import { Navigation } from "@/components/navigation"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { ArrowRight, Award, Users, Globe, CheckCircle, Building2, Palette, Factory, Wrench, Truck, Zap } from "lucide-react"
+import { ArrowRight, Award, Users, Globe, CheckCircle, Building2, Palette, Factory, Wrench, Truck, Zap, Train, MapPin } from "lucide-react"
 import Link from "next/link"
 import { Footer } from "@/components/footer"
 import { ContentItem } from "@/lib/database-client"
@@ -20,11 +20,28 @@ export default function HomePage() {
     const fetchContent = async () => {
       try {
         setLoading(true)
-        const response = await fetch('/api/content?page=home')
-        const result = await response.json()
+        const [homeResponse, aboutResponse] = await Promise.all([
+          fetch('/api/content?page=home'),
+          fetch('/api/content?page=about')
+        ])
         
-        if (result.success) {
-          setContentItems(result.data.content)
+        const homeResult = await homeResponse.json()
+        const aboutResult = await aboutResponse.json()
+        
+        if (homeResult.success) {
+          let allContent = homeResult.data.content
+          
+          // Add About page content for "Our Story"
+          if (aboutResult.success && aboutResult.data.content) {
+            const ourStoryItem = aboutResult.data.content.find((item: any) => 
+              item.section === 'our_story' && item.content_key === 'content'
+            )
+            if (ourStoryItem) {
+              allContent = [...allContent, ourStoryItem]
+            }
+          }
+          
+          setContentItems(allContent)
           
           // Load hero image
           const heroImageResponse = await fetch('/api/admin/page-images?page=home&section=hero_image')
@@ -104,13 +121,19 @@ export default function HomePage() {
     item.section === 'cta' && item.content_key === 'description'
   )?.content_value || '';
 
-  // Extract key points from company description for display
-  const getDescriptionSummary = (fullDescription: string) => {
-    if (!fullDescription) return '';
-    if (fullDescription.includes('leading construction chemicals manufacturer')) {
-      return 'Leading construction chemicals manufacturer based in Ahmedabad, proudly serving the Indian construction industry with innovative and reliable solutions for over two decades.';
+  // Get full "Our Story" content from About page
+  const getFullStoryDescription = () => {
+    const ourStoryContent = contentItems.find(item => 
+      item.section === 'our_story' && item.content_key === 'content'
+    )?.content_value;
+
+    if (ourStoryContent) {
+      // Extract the first paragraph which is the main introduction
+      const firstParagraph = ourStoryContent.split('\n')[0];
+      return firstParagraph;
     }
-    return fullDescription.split('\n')[0] || fullDescription;
+    
+    return companyDescription || 'Leading construction chemicals manufacturer based in Ahmedabad, proudly serving the Indian construction industry with innovative and reliable solutions for over two decades.';
   };
 
   return (
@@ -129,7 +152,7 @@ export default function HomePage() {
                 {heroHeadline}
               </h1>
               <p className="text-xl text-muted-foreground mb-8 leading-relaxed">
-                {getDescriptionSummary(companyDescription)}
+                {getFullStoryDescription()}
               </p>
               <div className="flex flex-col sm:flex-row gap-4">
                 <Button asChild size="lg" className="bg-primary hover:bg-primary/90">
@@ -476,7 +499,7 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Industries We Serve Section */}
+      {/* Project Categories Section */}
       <section className="py-20 bg-muted/50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
@@ -484,55 +507,62 @@ export default function HomePage() {
               className="text-3xl lg:text-4xl font-bold text-foreground mb-4"
               style={{ fontFamily: "var(--font-heading)" }}
             >
-              Industries We Serve
+              Our Project Categories
             </h2>
             <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
-              {industriesDescription}
+              Diverse infrastructure and construction projects showcasing our expertise across major industry sectors
             </p>
           </div>
 
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6">
-            <div className="text-center p-6 bg-background rounded-lg hover:shadow-md transition-shadow">
-              <div className="bg-primary/10 w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-4">
-                <Building2 className="w-6 h-6 text-primary" />
-              </div>
-              <h3 className="font-semibold text-sm">Construction</h3>
-            </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+            <Card className="hover:shadow-lg transition-all duration-300 hover:-translate-y-1 cursor-pointer group">
+              <CardContent className="text-center p-8">
+                <div className="bg-primary/10 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4 group-hover:bg-primary/20 transition-colors">
+                  <Train className="w-8 h-8 text-primary" />
+                </div>
+                <h3 className="font-semibold text-lg mb-2">High Speed Rail</h3>
+                <p className="text-muted-foreground text-sm">Bullet train and rapid transit infrastructure projects</p>
+              </CardContent>
+            </Card>
 
-            <div className="text-center p-6 bg-background rounded-lg hover:shadow-md transition-shadow">
-              <div className="bg-primary/10 w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-4">
-                <Palette className="w-6 h-6 text-primary" />
-              </div>
-              <h3 className="font-semibold text-sm">Textiles</h3>
-            </div>
+            <Card className="hover:shadow-lg transition-all duration-300 hover:-translate-y-1 cursor-pointer group">
+              <CardContent className="text-center p-8">
+                <div className="bg-primary/10 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4 group-hover:bg-primary/20 transition-colors">
+                  <Train className="w-8 h-8 text-primary" />
+                </div>
+                <h3 className="font-semibold text-lg mb-2">Metro & Rail</h3>
+                <p className="text-muted-foreground text-sm">Urban metro systems and railway infrastructure</p>
+              </CardContent>
+            </Card>
 
-            <div className="text-center p-6 bg-background rounded-lg hover:shadow-md transition-shadow">
-              <div className="bg-primary/10 w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-4">
-                <Palette className="w-6 h-6 text-primary" />
-              </div>
-              <h3 className="font-semibold text-sm">Paint & Coatings</h3>
-            </div>
+            <Card className="hover:shadow-lg transition-all duration-300 hover:-translate-y-1 cursor-pointer group">
+              <CardContent className="text-center p-8">
+                <div className="bg-primary/10 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4 group-hover:bg-primary/20 transition-colors">
+                  <MapPin className="w-8 h-8 text-primary" />
+                </div>
+                <h3 className="font-semibold text-lg mb-2">Roads & Highways</h3>
+                <p className="text-muted-foreground text-sm">Expressways, highways and road infrastructure</p>
+              </CardContent>
+            </Card>
 
-            <div className="text-center p-6 bg-background rounded-lg hover:shadow-md transition-shadow">
-              <div className="bg-primary/10 w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-4">
-                <Wrench className="w-6 h-6 text-primary" />
-              </div>
-              <h3 className="font-semibold text-sm">Steel & Metal</h3>
-            </div>
+            <Card className="hover:shadow-lg transition-all duration-300 hover:-translate-y-1 cursor-pointer group">
+              <CardContent className="text-center p-8">
+                <div className="bg-primary/10 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4 group-hover:bg-primary/20 transition-colors">
+                  <Building2 className="w-8 h-8 text-primary" />
+                </div>
+                <h3 className="font-semibold text-lg mb-2">Buildings & Factories</h3>
+                <p className="text-muted-foreground text-sm">Commercial buildings and industrial facilities</p>
+              </CardContent>
+            </Card>
+          </div>
 
-            <div className="text-center p-6 bg-background rounded-lg hover:shadow-md transition-shadow">
-              <div className="bg-primary/10 w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-4">
-                <Factory className="w-6 h-6 text-primary" />
-              </div>
-              <h3 className="font-semibold text-sm">Cement</h3>
-            </div>
-
-            <div className="text-center p-6 bg-background rounded-lg hover:shadow-md transition-shadow">
-              <div className="bg-primary/10 w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-4">
-                <Truck className="w-6 h-6 text-primary" />
-              </div>
-              <h3 className="font-semibold text-sm">Infrastructure</h3>
-            </div>
+          <div className="text-center mt-12">
+            <Button asChild size="lg" variant="outline">
+              <Link href="/projects">
+                View All Projects
+                <ArrowRight className="ml-2 h-5 w-5" />
+              </Link>
+            </Button>
           </div>
         </div>
       </section>

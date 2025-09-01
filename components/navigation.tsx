@@ -119,12 +119,6 @@ export function Navigation() {
             </div>
           </div>
 
-          {/* CTA Button */}
-          <div className="hidden md:block">
-            <Button asChild className="bg-primary hover:bg-primary/90">
-              <Link href="/contact">Get Quote</Link>
-            </Button>
-          </div>
 
           {/* Mobile menu button */}
           <div className="md:hidden">
@@ -198,13 +192,6 @@ export function Navigation() {
                 Contact Us
               </Link>
 
-              <div className="px-3 py-4">
-                <Button asChild className="w-full bg-primary hover:bg-primary/90 h-12 text-base font-medium">
-                  <Link href="/contact" onClick={toggleMenu}>
-                    Get Quote
-                  </Link>
-                </Button>
-              </div>
             </div>
           </div>
         )}

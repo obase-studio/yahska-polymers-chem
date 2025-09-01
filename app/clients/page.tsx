@@ -1,10 +1,21 @@
+"use client"
+
+import { useState, useEffect } from "react"
 import { Navigation } from "@/components/navigation"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
-import { Building2, MapPin, Users, Star, Quote } from "lucide-react"
+import { Building2, MapPin, Users, Star, Quote, Loader2 } from "lucide-react"
+import Image from "next/image"
 import Link from "next/link"
 import { Footer } from "@/components/footer"
+
+interface MediaFile {
+  id: number
+  original_name: string
+  file_path: string
+  alt_text?: string
+}
 
 const clientCategories = [
   {
@@ -118,6 +129,32 @@ const testimonials = [
 ]
 
 export default function ClientsPage() {
+  const [clientLogos, setClientLogos] = useState<MediaFile[]>([])
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    const fetchClientLogos = async () => {
+      try {
+        setLoading(true)
+        const response = await fetch('/api/admin/media')
+        const mediaFiles = await response.json()
+        
+        // Filter for client logos
+        const logos = mediaFiles
+          .filter((file: MediaFile) => file.file_path.includes('client-logos'))
+          .sort((a: MediaFile, b: MediaFile) => a.original_name.localeCompare(b.original_name))
+        
+        setClientLogos(logos)
+      } catch (error) {
+        console.error('Error fetching client logos:', error)
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    fetchClientLogos()
+  }, [])
+
   return (
     <div className="min-h-screen bg-background">
       <Navigation />
@@ -196,7 +233,7 @@ export default function ClientsPage() {
         </div>
       </section>
 
-      {/* Featured Clients */}
+      {/* Client Logos Grid */}
       <section className="py-20 bg-muted/50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
@@ -204,51 +241,58 @@ export default function ClientsPage() {
               className="text-3xl lg:text-4xl font-bold text-foreground mb-4"
               style={{ fontFamily: "var(--font-heading)" }}
             >
-              Featured Client Partnerships
+              Our Trusted Partners
             </h2>
             <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
-              Long-term partnerships built on trust, quality, and mutual success
+              Leading companies across industries that trust us for their chemical solution needs
             </p>
           </div>
 
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {featuredClients.map((client, index) => (
-              <Card key={index} className="hover:shadow-lg transition-shadow duration-300">
-                <CardHeader>
-                  <div className="flex items-center space-x-4">
-                    <img
-                      src={client.logo || "/placeholder.svg"}
-                      alt={`${client.name} logo`}
-                      className="h-12 w-16 object-contain"
-                    />
-                    <div>
-                      <CardTitle className="text-lg">{client.name}</CardTitle>
-                      <div className="flex items-center text-sm text-muted-foreground mt-1">
-                        <MapPin className="h-4 w-4 mr-1" />
-                        {client.location}
-                      </div>
+          {loading ? (
+            <div className="flex items-center justify-center py-16">
+              <div className="text-center">
+                <Loader2 className="h-8 w-8 animate-spin mx-auto mb-4" />
+                <p className="text-muted-foreground">Loading client logos...</p>
+              </div>
+            </div>
+          ) : (
+            <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 xl:grid-cols-8 gap-6">
+              {clientLogos.map((logo) => (
+                <Card key={logo.id} className="hover:shadow-lg transition-all duration-300 hover:scale-105 bg-background border border-border/50">
+                  <CardContent className="p-6 flex items-center justify-center h-24">
+                    <div className="relative w-full h-full">
+                      <Image
+                        src={logo.file_path}
+                        alt={logo.alt_text || logo.original_name.replace(/\.(jpg|jpeg|png|webp)$/i, '')}
+                        fill
+                        className="object-contain filter grayscale hover:grayscale-0 transition-all duration-300"
+                        sizes="(max-width: 768px) 50vw, (max-width: 1200px) 25vw, 12.5vw"
+                      />
                     </div>
-                  </div>
-                  <div className="flex items-center justify-between mt-4">
-                    <Badge variant="secondary">{client.industry}</Badge>
-                    <div className="text-sm text-muted-foreground">{client.partnership} partnership</div>
-                  </div>
-                </CardHeader>
-                <CardContent>
-                  <p className="text-muted-foreground mb-4">{client.description}</p>
-                  <div>
-                    <h4 className="font-semibold text-sm text-foreground mb-2">Key Projects:</h4>
-                    <div className="flex flex-wrap gap-1">
-                      {client.projects.map((project, projectIndex) => (
-                        <Badge key={projectIndex} variant="outline" className="text-xs">
-                          {project}
-                        </Badge>
-                      ))}
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          )}
+
+          {/* Statistics below logos */}
+          <div className="mt-16 grid grid-cols-2 md:grid-cols-4 gap-8 pt-8 border-t border-border">
+            <div className="text-center">
+              <div className="text-3xl font-bold text-primary mb-2">{clientLogos.length}+</div>
+              <div className="text-muted-foreground text-sm">Trusted Partners</div>
+            </div>
+            <div className="text-center">
+              <div className="text-3xl font-bold text-primary mb-2">15+</div>
+              <div className="text-muted-foreground text-sm">States Served</div>
+            </div>
+            <div className="text-center">
+              <div className="text-3xl font-bold text-primary mb-2">98%</div>
+              <div className="text-muted-foreground text-sm">Client Retention</div>
+            </div>
+            <div className="text-center">
+              <div className="text-3xl font-bold text-primary mb-2">20+</div>
+              <div className="text-muted-foreground text-sm">Years Experience</div>
+            </div>
           </div>
         </div>
       </section>

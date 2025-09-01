@@ -1,17 +1,15 @@
 "use client"
 
 import { useState, useEffect } from "react"
+import { Navigation } from "@/components/navigation"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
 import { Badge } from "@/components/ui/badge"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Search, ExternalLink, Building2, Train, Factory, Award, Users, MapPin } from "lucide-react"
+import { Search, ExternalLink, Building2, Train, Factory, Award, Users, MapPin, Loader2, RefreshCw } from "lucide-react"
 import Image from "next/image"
 import Link from "next/link"
 import { Footer } from "@/components/footer"
-import { Navigation } from "@/components/navigation"
-
-// Fetch content via API to avoid server-only imports
 
 interface Project {
   id: number
@@ -32,85 +30,89 @@ interface Project {
   sort_order: number
 }
 
+const projectCategories = [
+  { id: 'bullet-train', name: 'High Speed Rail', icon: Train },
+  { id: 'metro-rail', name: 'Metro & Rail', icon: Train },
+  { id: 'roads', name: 'Roads & Highways', icon: MapPin },
+  { id: 'buildings-factories', name: 'Buildings & Factories', icon: Building2 },
+  { id: 'others', name: 'Other Projects', icon: Factory },
+]
+
 export default function ProjectsPage() {
   const [projectOverview, setProjectOverview] = useState("")
-  const [projectCategories, setProjectCategories] = useState("")
-  const [projectAchievements, setProjectAchievements] = useState("")
-  
   const [projects, setProjects] = useState<Project[]>([])
-  const [categories, setCategories] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
   const [searchTerm, setSearchTerm] = useState("")
   const [selectedCategory, setSelectedCategory] = useState("all")
+  const [error, setError] = useState<string | null>(null)
+  const [refreshing, setRefreshing] = useState(false)
 
   useEffect(() => {
-    fetchProjects()
-    fetchCategories()
-    fetchContent()
-  }, [selectedCategory, searchTerm])
-
-  const fetchProjects = async () => {
-    try {
-      setLoading(true)
-      const params = new URLSearchParams()
-      if (selectedCategory !== 'all') params.set('category', selectedCategory)
-      if (searchTerm) params.set('search', searchTerm)
-      
-      const response = await fetch(`/api/projects?${params}`)
-      if (response.ok) {
-        const data = await response.json()
-        setProjects(data.data || [])
-      }
-    } catch (error) {
-      console.error('Error fetching projects:', error)
-    } finally {
-      setLoading(false)
-    }
-  }
-
-  const fetchCategories = async () => {
-    try {
-      const response = await fetch('/api/admin/categories')
-      if (response.ok) {
-        const data = await response.json()
-        if (data.success) {
-          setCategories(data.data || [])
+    const fetchData = async () => {
+      try {
+        setLoading(true)
+        const [projectsRes, contentRes] = await Promise.all([
+          fetch('/api/projects'),
+          fetch('/api/content?page=projects')
+        ])
+        
+        const projectsData = await projectsRes.json()
+        const contentData = await contentRes.json()
+        
+        if (projectsData.success || projectsData.data) {
+          setProjects(projectsData.data || [])
+        } else {
+          throw new Error(projectsData.error || 'Failed to fetch projects')
         }
+        
+        if (contentData.success && contentData.data.content) {
+          const items = contentData.data.content as Array<any>
+          setProjectOverview(items.find((i) => i.section === 'project_overview' && i.content_key === 'content')?.content_value || '')
+        }
+      } catch (err) {
+        setError(err instanceof Error ? err.message : 'An error occurred')
+        console.error('Error fetching data:', err)
+      } finally {
+        setLoading(false)
       }
-    } catch (error) {
-      console.error('Error fetching categories:', error)
     }
-  }
 
-  const fetchContent = async () => {
+    fetchData()
+  }, [])
+
+  const handleRefresh = async () => {
+    setRefreshing(true)
     try {
-      const res = await fetch('/api/content?page=projects')
-      const data = await res.json()
-      if (data.success) {
-        const items = data.data.content as Array<any>
-        setProjectOverview(items.find((i) => i.section === 'project_overview' && i.content_key === 'content')?.content_value || '')
-        setProjectCategories(items.find((i) => i.section === 'categories' && i.content_key === 'content')?.content_value || '')
-        setProjectAchievements(items.find((i) => i.section === 'achievements' && i.content_key === 'content')?.content_value || '')
+      const response = await fetch('/api/projects')
+      const result = await response.json()
+      
+      if (result.success || result.data) {
+        setProjects(result.data || [])
+      } else {
+        setError(result.error || 'Failed to refresh projects')
       }
-    } catch (e) {
-      // ignore
+    } catch (err) {
+      setError('Failed to refresh projects')
+      console.error('Error refreshing projects:', err)
+    } finally {
+      setRefreshing(false)
     }
   }
 
   const getCategoryIcon = (category: string) => {
     switch (category) {
       case 'bullet-train':
-        return <Train className="h-5 w-5" />
+        return <Train className="h-4 w-4" />
       case 'metro-rail':
-        return <Train className="h-5 w-5" />
+        return <Train className="h-4 w-4" />
       case 'roads':
-        return <MapPin className="h-5 w-5" />
+        return <MapPin className="h-4 w-4" />
       case 'buildings-factories':
-        return <Building2 className="h-5 w-5" />
+        return <Building2 className="h-4 w-4" />
       case 'others':
-        return <Factory className="h-5 w-5" />
+        return <Factory className="h-4 w-4" />
       default:
-        return <Building2 className="h-5 w-5" />
+        return <Building2 className="h-4 w-4" />
     }
   }
 
@@ -131,14 +133,33 @@ export default function ProjectsPage() {
     }
   }
 
+  // Get filtered projects
+  const filteredProjects = projects
+    .filter(project => project.is_active)
+    .filter(project => selectedCategory === "all" || project.category === selectedCategory)
+    .filter(project => 
+      searchTerm === "" || 
+      project.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      project.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      project.client_name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      project.location?.toLowerCase().includes(searchTerm.toLowerCase())
+    )
+
+  // Get project count by category
+  const getCategoryProjectCount = (categoryId: string) => {
+    if (categoryId === "all") return projects.filter(p => p.is_active).length
+    return projects.filter(p => p.is_active && p.category === categoryId).length
+  }
+
 
   if (loading) {
     return (
       <div className="min-h-screen bg-background">
-        <div className="container mx-auto px-4 py-8">
+        <Navigation />
+        <div className="flex items-center justify-center min-h-[60vh]">
           <div className="text-center">
-            <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-primary mx-auto"></div>
-            <p className="mt-4 text-muted-foreground">Loading projects...</p>
+            <Loader2 className="h-8 w-8 animate-spin mx-auto mb-4" />
+            <p className="text-muted-foreground">Loading projects...</p>
           </div>
         </div>
       </div>
@@ -148,170 +169,335 @@ export default function ProjectsPage() {
   return (
     <div className="min-h-screen bg-background">
       <Navigation />
-      {/* Header */}
-      <section className="py-20 bg-gradient-to-br from-primary/10 via-primary/5 to-background">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h1 className="text-4xl lg:text-5xl font-bold mb-6" style={{ fontFamily: "var(--font-heading)" }}>
-            Our Project Portfolio
-          </h1>
-          <p className="text-xl text-muted-foreground max-w-3xl mx-auto leading-relaxed">
-            {projectOverview || 'Showcasing our expertise across diverse industrial and infrastructure projects'}
-          </p>
+
+      {/* Hero Section */}
+      <section className="py-20 bg-gradient-to-br from-primary/10 to-accent/5">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center">
+            <h1
+              className="text-4xl lg:text-5xl font-black text-foreground mb-6"
+              style={{ fontFamily: "var(--font-heading)" }}
+            >
+              Our Project Portfolio
+            </h1>
+            <p className="text-xl text-muted-foreground max-w-3xl mx-auto leading-relaxed">
+              {projectOverview || 'Showcasing our expertise across diverse industrial and infrastructure projects with innovative chemical solutions.'}
+            </p>
+          </div>
         </div>
       </section>
 
-      {/* Search and Filter */}
+      {/* Main Content with Sidebar */}
       <section className="py-12">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex flex-col sm:flex-row gap-4 mb-8">
-            <div className="flex-1">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
-              <input
-                type="text"
-                placeholder="Search projects..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full pl-10 pr-4 py-2 border border-input rounded-md bg-background text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary"
-              />
-            </div>
-            <Select value={selectedCategory} onValueChange={setSelectedCategory}>
-              <SelectTrigger className="w-full sm:w-48">
-                <SelectValue placeholder="All Categories" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">All Categories</SelectItem>
-                <SelectItem value="bullet-train">High Speed Rail</SelectItem>
-                <SelectItem value="metro-rail">Metro & Rail</SelectItem>
-                <SelectItem value="roads">Roads & Highways</SelectItem>
-                <SelectItem value="buildings-factories">Buildings & Factories</SelectItem>
-                <SelectItem value="others">Other Projects</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
+          <div className="flex gap-8">
+            {/* Left Sidebar - Categories */}
+            <div className="hidden lg:block w-72 flex-shrink-0">
+              <div className="bg-card border border-border rounded-lg p-6 sticky top-24">
+                <h3 className="text-lg font-semibold mb-4 text-foreground">Project Categories</h3>
+                
+                {/* Search */}
+                <div className="relative mb-6">
+                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
+                  <Input
+                    placeholder="Search projects..."
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                    className="pl-10"
+                  />
+                </div>
 
-          {/* Projects Grid */}
-          <div className="mb-16">
-            <h2 className="text-2xl font-bold mb-6">Project Gallery</h2>
-            {projects.length === 0 && !loading && (
-              <div className="text-center py-12">
-                <p className="text-muted-foreground">No projects found matching your criteria.</p>
-              </div>
-            )}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {projects.map((project) => (
-                <Card key={project.id} className="overflow-hidden hover:shadow-lg transition-all duration-300 hover:-translate-y-1">
-                  <div className="aspect-video relative overflow-hidden bg-muted">
-                    {project.image_url ? (
-                      <Image
-                        src={project.image_url}
-                        alt={project.name}
-                        fill
-                        className="object-cover hover:scale-105 transition-transform duration-300"
-                      />
-                    ) : (
-                      <div className="flex items-center justify-center h-full">
-                        <Building2 className="h-16 w-16 text-muted-foreground/50" />
-                      </div>
-                    )}
-                    <div className="absolute top-2 right-2">
-                      <Badge variant="secondary" className="flex items-center gap-1">
-                        {getCategoryIcon(project.category)}
-                        {getCategoryName(project.category)}
-                      </Badge>
-                    </div>
-                    {project.is_featured && (
-                      <div className="absolute top-2 left-2">
-                        <Badge variant="default" className="bg-primary/90">
-                          Featured
+                {/* Category List */}
+                <div className="space-y-2">
+                  <button
+                    onClick={() => setSelectedCategory("all")}
+                    className={`w-full text-left px-4 py-3 rounded-md transition-colors flex items-center justify-between ${
+                      selectedCategory === "all" 
+                        ? "bg-primary text-primary-foreground" 
+                        : "hover:bg-muted text-foreground"
+                    }`}
+                  >
+                    <span className="flex items-center">
+                      <Building2 className="h-4 w-4 mr-3" />
+                      All Projects
+                    </span>
+                    <Badge variant="secondary" className={selectedCategory === "all" ? "bg-primary-foreground/20 text-primary-foreground" : ""}>
+                      {getCategoryProjectCount("all")}
+                    </Badge>
+                  </button>
+                  
+                  {projectCategories.map((category) => {
+                    const categoryProjectCount = getCategoryProjectCount(category.id)
+                    const IconComponent = category.icon
+                    return (
+                      <button
+                        key={category.id}
+                        onClick={() => setSelectedCategory(category.id)}
+                        className={`w-full text-left px-4 py-3 rounded-md transition-colors flex items-center justify-between ${
+                          selectedCategory === category.id 
+                            ? "bg-primary text-primary-foreground" 
+                            : "hover:bg-muted text-foreground"
+                        }`}
+                      >
+                        <span className="flex items-center">
+                          <IconComponent className="h-4 w-4 mr-3" />
+                          {category.name}
+                        </span>
+                        <Badge variant="secondary" className={selectedCategory === category.id ? "bg-primary-foreground/20 text-primary-foreground" : ""}>
+                          {categoryProjectCount}
                         </Badge>
-                      </div>
-                    )}
-                  </div>
-                  <CardContent className="p-6">
-                    <div className="space-y-3">
-                      <div>
-                        <h3 className="font-bold text-lg mb-2 line-clamp-2">{project.name}</h3>
-                        <p className="text-muted-foreground text-sm line-clamp-3 mb-3">
-                          {project.description}
-                        </p>
-                      </div>
-                      
-                      <div className="space-y-2">
-                        {project.client_name && (
-                          <div className="flex items-center gap-2 text-sm">
-                            <Users className="h-4 w-4 text-muted-foreground" />
-                            <span className="text-muted-foreground">Client:</span>
-                            <span className="font-medium">{project.client_name}</span>
-                          </div>
-                        )}
-                        
-                        {project.location && (
-                          <div className="flex items-center gap-2 text-sm">
-                            <MapPin className="h-4 w-4 text-muted-foreground" />
-                            <span className="text-muted-foreground">Location:</span>
-                            <span className="font-medium">{project.location}</span>
-                          </div>
-                        )}
-                        
-                        {project.completion_date && (
-                          <div className="flex items-center gap-2 text-sm">
-                            <span className="text-muted-foreground">Completed:</span>
-                            <span className="font-medium">
-                              {new Date(project.completion_date).getFullYear()}
-                            </span>
-                          </div>
-                        )}
-                      </div>
+                      </button>
+                    )
+                  })}
+                </div>
 
-                      {project.key_features && project.key_features.length > 0 && (
-                        <div className="pt-3 border-t">
-                          <p className="text-sm font-medium mb-2">Key Features:</p>
-                          <div className="flex flex-wrap gap-1">
-                            {project.key_features.slice(0, 3).map((feature, index) => (
-                              <Badge key={index} variant="outline" className="text-xs">
-                                {feature}
-                              </Badge>
-                            ))}
-                            {project.key_features.length > 3 && (
-                              <Badge variant="outline" className="text-xs">
-                                +{project.key_features.length - 3} more
-                              </Badge>
-                            )}
-                          </div>
-                        </div>
-                      )}
+                {/* Refresh Button */}
+                <Button
+                  variant="outline"
+                  onClick={handleRefresh}
+                  disabled={refreshing}
+                  className="w-full mt-6"
+                >
+                  {refreshing ? (
+                    <>
+                      <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                      Refreshing...
+                    </>
+                  ) : (
+                    <>
+                      <RefreshCw className="h-4 w-4 mr-2" />
+                      Refresh Projects
+                    </>
+                  )}
+                </Button>
+              </div>
+            </div>
+
+            {/* Right Content Area */}
+            <div className="flex-1">
+              {/* Mobile Category Filter */}
+              <div className="lg:hidden mb-6">
+                <div className="bg-card border border-border rounded-lg p-4">
+                  <div className="space-y-4">
+                    {/* Search */}
+                    <div className="relative">
+                      <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
+                      <Input
+                        placeholder="Search projects..."
+                        value={searchTerm}
+                        onChange={(e) => setSearchTerm(e.target.value)}
+                        className="pl-10"
+                      />
                     </div>
                     
-                    <Button asChild variant="outline" size="sm" className="w-full mt-4 hover:bg-primary hover:text-primary-foreground transition-colors">
-                      <Link href={`/projects/${project.id}`}>
-                        <ExternalLink className="h-4 w-4 mr-2" />
-                        View Details
-                      </Link>
+                    {/* Mobile Category Buttons */}
+                    <div className="flex flex-wrap gap-2">
+                      <Button
+                        variant={selectedCategory === "all" ? "default" : "outline"}
+                        onClick={() => setSelectedCategory("all")}
+                        size="sm"
+                      >
+                        All ({getCategoryProjectCount("all")})
+                      </Button>
+                      {projectCategories.map((category) => {
+                        const count = getCategoryProjectCount(category.id)
+                        return (
+                          <Button
+                            key={category.id}
+                            variant={selectedCategory === category.id ? "default" : "outline"}
+                            onClick={() => setSelectedCategory(category.id)}
+                            size="sm"
+                          >
+                            {category.name} ({count})
+                          </Button>
+                        )
+                      })}
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Results Header */}
+              <div className="flex items-center justify-between mb-6">
+                <div>
+                  <h2 className="text-2xl font-bold text-foreground">
+                    {selectedCategory === "all" 
+                      ? "All Projects" 
+                      : getCategoryName(selectedCategory)
+                    }
+                  </h2>
+                  <p className="text-muted-foreground mt-1">
+                    {filteredProjects.length} project{filteredProjects.length !== 1 ? 's' : ''} found
+                    {searchTerm && ` for "${searchTerm}"`}
+                  </p>
+                </div>
+              </div>
+
+              {/* Error State */}
+              {error && (
+                <div className="bg-destructive/15 border border-destructive/20 rounded-lg p-4 mb-6">
+                  <p className="text-destructive text-sm">{error}</p>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={handleRefresh}
+                    className="mt-2"
+                  >
+                    Try Again
+                  </Button>
+                </div>
+              )}
+
+              {/* Projects Grid */}
+              {filteredProjects.length === 0 ? (
+                <div className="text-center py-12">
+                  <Building2 className="h-16 w-16 mx-auto text-muted-foreground/50 mb-4" />
+                  <h3 className="text-lg font-semibold text-muted-foreground mb-2">
+                    No projects found
+                  </h3>
+                  <p className="text-muted-foreground">
+                    {searchTerm 
+                      ? `Try adjusting your search terms or browse other categories.`
+                      : `No projects available in this category.`
+                    }
+                  </p>
+                  {searchTerm && (
+                    <Button
+                      variant="outline"
+                      onClick={() => setSearchTerm("")}
+                      className="mt-4"
+                    >
+                      Clear Search
                     </Button>
-                  </CardContent>
-                </Card>
-              ))}
+                  )}
+                </div>
+              ) : (
+                <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+                  {filteredProjects.map((project) => (
+                    <Card key={project.id} className="h-full hover:shadow-lg transition-shadow duration-300">
+                      <div className="aspect-video relative overflow-hidden bg-muted rounded-t-lg">
+                        {project.image_url ? (
+                          <Image
+                            src={project.image_url}
+                            alt={project.name}
+                            fill
+                            className="object-cover hover:scale-105 transition-transform duration-300"
+                          />
+                        ) : (
+                          <div className="flex items-center justify-center h-full">
+                            <Building2 className="h-16 w-16 text-muted-foreground/50" />
+                          </div>
+                        )}
+                        <div className="absolute top-2 right-2">
+                          <Badge variant="secondary" className="flex items-center gap-1">
+                            {getCategoryIcon(project.category)}
+                            {getCategoryName(project.category)}
+                          </Badge>
+                        </div>
+                        {project.is_featured && (
+                          <div className="absolute top-2 left-2">
+                            <Badge variant="default" className="bg-primary/90">
+                              <Award className="h-3 w-3 mr-1" />
+                              Featured
+                            </Badge>
+                          </div>
+                        )}
+                      </div>
+                      <CardContent className="p-6">
+                        <div className="space-y-3">
+                          <div>
+                            <h3 className="font-bold text-lg mb-2 line-clamp-2">{project.name}</h3>
+                            <p className="text-muted-foreground text-sm line-clamp-3 mb-3">
+                              {project.description}
+                            </p>
+                          </div>
+                          
+                          <div className="space-y-2">
+                            {project.client_name && (
+                              <div className="flex items-center gap-2 text-sm">
+                                <Users className="h-4 w-4 text-muted-foreground" />
+                                <span className="text-muted-foreground">Client:</span>
+                                <span className="font-medium">{project.client_name}</span>
+                              </div>
+                            )}
+                            
+                            {project.location && (
+                              <div className="flex items-center gap-2 text-sm">
+                                <MapPin className="h-4 w-4 text-muted-foreground" />
+                                <span className="text-muted-foreground">Location:</span>
+                                <span className="font-medium">{project.location}</span>
+                              </div>
+                            )}
+                            
+                            {project.completion_date && (
+                              <div className="flex items-center gap-2 text-sm">
+                                <span className="text-muted-foreground">Completed:</span>
+                                <span className="font-medium">
+                                  {new Date(project.completion_date).getFullYear()}
+                                </span>
+                              </div>
+                            )}
+                          </div>
+
+                          {project.key_features && project.key_features.length > 0 && (
+                            <div className="pt-3 border-t">
+                              <p className="text-sm font-medium mb-2">Key Features:</p>
+                              <div className="flex flex-wrap gap-1">
+                                {project.key_features.slice(0, 3).map((feature, index) => (
+                                  <Badge key={index} variant="outline" className="text-xs">
+                                    {feature}
+                                  </Badge>
+                                ))}
+                                {project.key_features.length > 3 && (
+                                  <Badge variant="outline" className="text-xs">
+                                    +{project.key_features.length - 3} more
+                                  </Badge>
+                                )}
+                              </div>
+                            </div>
+                          )}
+                        </div>
+                        
+                        <Button asChild className="w-full mt-4" size="sm">
+                          <Link href={`/projects/${project.id}`}>
+                            <ExternalLink className="h-4 w-4 mr-2" />
+                            View Details
+                          </Link>
+                        </Button>
+                      </CardContent>
+                    </Card>
+                  ))}
+                </div>
+              )}
             </div>
           </div>
+        </div>
+      </section>
 
-          {/* Client Section - Show unique client names from projects */}
-          {projects.length > 0 && (
-            <div>
-              <h2 className="text-2xl font-bold mb-6">Our Clients</h2>
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                {[...new Set(projects.filter(p => p.client_name).map(p => p.client_name))].slice(0, 12).map((clientName, index) => (
-                  <Card key={index} className="p-4 text-center hover:shadow-md transition-shadow">
-                    <div className="flex items-center justify-center h-16 mb-2">
-                      <Users className="h-8 w-8 text-primary/60" />
-                    </div>
-                    <p className="text-sm font-medium text-foreground">
-                      {clientName}
-                    </p>
-                  </Card>
-                ))}
-              </div>
-            </div>
-          )}
+      {/* Contact CTA Section */}
+      <section className="py-20 bg-primary text-primary-foreground">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+          <h2 className="text-3xl lg:text-4xl font-bold mb-4" style={{ fontFamily: "var(--font-heading)" }}>
+            Ready to Start Your Next Project?
+          </h2>
+          <p className="text-xl mb-8 opacity-90 max-w-2xl mx-auto">
+            Let our experienced team help you achieve exceptional results with our proven chemical solutions.
+          </p>
+          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+            <Button asChild size="lg" variant="secondary">
+              <Link href="/contact">Contact Our Team</Link>
+            </Button>
+            <Button
+              asChild
+              size="lg"
+              variant="outline"
+              className="border-primary-foreground text-primary-foreground hover:bg-primary-foreground hover:text-primary bg-transparent"
+            >
+              <Link href="tel:+918890913222">
+                Call Now
+              </Link>
+            </Button>
+          </div>
         </div>
       </section>
 
