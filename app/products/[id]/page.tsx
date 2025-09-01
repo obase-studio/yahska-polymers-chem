@@ -1,66 +1,72 @@
-"use client"
+"use client";
 
-import { useState, useEffect } from "react"
-import { useParams } from "next/navigation"
-import { Navigation } from "@/components/navigation"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
-import { Badge } from "@/components/ui/badge"
-import { ArrowLeft, Mail, Phone, Loader2, AlertCircle } from "lucide-react"
-import Link from "next/link"
-import { Footer } from "@/components/footer"
+import { useState, useEffect } from "react";
+import { useParams } from "next/navigation";
+import { Navigation } from "@/components/navigation";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { ArrowLeft, Mail, Phone, Loader2, AlertCircle, Package } from "lucide-react";
+import Link from "next/link";
+import { Footer } from "@/components/footer";
 
 interface Product {
-  id: number
-  name: string
-  description: string
-  category_id: string
-  category_name: string
-  applications: string[]
-  features: string[]
-  usage: string
-  advantages: string
-  technical_specifications: string
-  product_code: string
-  is_active: boolean
+  id: number;
+  name: string;
+  description: string;
+  category_id: string;
+  category_name: string;
+  applications: string[];
+  features: string[];
+  usage: string;
+  advantages: string;
+  technical_specifications: string;
+  product_code: string;
+  is_active: boolean;
 }
 
 export default function ProductDetailPage() {
-  const params = useParams()
-  const productId = params.id
-  const [product, setProduct] = useState<Product | null>(null)
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState<string | null>(null)
+  const params = useParams();
+  const productId = params.id;
+  const [product, setProduct] = useState<Product | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchProduct = async () => {
       try {
-        setLoading(true)
-        const response = await fetch(`/api/products/${productId}`)
-        const result = await response.json()
-        
+        setLoading(true);
+        const response = await fetch(`/api/products/${productId}`);
+        const result = await response.json();
+
         if (result.success) {
-          setProduct(result.data)
+          setProduct(result.data);
         } else {
-          setError(result.error || 'Product not found')
+          setError(result.error || "Product not found");
         }
       } catch (err) {
-        setError('Failed to fetch product details')
-        console.error('Error fetching product:', err)
+        setError("Failed to fetch product details");
+        console.error("Error fetching product:", err);
       } finally {
-        setLoading(false)
+        setLoading(false);
       }
-    }
+    };
 
     if (productId) {
-      fetchProduct()
+      fetchProduct();
     }
-  }, [productId])
+  }, [productId]);
 
   // Safely get array fields
   const getArrayField = (field: string[] | null) => {
-    return Array.isArray(field) ? field : []
-  }
+    return Array.isArray(field) ? field : [];
+  };
 
   if (loading) {
     return (
@@ -72,7 +78,7 @@ export default function ProductDetailPage() {
         </div>
         <Footer />
       </div>
-    )
+    );
   }
 
   if (error || !product) {
@@ -81,8 +87,12 @@ export default function ProductDetailPage() {
         <Navigation />
         <div className="text-center py-20">
           <AlertCircle className="h-16 w-16 mx-auto mb-4 text-destructive" />
-          <h1 className="text-2xl font-bold text-foreground mb-2">Product Not Found</h1>
-          <p className="text-muted-foreground mb-6">{error || 'The requested product could not be found.'}</p>
+          <h1 className="text-2xl font-bold text-foreground mb-2">
+            Product Not Found
+          </h1>
+          <p className="text-muted-foreground mb-6">
+            {error || "The requested product could not be found."}
+          </p>
           <Button asChild>
             <Link href="/products">
               <ArrowLeft className="mr-2 h-4 w-4" />
@@ -92,11 +102,11 @@ export default function ProductDetailPage() {
         </div>
         <Footer />
       </div>
-    )
+    );
   }
 
-  const applications = getArrayField(product.applications)
-  const features = getArrayField(product.features)
+  const applications = getArrayField(product.applications);
+  const features = getArrayField(product.features);
 
   return (
     <div className="min-h-screen bg-background">
@@ -106,9 +116,13 @@ export default function ProductDetailPage() {
       <section className="py-6 bg-muted/30">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <nav className="flex items-center space-x-2 text-sm text-muted-foreground">
-            <Link href="/" className="hover:text-foreground">Home</Link>
+            <Link href="/" className="hover:text-foreground">
+              Home
+            </Link>
             <span>/</span>
-            <Link href="/products" className="hover:text-foreground">Products</Link>
+            <Link href="/products" className="hover:text-foreground">
+              Products
+            </Link>
             <span>/</span>
             <span className="text-foreground">{product.name}</span>
           </nav>
@@ -126,23 +140,30 @@ export default function ProductDetailPage() {
               </Link>
             </Button>
           </div>
-          
+
           <div className="grid lg:grid-cols-2 gap-12 items-start">
             <div>
               <Badge variant="secondary" className="mb-4">
                 {product.category_name}
               </Badge>
-              <h1 className="text-4xl lg:text-5xl font-black text-foreground mb-6" style={{ fontFamily: "var(--font-heading)" }}>
+              <h1
+                className="text-4xl lg:text-5xl font-black text-foreground mb-6"
+                style={{ fontFamily: "var(--font-heading)" }}
+              >
                 {product.name}
               </h1>
               <p className="text-xl text-muted-foreground leading-relaxed mb-6">
                 {product.description}
               </p>
-              
+
               {product.product_code && (
                 <div className="mb-6">
-                  <span className="text-sm text-muted-foreground">Product Code: </span>
-                  <span className="font-mono text-primary font-semibold">{product.product_code}</span>
+                  <span className="text-sm text-muted-foreground">
+                    Product Code:{" "}
+                  </span>
+                  <span className="font-mono text-primary font-semibold">
+                    {product.product_code}
+                  </span>
                 </div>
               )}
 
@@ -158,27 +179,13 @@ export default function ProductDetailPage() {
               </div>
             </div>
 
-            <div className="bg-muted/30 rounded-lg p-8">
-              <h3 className="text-lg font-semibold mb-4">Quick Overview</h3>
-              <div className="space-y-3">
-                <div className="flex justify-between">
-                  <span className="text-muted-foreground">Category:</span>
-                  <span className="font-medium">{product.category_name}</span>
+            <div className="bg-muted/30 rounded-lg p-8 flex items-center justify-center min-h-[400px]">
+              <div className="text-center">
+                <div className="w-32 h-32 bg-muted rounded-lg flex items-center justify-center mb-4 mx-auto">
+                  <Package className="w-16 h-16 text-muted-foreground" />
                 </div>
-                {product.product_code && (
-                  <div className="flex justify-between">
-                    <span className="text-muted-foreground">Product Code:</span>
-                    <span className="font-mono text-primary">{product.product_code}</span>
-                  </div>
-                )}
-                <div className="flex justify-between">
-                  <span className="text-muted-foreground">Applications:</span>
-                  <span className="font-medium">{applications.length}</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-muted-foreground">Key Features:</span>
-                  <span className="font-medium">{features.length}</span>
-                </div>
+                <p className="text-sm text-muted-foreground">Product Image</p>
+                <p className="text-xs text-muted-foreground/70 mt-1">Coming Soon</p>
               </div>
             </div>
           </div>
@@ -189,13 +196,14 @@ export default function ProductDetailPage() {
       <section className="py-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid lg:grid-cols-2 gap-12">
-            
             {/* Applications */}
             {applications.length > 0 && (
-              <Card>
+              <Card className="py-6">
                 <CardHeader>
                   <CardTitle className="text-primary">Applications</CardTitle>
-                  <CardDescription>Where and how this product can be used</CardDescription>
+                  <CardDescription>
+                    Where and how this product can be used
+                  </CardDescription>
                 </CardHeader>
                 <CardContent>
                   <ul className="space-y-3">
@@ -212,10 +220,12 @@ export default function ProductDetailPage() {
 
             {/* Key Features */}
             {features.length > 0 && (
-              <Card>
+              <Card className="py-6">
                 <CardHeader>
                   <CardTitle className="text-primary">Key Features</CardTitle>
-                  <CardDescription>What makes this product special</CardDescription>
+                  <CardDescription>
+                    What makes this product special
+                  </CardDescription>
                 </CardHeader>
                 <CardContent>
                   <ul className="space-y-3">
@@ -234,8 +244,12 @@ export default function ProductDetailPage() {
             {product.usage && (
               <Card>
                 <CardHeader>
-                  <CardTitle className="text-primary">Usage Instructions</CardTitle>
-                  <CardDescription>How to properly use this product</CardDescription>
+                  <CardTitle className="text-primary">
+                    Usage Instructions
+                  </CardTitle>
+                  <CardDescription>
+                    How to properly use this product
+                  </CardDescription>
                 </CardHeader>
                 <CardContent>
                   <p className="text-muted-foreground leading-relaxed">
@@ -250,7 +264,9 @@ export default function ProductDetailPage() {
               <Card>
                 <CardHeader>
                   <CardTitle className="text-primary">Advantages</CardTitle>
-                  <CardDescription>Benefits of using this product</CardDescription>
+                  <CardDescription>
+                    Benefits of using this product
+                  </CardDescription>
                 </CardHeader>
                 <CardContent>
                   <p className="text-muted-foreground leading-relaxed">
@@ -264,8 +280,12 @@ export default function ProductDetailPage() {
             {product.technical_specifications && (
               <Card className="lg:col-span-2">
                 <CardHeader>
-                  <CardTitle className="text-primary">Technical Specifications</CardTitle>
-                  <CardDescription>Detailed technical information</CardDescription>
+                  <CardTitle className="text-primary">
+                    Technical Specifications
+                  </CardTitle>
+                  <CardDescription>
+                    Detailed technical information
+                  </CardDescription>
                 </CardHeader>
                 <CardContent>
                   <p className="text-muted-foreground leading-relaxed">
@@ -281,11 +301,16 @@ export default function ProductDetailPage() {
       {/* Contact CTA */}
       <section className="py-20 bg-primary text-primary-foreground">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h2 className="text-3xl lg:text-4xl font-bold mb-4" style={{ fontFamily: "var(--font-heading)" }}>
+          <h2
+            className="text-3xl lg:text-4xl font-bold mb-4"
+            style={{ fontFamily: "var(--font-heading)" }}
+          >
             Need More Information?
           </h2>
           <p className="text-xl mb-8 opacity-90 max-w-2xl mx-auto">
-            Our technical experts can provide detailed specifications, application guidance, and custom solutions for your specific requirements.
+            Our technical experts can provide detailed specifications,
+            application guidance, and custom solutions for your specific
+            requirements.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Button asChild size="lg" variant="secondary">
@@ -311,5 +336,5 @@ export default function ProductDetailPage() {
 
       <Footer />
     </div>
-  )
+  );
 }
