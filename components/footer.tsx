@@ -1,35 +1,10 @@
 import Link from "next/link"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
 import { Separator } from "@/components/ui/separator"
-import { MapPin, Phone, Mail, Clock, Facebook, Twitter, Linkedin, Instagram, Send } from "lucide-react"
+import { MapPin, Phone, Mail, Clock, Facebook, Twitter, Linkedin, Instagram } from "lucide-react"
 
 export function Footer() {
   return (
     <footer className="bg-muted/30 border-t border-border">
-      {/* Newsletter Section */}
-      <div className="bg-primary text-primary-foreground">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-          <div className="text-center">
-            <h3 className="text-2xl font-bold mb-4" style={{ fontFamily: "var(--font-heading)" }}>
-              Stay Updated with Industry Insights
-            </h3>
-            <p className="text-lg opacity-90 mb-6 max-w-2xl mx-auto">
-              Subscribe to our newsletter for the latest product updates, industry trends, and technical insights.
-            </p>
-            <div className="flex flex-col sm:flex-row gap-4 max-w-md mx-auto">
-              <Input
-                placeholder="Enter your email address"
-                className="bg-primary-foreground text-primary placeholder:text-primary/60"
-              />
-              <Button variant="secondary" size="default">
-                <Send className="mr-2 h-4 w-4" />
-                Subscribe
-              </Button>
-            </div>
-          </div>
-        </div>
-      </div>
 
       {/* Main Footer Content */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">

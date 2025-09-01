@@ -287,78 +287,15 @@ export default function ClientsPage() {
               className="text-4xl lg:text-5xl font-black text-foreground mb-6"
               style={{ fontFamily: "var(--font-heading)" }}
             >
-              Our Valued Clients
+              Our Clients
             </h1>
             <p className="text-xl text-muted-foreground max-w-3xl mx-auto leading-relaxed">
-              Trusted by over 500+ companies across India for their chemical
-              solution needs. Building lasting partnerships through quality
-              products and exceptional service.
+              Leading companies that trust us for their chemical solution needs.
             </p>
           </div>
         </div>
       </section>
 
-      {/* Client Statistics */}
-      <section className="py-16 bg-muted/50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-8">
-            <div className="text-center">
-              <div className="text-4xl font-bold text-primary mb-2">500+</div>
-              <div className="text-muted-foreground">Active Clients</div>
-            </div>
-            <div className="text-center">
-              <div className="text-4xl font-bold text-primary mb-2">15+</div>
-              <div className="text-muted-foreground">States Served</div>
-            </div>
-            <div className="text-center">
-              <div className="text-4xl font-bold text-primary mb-2">98%</div>
-              <div className="text-muted-foreground">Client Retention</div>
-            </div>
-            <div className="text-center">
-              <div className="text-4xl font-bold text-primary mb-2">20+</div>
-              <div className="text-muted-foreground">Years Experience</div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Client Categories */}
-      <section className="py-20">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-16">
-            <h2
-              className="text-3xl lg:text-4xl font-bold text-foreground mb-4"
-              style={{ fontFamily: "var(--font-heading)" }}
-            >
-              Industries We Serve
-            </h2>
-            <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
-              Our diverse client base spans across multiple industries, each
-              with unique requirements and challenges
-            </p>
-          </div>
-
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
-            {clientCategories.map((category, index) => (
-              <Card
-                key={index}
-                className="hover:shadow-lg transition-shadow duration-300"
-              >
-                <CardHeader>
-                  <div className="flex items-center justify-between">
-                    <Building2 className="h-8 w-8 text-primary" />
-                    <Badge className={category.color}>
-                      {category.count}+ clients
-                    </Badge>
-                  </div>
-                  <CardTitle className="text-lg">{category.name}</CardTitle>
-                  <CardDescription>{category.description}</CardDescription>
-                </CardHeader>
-              </Card>
-            ))}
-          </div>
-        </div>
-      </section>
 
       {/* Client Logos Grid */}
       <section className="py-20 bg-muted/50">
@@ -570,164 +507,8 @@ export default function ClientsPage() {
         </div>
       </section>
 
-      {/* Client Testimonials */}
-      <section className="py-20">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-16">
-            <h2
-              className="text-3xl lg:text-4xl font-bold text-foreground mb-4"
-              style={{ fontFamily: "var(--font-heading)" }}
-            >
-              What Our Clients Say
-            </h2>
-            <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
-              Real feedback from industry leaders who trust Yahska Polymers for
-              their chemical solutions
-            </p>
-          </div>
 
-          <div className="grid md:grid-cols-3 gap-8">
-            {testimonials.map((testimonial, index) => (
-              <Card
-                key={index}
-                className="hover:shadow-lg transition-shadow duration-300"
-              >
-                <CardHeader>
-                  <div className="flex items-center space-x-1 mb-4">
-                    {[...Array(testimonial.rating)].map((_, i) => (
-                      <Star
-                        key={i}
-                        className="h-4 w-4 fill-yellow-400 text-yellow-400"
-                      />
-                    ))}
-                  </div>
-                  <Quote className="h-8 w-8 text-primary/20" />
-                </CardHeader>
-                <CardContent>
-                  <p className="text-muted-foreground mb-6 italic">
-                    "{testimonial.content}"
-                  </p>
-                  <div className="border-t border-border pt-4">
-                    <div className="font-semibold text-foreground">
-                      {testimonial.name}
-                    </div>
-                    <div className="text-sm text-muted-foreground">
-                      {testimonial.position}
-                    </div>
-                    <div className="text-sm text-primary font-medium">
-                      {testimonial.company}
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-        </div>
-      </section>
 
-      {/* Geographic Presence */}
-      <section className="py-20 bg-muted/50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-16">
-            <h2
-              className="text-3xl lg:text-4xl font-bold text-foreground mb-4"
-              style={{ fontFamily: "var(--font-heading)" }}
-            >
-              Pan-India Presence
-            </h2>
-            <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
-              Serving clients across major industrial hubs in India with
-              reliable supply chain and logistics
-            </p>
-          </div>
-
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {[
-              {
-                state: "Gujarat",
-                clients: "180+",
-                cities: ["Ahmedabad", "Surat", "Vadodara", "Rajkot"],
-              },
-              {
-                state: "Maharashtra",
-                clients: "120+",
-                cities: ["Mumbai", "Pune", "Nashik", "Aurangabad"],
-              },
-              {
-                state: "Tamil Nadu",
-                clients: "90+",
-                cities: ["Chennai", "Coimbatore", "Tirupur", "Salem"],
-              },
-              {
-                state: "Karnataka",
-                clients: "70+",
-                cities: ["Bangalore", "Mysore", "Hubli", "Belgaum"],
-              },
-            ].map((region, index) => (
-              <Card key={index}>
-                <CardHeader>
-                  <CardTitle className="text-lg text-primary">
-                    {region.state}
-                  </CardTitle>
-                  <CardDescription>
-                    {region.clients} active clients
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <div className="space-y-2">
-                    <h4 className="font-semibold text-sm text-foreground">
-                      Major Cities:
-                    </h4>
-                    <div className="flex flex-wrap gap-1">
-                      {region.cities.map((city, cityIndex) => (
-                        <Badge
-                          key={cityIndex}
-                          variant="outline"
-                          className="text-xs"
-                        >
-                          {city}
-                        </Badge>
-                      ))}
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* CTA Section */}
-      <section className="py-20 bg-primary text-primary-foreground">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h2
-            className="text-3xl lg:text-4xl font-bold mb-4"
-            style={{ fontFamily: "var(--font-heading)" }}
-          >
-            Join Our Growing Family of Satisfied Clients
-          </h2>
-          <p className="text-xl mb-8 opacity-90 max-w-2xl mx-auto">
-            Experience the quality and service that has made us the preferred
-            choice for leading companies across India.
-          </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Button asChild size="lg" variant="secondary">
-              <Link href="/contact">
-                <Users className="mr-2 h-5 w-5" />
-                Become Our Client
-              </Link>
-            </Button>
-            <Button
-              asChild
-              size="lg"
-              variant="outline"
-              className="border-primary-foreground text-primary-foreground hover:bg-primary-foreground hover:text-primary bg-transparent"
-            >
-              <Link href="/products">Explore Our Products</Link>
-            </Button>
-          </div>
-        </div>
-      </section>
 
       <Footer />
     </div>

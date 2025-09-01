@@ -12,7 +12,7 @@ import {
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { ArrowLeft, Mail, Phone, Loader2, AlertCircle } from "lucide-react";
+import { ArrowLeft, Mail, Phone, Loader2, AlertCircle, Package } from "lucide-react";
 import Link from "next/link";
 import { Footer } from "@/components/footer";
 
@@ -179,29 +179,13 @@ export default function ProductDetailPage() {
               </div>
             </div>
 
-            <div className="bg-muted/30 rounded-lg p-8">
-              <h3 className="text-lg font-semibold mb-4">Quick Overview</h3>
-              <div className="space-y-3">
-                <div className="flex justify-between">
-                  <span className="text-muted-foreground">Category:</span>
-                  <span className="font-medium">{product.category_name}</span>
+            <div className="bg-muted/30 rounded-lg p-8 flex items-center justify-center min-h-[400px]">
+              <div className="text-center">
+                <div className="w-32 h-32 bg-muted rounded-lg flex items-center justify-center mb-4 mx-auto">
+                  <Package className="w-16 h-16 text-muted-foreground" />
                 </div>
-                {product.product_code && (
-                  <div className="flex justify-between">
-                    <span className="text-muted-foreground">Product Code:</span>
-                    <span className="font-mono text-primary">
-                      {product.product_code}
-                    </span>
-                  </div>
-                )}
-                <div className="flex justify-between">
-                  <span className="text-muted-foreground">Applications:</span>
-                  <span className="font-medium">{applications.length}</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-muted-foreground">Key Features:</span>
-                  <span className="font-medium">{features.length}</span>
-                </div>
+                <p className="text-sm text-muted-foreground">Product Image</p>
+                <p className="text-xs text-muted-foreground/70 mt-1">Coming Soon</p>
               </div>
             </div>
           </div>

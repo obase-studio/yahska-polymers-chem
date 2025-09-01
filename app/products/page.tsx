@@ -451,7 +451,7 @@ export default function ProductsPage() {
                         <div className="flex gap-2 mt-6">
                           <Button
                             asChild
-                            className="flex-1 flex items-center justify-center"
+                            className="w-full flex items-center justify-center"
                             size="sm"
                           >
                             <Link
@@ -460,19 +460,6 @@ export default function ProductsPage() {
                             >
                               <ArrowRight className="h-4 w-4 mr-2" />
                               View Details
-                            </Link>
-                          </Button>
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            asChild
-                            className="flex-1 flex items-center justify-center"
-                          >
-                            <Link
-                              href="/contact"
-                              className="flex items-center justify-center w-full"
-                            >
-                              <Mail className="h-4 w-4" />
                             </Link>
                           </Button>
                         </div>
