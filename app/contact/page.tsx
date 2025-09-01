@@ -1,16 +1,22 @@
-"use client"
+"use client";
 
-import type React from "react"
-import { Footer } from "@/components/footer"
-import { useState } from "react"
-import { Navigation } from "@/components/navigation"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Textarea } from "@/components/ui/textarea"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { MapPin, Phone, Mail, Send } from "lucide-react"
+import type React from "react";
+import { Footer } from "@/components/footer";
+import { useState } from "react";
+import { Navigation } from "@/components/navigation";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { MapPin, Phone, Mail, Send } from "lucide-react";
 
 export default function ContactPage() {
   const [formData, setFormData] = useState({
@@ -21,23 +27,25 @@ export default function ContactPage() {
     industry: "",
     inquiryType: "",
     message: "",
-  })
+  });
 
-  const [isSubmitting, setIsSubmitting] = useState(false)
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleInputChange = (field: string, value: string) => {
-    setFormData((prev) => ({ ...prev, [field]: value }))
-  }
+    setFormData((prev) => ({ ...prev, [field]: value }));
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    setIsSubmitting(true)
+    e.preventDefault();
+    setIsSubmitting(true);
 
     // Simulate form submission
-    await new Promise((resolve) => setTimeout(resolve, 2000))
+    await new Promise((resolve) => setTimeout(resolve, 2000));
 
-    console.log("Form submitted:", formData)
-    alert("Thank you for your inquiry! We will get back to you within 24 hours.")
+    console.log("Form submitted:", formData);
+    alert(
+      "Thank you for your inquiry! We will get back to you within 24 hours."
+    );
 
     // Reset form
     setFormData({
@@ -48,10 +56,10 @@ export default function ContactPage() {
       industry: "",
       inquiryType: "",
       message: "",
-    })
+    });
 
-    setIsSubmitting(false)
-  }
+    setIsSubmitting(false);
+  };
 
   return (
     <div className="min-h-screen bg-background">
@@ -60,7 +68,7 @@ export default function ContactPage() {
       {/* Hero Section */}
       <section className="py-20 bg-gradient-to-br from-primary/10 to-accent/5">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center">
+          <div className="text-center py-6">
             <h1
               className="text-4xl lg:text-5xl font-black text-foreground mb-6"
               style={{ fontFamily: "var(--font-heading)" }}
@@ -68,7 +76,9 @@ export default function ContactPage() {
               Contact Us
             </h1>
             <p className="text-xl text-muted-foreground max-w-3xl mx-auto leading-relaxed">
-              Get in touch with our experts for customized chemical solutions. We're here to help you find the perfect products for your industrial needs.
+              Get in touch with our experts for customized chemical solutions.
+              We're here to help you find the perfect products for your
+              industrial needs.
             </p>
           </div>
         </div>
@@ -78,14 +88,17 @@ export default function ContactPage() {
       <section className="py-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid lg:grid-cols-2 gap-12">
-            
             {/* Contact Form */}
             <div>
-              <h2 className="text-3xl font-bold text-foreground mb-6" style={{ fontFamily: "var(--font-heading)" }}>
+              <h2
+                className="text-3xl font-bold text-foreground mb-6"
+                style={{ fontFamily: "var(--font-heading)" }}
+              >
                 Send Us a Message
               </h2>
               <p className="text-muted-foreground mb-8">
-                Fill out the form below and our team will get back to you within 24 hours with a customized solution for your requirements.
+                Fill out the form below and our team will get back to you within
+                24 hours with a customized solution for your requirements.
               </p>
 
               <form onSubmit={handleSubmit} className="space-y-6">
@@ -94,8 +107,11 @@ export default function ContactPage() {
                     <Label htmlFor="name">Full Name *</Label>
                     <Input
                       id="name"
+                      className="mt-4"
                       value={formData.name}
-                      onChange={(e) => handleInputChange("name", e.target.value)}
+                      onChange={(e) =>
+                        handleInputChange("name", e.target.value)
+                      }
                       placeholder="Enter your full name"
                       required
                     />
@@ -105,8 +121,11 @@ export default function ContactPage() {
                     <Input
                       id="email"
                       type="email"
+                      className="mt-4"
                       value={formData.email}
-                      onChange={(e) => handleInputChange("email", e.target.value)}
+                      onChange={(e) =>
+                        handleInputChange("email", e.target.value)
+                      }
                       placeholder="Enter your email"
                       required
                     />
@@ -118,8 +137,11 @@ export default function ContactPage() {
                     <Label htmlFor="phone">Phone Number *</Label>
                     <Input
                       id="phone"
+                      className="mt-4"
                       value={formData.phone}
-                      onChange={(e) => handleInputChange("phone", e.target.value)}
+                      onChange={(e) =>
+                        handleInputChange("phone", e.target.value)
+                      }
                       placeholder="Enter your phone number"
                       required
                     />
@@ -128,8 +150,11 @@ export default function ContactPage() {
                     <Label htmlFor="company">Company Name</Label>
                     <Input
                       id="company"
+                      className="mt-4"
                       value={formData.company}
-                      onChange={(e) => handleInputChange("company", e.target.value)}
+                      onChange={(e) =>
+                        handleInputChange("company", e.target.value)
+                      }
                       placeholder="Enter your company name"
                     />
                   </div>
@@ -137,35 +162,58 @@ export default function ContactPage() {
 
                 <div className="grid md:grid-cols-2 gap-4">
                   <div>
-                    <Label htmlFor="industry">Industry</Label>
-                    <Select value={formData.industry} onValueChange={(value) => handleInputChange("industry", value)}>
+                    <Label htmlFor="industry" className="mb-4">
+                      Industry
+                    </Label>
+                    <Select
+                      value={formData.industry}
+                      onValueChange={(value) =>
+                        handleInputChange("industry", value)
+                      }
+                    >
                       <SelectTrigger>
                         <SelectValue placeholder="Select your industry" />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="construction">Construction</SelectItem>
+                        <SelectItem value="construction">
+                          Construction
+                        </SelectItem>
                         <SelectItem value="textile">Textile</SelectItem>
-                        <SelectItem value="chemical">Chemical Processing</SelectItem>
-                        <SelectItem value="concrete">Concrete Manufacturing</SelectItem>
+                        <SelectItem value="chemical">
+                          Chemical Processing
+                        </SelectItem>
+                        <SelectItem value="concrete">
+                          Concrete Manufacturing
+                        </SelectItem>
                         <SelectItem value="dyestuff">Dyestuff</SelectItem>
                         <SelectItem value="other">Other</SelectItem>
                       </SelectContent>
                     </Select>
                   </div>
                   <div>
-                    <Label htmlFor="inquiryType">Inquiry Type *</Label>
+                    <Label htmlFor="inquiryType" className="mb-4">
+                      Inquiry Type *
+                    </Label>
                     <Select
                       value={formData.inquiryType}
-                      onValueChange={(value) => handleInputChange("inquiryType", value)}
+                      onValueChange={(value) =>
+                        handleInputChange("inquiryType", value)
+                      }
                       required
                     >
                       <SelectTrigger>
                         <SelectValue placeholder="Select inquiry type" />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="product-inquiry">Product Inquiry</SelectItem>
-                        <SelectItem value="quote-request">Quote Request</SelectItem>
-                        <SelectItem value="technical-support">Technical Support</SelectItem>
+                        <SelectItem value="product-inquiry">
+                          Product Inquiry
+                        </SelectItem>
+                        <SelectItem value="quote-request">
+                          Quote Request
+                        </SelectItem>
+                        <SelectItem value="technical-support">
+                          Technical Support
+                        </SelectItem>
                         <SelectItem value="partnership">Partnership</SelectItem>
                         <SelectItem value="general">General Inquiry</SelectItem>
                       </SelectContent>
@@ -174,11 +222,15 @@ export default function ContactPage() {
                 </div>
 
                 <div>
-                  <Label htmlFor="message">Message *</Label>
+                  <Label htmlFor="message" className="mb-4">
+                    Message *
+                  </Label>
                   <Textarea
                     id="message"
                     value={formData.message}
-                    onChange={(e) => handleInputChange("message", e.target.value)}
+                    onChange={(e) =>
+                      handleInputChange("message", e.target.value)
+                    }
                     placeholder="Please describe your requirements, project details, or any specific questions you have..."
                     rows={5}
                     required
@@ -206,12 +258,15 @@ export default function ContactPage() {
             {/* Contact Information */}
             <div className="space-y-8">
               <div>
-                <h3 className="text-2xl font-bold text-foreground mb-6" style={{ fontFamily: "var(--font-heading)" }}>
+                <h3
+                  className="text-2xl font-bold text-foreground mb-6"
+                  style={{ fontFamily: "var(--font-heading)" }}
+                >
                   Get In Touch
                 </h3>
-                
-                <div className="space-y-6">
-                  <Card>
+
+                <div className="space-y-6 ">
+                  <Card className="py-6">
                     <CardHeader>
                       <CardTitle className="flex items-center gap-3">
                         <MapPin className="h-5 w-5 text-primary" />
@@ -220,23 +275,27 @@ export default function ContactPage() {
                     </CardHeader>
                     <CardContent className="space-y-4">
                       <div>
-                        <h4 className="font-semibold mb-2">Unit 1 - Changodar</h4>
+                        <h4 className="font-semibold mb-2">
+                          Unit 1 - Changodar
+                        </h4>
                         <p className="text-muted-foreground text-sm">
-                          S. No 407, Khata No 1217, Bh Sarvodaya Hotel,<br />
+                          S. No 407, Khata No 1217, Bh Sarvodaya Hotel,
+                          <br />
                           Moraiya, Changodar, Ahmedabad – 382213
                         </p>
                       </div>
                       <div>
                         <h4 className="font-semibold mb-2">Unit 2 - Vatva</h4>
                         <p className="text-muted-foreground text-sm">
-                          C-1/127, Phase I, Nr Tiger Surgical,<br />
+                          C-1/127, Phase I, Nr Tiger Surgical,
+                          <br />
                           GIDC Vatva, Ahmedabad – 382245
                         </p>
                       </div>
                     </CardContent>
                   </Card>
 
-                  <Card>
+                  <Card className="py-6">
                     <CardHeader>
                       <CardTitle className="flex items-center gap-3">
                         <Phone className="h-5 w-5 text-primary" />
@@ -245,14 +304,17 @@ export default function ContactPage() {
                     </CardHeader>
                     <CardContent>
                       <p className="text-muted-foreground">
-                        <a href="tel:+918890913222" className="hover:text-primary">
+                        <a
+                          href="tel:+918890913222"
+                          className="hover:text-primary"
+                        >
                           +91-8890913222
                         </a>
                       </p>
                     </CardContent>
                   </Card>
 
-                  <Card>
+                  <Card className="py-6">
                     <CardHeader>
                       <CardTitle className="flex items-center gap-3">
                         <Mail className="h-5 w-5 text-primary" />
@@ -261,7 +323,10 @@ export default function ContactPage() {
                     </CardHeader>
                     <CardContent>
                       <p className="text-muted-foreground">
-                        <a href="mailto:admin@yahskapolymers.com" className="hover:text-primary">
+                        <a
+                          href="mailto:admin@yahskapolymers.com"
+                          className="hover:text-primary"
+                        >
                           admin@yahskapolymers.com
                         </a>
                       </p>
@@ -276,5 +341,5 @@ export default function ContactPage() {
 
       <Footer />
     </div>
-  )
+  );
 }
