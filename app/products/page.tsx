@@ -2,13 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { Navigation } from "@/components/navigation";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
@@ -26,6 +20,7 @@ import Link from "next/link";
 import { Footer } from "@/components/footer";
 import { ContentItem } from "@/lib/database-client";
 import { useProductContext } from "@/contexts/ProductContext";
+import Image from "next/image";
 
 // Function to get specific content value
 function getContentValue(
@@ -403,29 +398,39 @@ export default function ProductsPage() {
                   {filteredProducts.map((product) => (
                     <Card
                       key={product.id}
-                      className="h-full hover:shadow-lg transition-shadow duration-300 flex flex-col py-6"
+                      className="h-full hover:shadow-lg transition-shadow duration-300 flex flex-col"
                     >
-                      <CardHeader>
-                        <div className="flex items-start justify-between">
-                          <div className="flex-1">
-                            <CardTitle className="text-lg mb-2 line-clamp-2">
-                              {product.name}
-                            </CardTitle>
-                            <Badge variant="secondary" className="mb-2">
-                              {product.category_name}
-                            </Badge>
-                          </div>
+                      <div className="aspect-video relative overflow-hidden bg-muted rounded-t-lg">
+                        <Image
+                          src="/placeholder.jpg"
+                          alt={product.name}
+                          fill
+                          className="object-cover hover:scale-105 transition-transform duration-300"
+                        />
+                        <div className="absolute top-2 right-2">
+                          <Badge
+                            variant="secondary"
+                            className="flex items-center gap-1"
+                          >
+                            <Package className="h-3 w-3 mr-1" />
+                            {product.category_name}
+                          </Badge>
                         </div>
-                      </CardHeader>
-                      <CardContent className="flex-1 flex flex-col">
-                        <div className="flex-1">
-                          <CardDescription className="mb-4 line-clamp-3">
-                            {product.description}
-                          </CardDescription>
+                      </div>
+                      <CardContent className="p-6 flex-1 flex flex-col">
+                        <div className="flex-1 space-y-3">
+                          <div>
+                            <h3 className="font-bold text-lg mb-2 line-clamp-2">
+                              {product.name}
+                            </h3>
+                            <p className="text-muted-foreground text-sm line-clamp-3 mb-3">
+                              {product.description}
+                            </p>
+                          </div>
 
                           {product.features && product.features.length > 0 && (
-                            <div className="mb-4">
-                              <p className="text-sm font-medium text-foreground mb-2">
+                            <div className="pt-3 border-t">
+                              <p className="text-sm font-medium mb-2">
                                 Key Features:
                               </p>
                               <div className="flex flex-wrap gap-1">
@@ -450,34 +455,19 @@ export default function ProductsPage() {
                           )}
                         </div>
 
-                        <div className="flex gap-2 mt-6">
-                          <Button
-                            asChild
-                            className="flex-1 flex items-center justify-center"
-                            size="sm"
+                        <Button
+                          asChild
+                          className="w-full mt-6 flex items-center justify-center"
+                          size="sm"
+                        >
+                          <Link
+                            href={`/products/${product.id}`}
+                            className="flex items-center justify-center w-full"
                           >
-                            <Link
-                              href={`/products/${product.id}`}
-                              className="flex items-center justify-center w-full"
-                            >
-                              <ArrowRight className="h-4 w-4 mr-2" />
-                              View Details
-                            </Link>
-                          </Button>
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            asChild
-                            className="flex-1 flex items-center justify-center"
-                          >
-                            <Link
-                              href="/contact"
-                              className="flex items-center justify-center w-full"
-                            >
-                              <Mail className="h-4 w-4" />
-                            </Link>
-                          </Button>
-                        </div>
+                            <ArrowRight className="h-4 w-4 mr-2" />
+                            View Details
+                          </Link>
+                        </Button>
                       </CardContent>
                     </Card>
                   ))}

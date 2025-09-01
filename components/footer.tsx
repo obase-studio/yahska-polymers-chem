@@ -1,14 +1,24 @@
-import Link from "next/link"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Separator } from "@/components/ui/separator"
-import { MapPin, Phone, Mail, Clock, Facebook, Twitter, Linkedin, Instagram, Send } from "lucide-react"
+import Link from "next/link";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Separator } from "@/components/ui/separator";
+import {
+  MapPin,
+  Phone,
+  Mail,
+  Clock,
+  Facebook,
+  Twitter,
+  Linkedin,
+  Instagram,
+  Send,
+} from "lucide-react";
 
 export function Footer() {
   return (
     <footer className="bg-muted/30 border-t border-border">
       {/* Newsletter Section */}
-      <div className="bg-primary text-primary-foreground">
+      {/* <div className="bg-primary text-primary-foreground">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
           <div className="text-center">
             <h3 className="text-2xl font-bold mb-4" style={{ fontFamily: "var(--font-heading)" }}>
@@ -29,22 +39,27 @@ export function Footer() {
             </div>
           </div>
         </div>
-      </div>
+      </div> */}
 
       {/* Main Footer Content */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
         <div className="grid lg:grid-cols-4 md:grid-cols-2 gap-8">
           {/* Company Info */}
           <div className="lg:col-span-1">
-            <div className="text-2xl font-bold text-primary mb-4">Yahska Polymers</div>
+            <div className="text-2xl font-bold text-primary mb-4">
+              Yahska Polymers
+            </div>
             <p className="text-muted-foreground mb-6 leading-relaxed">
-              Leading manufacturer of construction chemicals, concrete admixtures, textile chemicals, and dyestuff
-              chemicals with over 20 years of industry excellence.
+              Leading manufacturer of construction chemicals, concrete
+              admixtures, textile chemicals, and dyestuff chemicals with over 20
+              years of industry excellence.
             </p>
             <div className="space-y-3">
               <div className="flex items-center text-sm text-muted-foreground">
                 <MapPin className="h-4 w-4 mr-2 flex-shrink-0" />
-                <span>Plot No. 123, Industrial Area, Ahmedabad - 380015, Gujarat</span>
+                <span>
+                  Plot No. 123, Industrial Area, Ahmedabad - 380015, Gujarat
+                </span>
               </div>
               <div className="flex items-center text-sm text-muted-foreground">
                 <Phone className="h-4 w-4 mr-2 flex-shrink-0" />
@@ -62,12 +77,18 @@ export function Footer() {
             <h4 className="font-semibold text-foreground mb-4">Quick Links</h4>
             <ul className="space-y-3">
               <li>
-                <Link href="/" className="text-muted-foreground hover:text-primary transition-colors duration-200">
+                <Link
+                  href="/"
+                  className="text-muted-foreground hover:text-primary transition-colors duration-200"
+                >
                   Home
                 </Link>
               </li>
               <li>
-                <Link href="/about" className="text-muted-foreground hover:text-primary transition-colors duration-200">
+                <Link
+                  href="/about"
+                  className="text-muted-foreground hover:text-primary transition-colors duration-200"
+                >
                   About Us
                 </Link>
               </li>
@@ -147,7 +168,9 @@ export function Footer() {
 
           {/* Services & Support */}
           <div>
-            <h4 className="font-semibold text-foreground mb-4">Services & Support</h4>
+            <h4 className="font-semibold text-foreground mb-4">
+              Services & Support
+            </h4>
             <ul className="space-y-3">
               <li>
                 <Link
@@ -216,22 +239,28 @@ export function Footer() {
                 <span>Closed</span>
               </div>
               <div className="mt-4 text-xs">
-                <span className="text-accent font-medium">Emergency Support:</span> Available 24/7 for critical
-                requirements
+                <span className="text-accent font-medium">
+                  Emergency Support:
+                </span>{" "}
+                Available 24/7 for critical requirements
               </div>
             </div>
           </div>
 
           <div>
-            <h4 className="font-semibold text-foreground mb-4">Quality Certifications</h4>
+            <h4 className="font-semibold text-foreground mb-4">
+              Quality Certifications
+            </h4>
             <div className="space-y-2 text-sm text-muted-foreground">
               <div>• ISO 9001:2015 - Quality Management System</div>
               <div>• ISO 14001:2015 - Environmental Management</div>
               <div>• OHSAS 18001 - Occupational Health & Safety</div>
               <div>• BIS Certification - Bureau of Indian Standards</div>
               <div className="mt-4 text-xs">
-                <span className="text-accent font-medium">Established:</span> 2003 |{" "}
-                <span className="text-accent font-medium">Experience:</span> 20+ Years
+                <span className="text-accent font-medium">Established:</span>{" "}
+                2003 |{" "}
+                <span className="text-accent font-medium">Experience:</span> 20+
+                Years
               </div>
             </div>
           </div>
@@ -247,7 +276,9 @@ export function Footer() {
 
           {/* Social Media Links */}
           <div className="flex items-center space-x-4">
-            <span className="text-sm text-muted-foreground mr-2">Follow us:</span>
+            <span className="text-sm text-muted-foreground mr-2">
+              Follow us:
+            </span>
             <Link
               href="#"
               className="text-muted-foreground hover:text-primary transition-colors duration-200"
@@ -280,20 +311,29 @@ export function Footer() {
 
           {/* Legal Links */}
           <div className="flex items-center space-x-4 text-sm">
-            <Link href="#" className="text-muted-foreground hover:text-primary transition-colors duration-200">
+            <Link
+              href="#"
+              className="text-muted-foreground hover:text-primary transition-colors duration-200"
+            >
               Privacy Policy
             </Link>
             <span className="text-muted-foreground">•</span>
-            <Link href="#" className="text-muted-foreground hover:text-primary transition-colors duration-200">
+            <Link
+              href="#"
+              className="text-muted-foreground hover:text-primary transition-colors duration-200"
+            >
               Terms of Service
             </Link>
             <span className="text-muted-foreground">•</span>
-            <Link href="#" className="text-muted-foreground hover:text-primary transition-colors duration-200">
+            <Link
+              href="#"
+              className="text-muted-foreground hover:text-primary transition-colors duration-200"
+            >
               Sitemap
             </Link>
           </div>
         </div>
       </div>
     </footer>
-  )
+  );
 }

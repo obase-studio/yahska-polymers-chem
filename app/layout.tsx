@@ -40,6 +40,12 @@ export default function RootLayout({
             --font-body: ${openSans.style.fontFamily};
           }
         `}</style>
+        <link
+          rel="preload"
+          href="https://jlbwwbnatmmkcizqprdx.supabase.co/storage/v1/object/public/yahska-media/uploads/home.webp"
+          as="image"
+          type="image/webp"
+        />
       </head>
       <body className="font-sans antialiased">
         <ProductProvider>{children}</ProductProvider>

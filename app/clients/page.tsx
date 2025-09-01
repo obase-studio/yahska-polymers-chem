@@ -323,7 +323,7 @@ export default function ClientsPage() {
       </section>
 
       {/* Client Categories */}
-      <section className="py-20">
+      {/* <section className="py-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
             <h2
@@ -358,7 +358,7 @@ export default function ClientsPage() {
             ))}
           </div>
         </div>
-      </section>
+      </section> */}
 
       {/* Client Logos Grid */}
       <section className="py-20 bg-muted/50">
@@ -590,7 +590,7 @@ export default function ClientsPage() {
             {testimonials.map((testimonial, index) => (
               <Card
                 key={index}
-                className="hover:shadow-lg transition-shadow duration-300"
+                className="hover:shadow-lg transition-shadow duration-300 py-6"
               >
                 <CardHeader>
                   <div className="flex items-center space-x-1 mb-4">
@@ -664,7 +664,7 @@ export default function ClientsPage() {
                 cities: ["Bangalore", "Mysore", "Hubli", "Belgaum"],
               },
             ].map((region, index) => (
-              <Card key={index}>
+              <Card key={index} className="py-6">
                 <CardHeader>
                   <CardTitle className="text-lg text-primary">
                     {region.state}

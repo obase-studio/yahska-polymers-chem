@@ -66,16 +66,14 @@ export default function HomePage() {
 
           setContentItems(allContent);
 
-          // Load hero image
-          const heroImageResponse = await fetch(
-            "/api/admin/page-images?page=home&section=hero_image"
-          );
-          if (heroImageResponse.ok) {
-            const heroImageData = await heroImageResponse.json();
-            if (heroImageData?.media_files?.file_path) {
-              setHeroImage(heroImageData.media_files.file_path);
-            }
-          }
+          // Preload hero image first
+          const heroImageUrl =
+            "https://jlbwwbnatmmkcizqprdx.supabase.co/storage/v1/object/public/yahska-media/uploads/home.webp";
+          const img = new Image();
+          img.onload = () => {
+            setHeroImage(heroImageUrl);
+          };
+          img.src = heroImageUrl;
 
           // Load category images
           const categoryImagePromises = [
@@ -119,10 +117,7 @@ export default function HomePage() {
   const heroHeadline =
     contentItems.find(
       (item) => item.section === "hero" && item.content_key === "headline"
-    )?.content_value ||
-    (loading
-      ? "Loading..."
-      : "Leading Chemical Solutions for Industrial Excellence");
+    )?.content_value || "Leading Chemical Solutions for Industrial Excellence";
 
   const companyDescription =
     contentItems.find(
@@ -181,7 +176,7 @@ export default function HomePage() {
 
     return (
       companyDescription ||
-      "Leading construction chemicals manufacturer based in Ahmedabad, proudly serving the Indian construction industry with innovative and reliable solutions for over two decades."
+      "Yahska Polymers Pvt Ltd is a leading construction chemicals manufacturer based in Ahmedabad, proudly serving the Indian construction industry with innovative and reliable solutions for over two decades. As one of the leading names in the field, our mission is simple—to build stronger, safer, and more sustainable structures through chemistry that performs."
     );
   };
 
@@ -214,23 +209,20 @@ export default function HomePage() {
                     <ArrowRight className="ml-2 h-5 w-5" />
                   </Link>
                 </Button>
-                <Button asChild variant="outline" size="lg">
+                {/* <Button asChild variant="outline" size="lg">
                   <Link href="/contact">Get Quote</Link>
-                </Button>
+                </Button> */}
               </div>
             </div>
             <div className="relative">
-              {heroImage ? (
-                <img
-                  src={heroImage}
-                  alt="Yahska Polymers Manufacturing Facility"
-                  className="rounded-lg shadow-2xl"
-                />
-              ) : (
-                <div className="aspect-video bg-muted rounded-lg shadow-2xl flex items-center justify-center">
-                  <p className="text-muted-foreground">Loading hero image...</p>
-                </div>
-              )}
+              <img
+                src={
+                  heroImage ||
+                  "https://jlbwwbnatmmkcizqprdx.supabase.co/storage/v1/object/public/yahska-media/uploads/home.webp"
+                }
+                alt="Yahska Polymers Manufacturing Facility"
+                className="rounded-lg shadow-2xl"
+              />
             </div>
           </div>
         </div>

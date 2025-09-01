@@ -12,9 +12,17 @@ import {
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { ArrowLeft, Mail, Phone, Loader2, AlertCircle } from "lucide-react";
+import {
+  ArrowLeft,
+  Mail,
+  Phone,
+  Loader2,
+  AlertCircle,
+  Package,
+} from "lucide-react";
 import Link from "next/link";
 import { Footer } from "@/components/footer";
+import Image from "next/image";
 
 interface Product {
   id: number;
@@ -130,77 +138,69 @@ export default function ProductDetailPage() {
       </section>
 
       {/* Product Header */}
-      <section className="py-12 bg-gradient-to-br from-primary/10 to-accent/5">
+      <section className="py-8 border-b">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="mb-6">
-            <Button asChild variant="outline" size="sm">
+          <div className="flex items-center gap-4 mb-6">
+            <Button variant="outline" size="sm" asChild>
               <Link href="/products">
                 <ArrowLeft className="mr-2 h-4 w-4" />
                 Back to Products
               </Link>
             </Button>
+
+            <Badge variant="secondary" className="flex items-center gap-1">
+              <Package className="h-4 w-4 mr-1" />
+              {product.category_name}
+            </Badge>
           </div>
 
-          <div className="grid lg:grid-cols-2 gap-12 items-start">
-            <div>
-              <Badge variant="secondary" className="mb-4">
-                {product.category_name}
-              </Badge>
-              <h1
-                className="text-4xl lg:text-5xl font-black text-foreground mb-6"
-                style={{ fontFamily: "var(--font-heading)" }}
-              >
-                {product.name}
-              </h1>
-              <p className="text-xl text-muted-foreground leading-relaxed mb-6">
-                {product.description}
-              </p>
-
-              {product.product_code && (
-                <div className="mb-6">
-                  <span className="text-sm text-muted-foreground">
-                    Product Code:{" "}
-                  </span>
-                  <span className="font-mono text-primary font-semibold">
-                    {product.product_code}
-                  </span>
-                </div>
-              )}
-
-              <div className="flex flex-col sm:flex-row gap-4">
-                <Button size="lg" className="bg-primary hover:bg-primary/90">
-                  <Mail className="mr-2 h-5 w-5" />
-                  Request Quote
-                </Button>
-                <Button size="lg" variant="outline">
-                  <Phone className="mr-2 h-5 w-5" />
-                  Call Expert
-                </Button>
+          <div className="flex flex-col lg:flex-row gap-8">
+            {/* Left Column - Image */}
+            <div className="flex-shrink-0">
+              <div className="w-[800px] h-[450px] relative overflow-hidden rounded-lg bg-muted">
+                <Image
+                  src={"/placeholder.jpg"}
+                  alt={product.name}
+                  width={800}
+                  height={450}
+                  className="object-cover w-full h-full"
+                />
               </div>
             </div>
 
-            <div className="bg-muted/30 rounded-lg p-8">
-              <h3 className="text-lg font-semibold mb-4">Quick Overview</h3>
-              <div className="space-y-3">
-                <div className="flex justify-between">
-                  <span className="text-muted-foreground">Category:</span>
-                  <span className="font-medium">{product.category_name}</span>
-                </div>
+            {/* Right Column - Product Info */}
+            <div className="flex-1 space-y-6">
+              <div>
+                <h1
+                  className="text-3xl lg:text-4xl font-bold mb-4"
+                  style={{ fontFamily: "var(--font-heading)" }}
+                >
+                  {product.name}
+                </h1>
+                <p className="text-xl text-muted-foreground leading-relaxed mb-6">
+                  {product.description}
+                </p>
+
                 {product.product_code && (
-                  <div className="flex justify-between">
-                    <span className="text-muted-foreground">Product Code:</span>
-                    <span className="font-mono text-primary">
+                  <div className="mb-6">
+                    <span className="text-sm text-muted-foreground">
+                      Product Code:{" "}
+                    </span>
+                    <span className="font-mono text-primary font-semibold">
                       {product.product_code}
                     </span>
                   </div>
                 )}
-                <div className="flex justify-between">
-                  <span className="text-muted-foreground">Applications:</span>
-                  <span className="font-medium">{applications.length}</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-muted-foreground">Key Features:</span>
-                  <span className="font-medium">{features.length}</span>
+
+                <div className="flex flex-col sm:flex-row gap-4">
+                  <Button size="lg" className="bg-primary hover:bg-primary/90">
+                    <Mail className="mr-2 h-5 w-5" />
+                    Request Quote
+                  </Button>
+                  <Button size="lg" variant="outline">
+                    <Phone className="mr-2 h-5 w-5" />
+                    Call Expert
+                  </Button>
                 </div>
               </div>
             </div>
