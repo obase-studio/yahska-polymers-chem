@@ -1,8 +1,35 @@
+"use client"
+
 import Link from "next/link"
+import { useState, useEffect } from "react"
 import { Separator } from "@/components/ui/separator"
 import { MapPin, Phone, Mail, Clock, Facebook, Twitter, Linkedin, Instagram } from "lucide-react"
 
 export function Footer() {
+  const [categories, setCategories] = useState<any[]>([]);
+
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const response = await fetch("/api/admin/categories");
+        const result = await response.json();
+        
+        if (result.success && result.data) {
+          const activeCategories = result.data
+            .filter((cat: any) => cat.is_active)
+            .sort((a: any, b: any) => a.sort_order - b.sort_order)
+            .slice(0, 6); // Show max 6 categories in footer
+          
+          setCategories(activeCategories);
+        }
+      } catch (error) {
+        console.error('Error fetching categories:', error);
+      }
+    };
+
+    fetchCategories();
+  }, []);
+
   return (
     <footer className="bg-muted/30 border-t border-border">
 
@@ -19,15 +46,15 @@ export function Footer() {
             <div className="space-y-3">
               <div className="flex items-center text-sm text-muted-foreground">
                 <MapPin className="h-4 w-4 mr-2 flex-shrink-0" />
-                <span>Plot No. 123, Industrial Area, Ahmedabad - 380015, Gujarat</span>
+                <span>Survey No. 237/1, Near GIDC, Vatva, Ahmedabad - 382445, Gujarat, India</span>
               </div>
               <div className="flex items-center text-sm text-muted-foreground">
                 <Phone className="h-4 w-4 mr-2 flex-shrink-0" />
-                <span>+91 98250 12345</span>
+                <span>+91 88909 13222</span>
               </div>
               <div className="flex items-center text-sm text-muted-foreground">
                 <Mail className="h-4 w-4 mr-2 flex-shrink-0" />
-                <span>info@yahskapolymers.in</span>
+                <span>info@yahskapolymers.com</span>
               </div>
             </div>
           </div>
@@ -56,18 +83,23 @@ export function Footer() {
               </li>
               <li>
                 <Link
-                  href="/clients"
-                  className="text-muted-foreground hover:text-primary transition-colors duration-200"
-                >
-                  Clients
-                </Link>
-              </li>
-              <li>
-                <Link
                   href="/contact"
                   className="text-muted-foreground hover:text-primary transition-colors duration-200"
                 >
                   Contact Us
+                </Link>
+              </li>
+              <li>
+                <Link
+                  href="#"
+                  className="text-muted-foreground hover:text-primary transition-colors duration-200"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    // Placeholder for company profile download
+                    alert('Company profile download will be available soon.');
+                  }}
+                >
+                  Download Company Profile
                 </Link>
               </li>
             </ul>
@@ -77,36 +109,22 @@ export function Footer() {
           <div>
             <h4 className="font-semibold text-foreground mb-4">Our Products</h4>
             <ul className="space-y-3">
+              {categories.map((category) => (
+                <li key={category.id}>
+                  <Link
+                    href={`/products?category=${category.id}`}
+                    className="text-muted-foreground hover:text-primary transition-colors duration-200"
+                  >
+                    {category.name}
+                  </Link>
+                </li>
+              ))}
               <li>
                 <Link
-                  href="/products?category=construction"
-                  className="text-muted-foreground hover:text-primary transition-colors duration-200"
+                  href="/products"
+                  className="text-muted-foreground hover:text-primary transition-colors duration-200 font-semibold"
                 >
-                  Construction Chemicals
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href="/products?category=concrete"
-                  className="text-muted-foreground hover:text-primary transition-colors duration-200"
-                >
-                  Concrete Admixtures
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href="/products?category=textile"
-                  className="text-muted-foreground hover:text-primary transition-colors duration-200"
-                >
-                  Textile Chemicals
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href="/products?category=dyestuff"
-                  className="text-muted-foreground hover:text-primary transition-colors duration-200"
-                >
-                  Dyestuff Chemicals
+                  View All Products
                 </Link>
               </li>
               <li>
@@ -120,52 +138,6 @@ export function Footer() {
             </ul>
           </div>
 
-          {/* Services & Support */}
-          <div>
-            <h4 className="font-semibold text-foreground mb-4">Services & Support</h4>
-            <ul className="space-y-3">
-              <li>
-                <Link
-                  href="/contact"
-                  className="text-muted-foreground hover:text-primary transition-colors duration-200"
-                >
-                  Technical Support
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href="/contact"
-                  className="text-muted-foreground hover:text-primary transition-colors duration-200"
-                >
-                  Quality Assurance
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href="/contact"
-                  className="text-muted-foreground hover:text-primary transition-colors duration-200"
-                >
-                  Application Guidance
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href="/contact"
-                  className="text-muted-foreground hover:text-primary transition-colors duration-200"
-                >
-                  Career Opportunities
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href="/contact"
-                  className="text-muted-foreground hover:text-primary transition-colors duration-200"
-                >
-                  News & Updates
-                </Link>
-              </li>
-            </ul>
-          </div>
         </div>
 
         <Separator className="my-12" />

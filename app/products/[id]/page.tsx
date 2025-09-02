@@ -168,13 +168,16 @@ export default function ProductDetailPage() {
               )}
 
               <div className="flex flex-col sm:flex-row gap-4">
-                <Button size="lg" className="bg-primary hover:bg-primary/90">
-                  <Mail className="mr-2 h-5 w-5" />
-                  Request Quote
-                </Button>
-                <Button size="lg" variant="outline">
-                  <Phone className="mr-2 h-5 w-5" />
-                  Call Expert
+                <Button 
+                  size="lg" 
+                  className="bg-primary hover:bg-primary/90"
+                  onClick={() => {
+                    // Placeholder for datasheet download
+                    alert('Product datasheet will be available soon.');
+                  }}
+                >
+                  <Package className="mr-2 h-5 w-5" />
+                  Download Datasheet
                 </Button>
               </div>
             </div>

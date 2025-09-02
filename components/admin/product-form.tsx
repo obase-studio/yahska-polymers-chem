@@ -9,6 +9,7 @@ import { Textarea } from "@/components/ui/textarea"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Badge } from "@/components/ui/badge"
 import { X, Plus, Upload, FileText } from "lucide-react"
+import { ImagePicker } from "@/components/admin/image-picker"
 
 interface ProductFormProps {
   categories: any[]
@@ -174,12 +175,12 @@ export function ProductForm({ categories, product, isEdit = false }: ProductForm
           />
         </div>
         <div className="space-y-2">
-          <Label htmlFor="image_url">Image URL</Label>
-          <Input
-            id="image_url"
+          <ImagePicker
+            label="Product Image"
             value={formData.image_url}
-            onChange={(e) => setFormData(prev => ({ ...prev, image_url: e.target.value }))}
-            placeholder="Enter image URL"
+            onChange={(url) => setFormData(prev => ({ ...prev, image_url: url }))}
+            placeholder="Select product image"
+            folder="uploads"
           />
         </div>
       </div>

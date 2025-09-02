@@ -228,19 +228,12 @@ export default function ProjectDetailPage() {
                 )}
               </div>
 
-              <div className="flex flex-col sm:flex-row gap-4">
-                <Button size="lg" className="bg-primary hover:bg-primary/90" asChild>
-                  <Link href="/contact">
-                    <Users className="mr-2 h-5 w-5" />
-                    Discuss Similar Project
-                  </Link>
-                </Button>
-                <Button size="lg" variant="outline" asChild>
-                  <Link href="tel:+918890913222">
-                    <Calendar className="mr-2 h-5 w-5" />
-                    Schedule Call
-                  </Link>
-                </Button>
+              {/* Project Info Text Block */}
+              <div className="mt-6 p-4 bg-muted/20 rounded-lg border border-border/50">
+                <h4 className="text-sm font-semibold text-foreground mb-2">Project Information</h4>
+                <p className="text-sm text-muted-foreground">
+                  Project information will be updated soon.
+                </p>
               </div>
             </div>
 
@@ -263,6 +256,7 @@ export default function ProjectDetailPage() {
                   <p className="text-xs text-muted-foreground/70 mt-1">Coming Soon</p>
                 </div>
               )}
+
             </div>
           </div>
         </div>
@@ -423,24 +417,10 @@ export default function ProjectDetailPage() {
             Our project management and technical teams can help you deliver
             complex infrastructure projects on time and within budget.
           </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Button asChild size="lg" variant="secondary">
-              <Link href="/contact">
-                <Users className="mr-2 h-5 w-5" />
-                Discuss Your Project
-              </Link>
-            </Button>
-            <Button
-              asChild
-              size="lg"
-              variant="outline"
-              className="border-primary-foreground text-primary-foreground hover:bg-primary-foreground hover:text-primary bg-transparent"
-            >
-              <Link href="tel:+918890913222">
-                <Calendar className="mr-2 h-5 w-5" />
-                Schedule Call
-              </Link>
-            </Button>
+          <div className="text-center">
+            <p className="text-lg opacity-90">
+              For similar project inquiries, please <Link href="/contact" className="underline hover:text-primary-foreground/80">contact us</Link>
+            </p>
           </div>
         </div>
       </section>

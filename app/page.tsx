@@ -24,10 +24,93 @@ import {
   Zap,
   Train,
   MapPin,
+  Package,
+  Loader2,
 } from "lucide-react";
 import Link from "next/link";
 import { Footer } from "@/components/footer";
 import { ContentItem } from "@/lib/database-client";
+
+// Enhanced Category Image Component
+interface CategoryImageProps {
+  categoryId: string;
+  categoryName: string;
+  categoryImages: Record<string, string>;
+}
+
+function CategoryImage({ categoryId, categoryName, categoryImages }: CategoryImageProps) {
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(false);
+  const [retryCount, setRetryCount] = useState(0);
+  
+  const imageUrl = categoryImages[categoryId];
+  
+  const handleLoad = () => {
+    setLoading(false);
+    setError(false);
+  };
+  
+  const handleError = () => {
+    setLoading(false);
+    setError(true);
+  };
+  
+  const handleRetry = () => {
+    if (retryCount < 2) {
+      setError(false);
+      setLoading(true);
+      setRetryCount(prev => prev + 1);
+    }
+  };
+  
+  if (!imageUrl) {
+    return (
+      <div className="w-full h-full flex items-center justify-center">
+        <div className="text-center">
+          <Package className="h-8 w-8 mx-auto mb-2 text-muted-foreground" />
+          <p className="text-muted-foreground text-sm">{categoryName}</p>
+        </div>
+      </div>
+    );
+  }
+  
+  if (error && retryCount >= 2) {
+    return (
+      <div className="w-full h-full flex items-center justify-center">
+        <div className="text-center">
+          <Package className="h-8 w-8 mx-auto mb-2 text-muted-foreground" />
+          <p className="text-muted-foreground text-xs mb-2">{categoryName}</p>
+          <button 
+            onClick={handleRetry}
+            className="text-xs text-primary hover:underline"
+          >
+            Retry Loading
+          </button>
+        </div>
+      </div>
+    );
+  }
+  
+  return (
+    <div className="relative w-full h-full">
+      {loading && (
+        <div className="absolute inset-0 flex items-center justify-center bg-muted">
+          <Loader2 className="h-6 w-6 animate-spin" />
+        </div>
+      )}
+      <img
+        src={`${imageUrl}?retry=${retryCount}`}
+        alt={categoryName}
+        className={`w-full h-full object-cover hover:scale-105 transition-transform duration-300 ${
+          loading ? 'opacity-0' : 'opacity-100'
+        }`}
+        onLoad={handleLoad}
+        onError={handleError}
+        loading="lazy"
+      />
+    </div>
+  );
+}
 
 export default function HomePage() {
   const [contentItems, setContentItems] = useState<ContentItem[]>([]);
@@ -35,6 +118,9 @@ export default function HomePage() {
   const [categoryImages, setCategoryImages] = useState<Record<string, string>>(
     {}
   );
+  const [categories, setCategories] = useState<any[]>([]);
+  const [clientLogos, setClientLogos] = useState<any[]>([]);
+  const [approvalLogos, setApprovalLogos] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
   // Fetch content and images from API
@@ -42,13 +128,15 @@ export default function HomePage() {
     const fetchContent = async () => {
       try {
         setLoading(true);
-        const [homeResponse, aboutResponse] = await Promise.all([
+        const [homeResponse, aboutResponse, categoriesResponse] = await Promise.all([
           fetch("/api/content?page=home"),
           fetch("/api/content?page=about"),
+          fetch("/api/admin/categories"),
         ]);
 
         const homeResult = await homeResponse.json();
         const aboutResult = await aboutResponse.json();
+        const categoriesResult = await categoriesResponse.json();
 
         if (homeResult.success) {
           let allContent = homeResult.data.content;
@@ -65,6 +153,15 @@ export default function HomePage() {
           }
 
           setContentItems(allContent);
+        }
+
+        // Set categories
+        if (categoriesResult.success && categoriesResult.data) {
+          const activeCategories = categoriesResult.data
+            .filter((cat: any) => cat.is_active)
+            .sort((a: any, b: any) => a.sort_order - b.sort_order)
+            .slice(0, 4); // Show max 4 categories on homepage
+          setCategories(activeCategories);
 
           // Preload hero image first
           const heroImageUrl =
@@ -102,6 +199,34 @@ export default function HomePage() {
             }
           });
           setCategoryImages(categoryImageMap);
+
+          // Fetch client logos
+          try {
+            const clientLogosResponse = await fetch("/api/client-logos");
+            if (clientLogosResponse.ok) {
+              const clientLogosData = await clientLogosResponse.json();
+              console.log('Client logos loaded successfully:', clientLogosData.length, 'logos');
+              
+              // Use URLs directly from API as they're already properly encoded
+              setClientLogos(clientLogosData.slice(0, 12)); // Show max 12 client logos
+            }
+          } catch (error) {
+            console.error("Error fetching client logos:", error);
+          }
+
+          // Fetch approval logos
+          try {
+            const approvalLogosResponse = await fetch("/api/approval-logos");
+            if (approvalLogosResponse.ok) {
+              const approvalLogosData = await approvalLogosResponse.json();
+              console.log('Approval logos loaded successfully:', approvalLogosData.length, 'logos');
+              
+              // Use URLs directly from API as they should be properly encoded
+              setApprovalLogos(approvalLogosData.slice(0, 8)); // Show max 8 approval logos
+            }
+          } catch (error) {
+            console.error("Error fetching approval logos:", error);
+          }
         }
       } catch (err) {
         console.error("Error fetching home content:", err);
@@ -268,175 +393,35 @@ export default function HomePage() {
           </div>
 
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
-            <Card className="hover:shadow-lg transition-shadow duration-300">
-              <div className="aspect-video overflow-hidden rounded-t-lg">
-                {categoryImages.construction ? (
-                  <img
-                    src={categoryImages.construction}
-                    alt="Construction Chemicals"
-                    className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
+            {categories.map((category) => (
+              <Card key={category.id} className="hover:shadow-lg transition-shadow duration-300">
+                <div className="aspect-video overflow-hidden rounded-t-lg bg-muted">
+                  <CategoryImage
+                    categoryId={category.id}
+                    categoryName={category.name}
+                    categoryImages={categoryImages}
                   />
-                ) : (
-                  <div className="w-full h-full bg-muted flex items-center justify-center">
-                    <p className="text-muted-foreground text-sm">
-                      Construction Chemicals
-                    </p>
+                </div>
+                <CardHeader>
+                  <CardTitle className="text-primary">
+                    {category.name}
+                  </CardTitle>
+                  <CardDescription>
+                    {category.description || `Quality ${category.name.toLowerCase()} for industrial applications`}
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <div className="flex justify-center">
+                    <Button asChild variant="outline" size="sm">
+                      <Link href={`/products?category=${category.id}`}>
+                        View Products
+                        <ArrowRight className="ml-2 h-4 w-4" />
+                      </Link>
+                    </Button>
                   </div>
-                )}
-              </div>
-              <CardHeader>
-                <CardTitle className="text-primary">
-                  Construction Chemicals
-                </CardTitle>
-                <CardDescription>
-                  Advanced solutions for construction and infrastructure
-                  projects
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <ul className="space-y-2 text-sm text-muted-foreground">
-                  <li className="flex items-center">
-                    <CheckCircle className="h-4 w-4 text-accent mr-2" />
-                    Waterproofing compounds
-                  </li>
-                  <li className="flex items-center">
-                    <CheckCircle className="h-4 w-4 text-accent mr-2" />
-                    Repair mortars
-                  </li>
-                  <li className="flex items-center">
-                    <CheckCircle className="h-4 w-4 text-accent mr-2" />
-                    Protective coatings
-                  </li>
-                </ul>
-              </CardContent>
-            </Card>
-
-            <Card className="hover:shadow-lg transition-shadow duration-300 ">
-              <div className="aspect-video overflow-hidden rounded-t-lg">
-                {categoryImages.concrete ? (
-                  <img
-                    src={categoryImages.concrete}
-                    alt="Concrete Admixtures"
-                    className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
-                  />
-                ) : (
-                  <div className="w-full h-full bg-muted flex items-center justify-center">
-                    <p className="text-muted-foreground text-sm">
-                      Concrete Admixtures
-                    </p>
-                  </div>
-                )}
-              </div>
-              <CardHeader>
-                <CardTitle className="text-primary">
-                  Concrete Admixtures
-                </CardTitle>
-                <CardDescription>
-                  High-performance additives for enhanced concrete properties
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <ul className="space-y-2 text-sm text-muted-foreground">
-                  <li className="flex items-center">
-                    <CheckCircle className="h-4 w-4 text-accent mr-2" />
-                    Superplasticizers
-                  </li>
-                  <li className="flex items-center">
-                    <CheckCircle className="h-4 w-4 text-accent mr-2" />
-                    Retarding agents
-                  </li>
-                  <li className="flex items-center">
-                    <CheckCircle className="h-4 w-4 text-accent mr-2" />
-                    Accelerating agents
-                  </li>
-                </ul>
-              </CardContent>
-            </Card>
-
-            <Card className="hover:shadow-lg transition-shadow duration-300 ">
-              <div className="aspect-video overflow-hidden rounded-t-lg">
-                {categoryImages.textile ? (
-                  <img
-                    src={categoryImages.textile}
-                    alt="Textile Chemicals"
-                    className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
-                  />
-                ) : (
-                  <div className="w-full h-full bg-muted flex items-center justify-center">
-                    <p className="text-muted-foreground text-sm">
-                      Textile Chemicals
-                    </p>
-                  </div>
-                )}
-              </div>
-              <CardHeader>
-                <CardTitle className="text-primary">
-                  Textile Chemicals
-                </CardTitle>
-                <CardDescription>
-                  Specialized chemicals for textile processing and finishing
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <ul className="space-y-2 text-sm text-muted-foreground">
-                  <li className="flex items-center">
-                    <CheckCircle className="h-4 w-4 text-accent mr-2" />
-                    Dispersing agents
-                  </li>
-                  <li className="flex items-center">
-                    <CheckCircle className="h-4 w-4 text-accent mr-2" />
-                    Leveling agents
-                  </li>
-                  <li className="flex items-center">
-                    <CheckCircle className="h-4 w-4 text-accent mr-2" />
-                    Wetting agents
-                  </li>
-                </ul>
-              </CardContent>
-            </Card>
-
-            <Card className="hover:shadow-lg transition-shadow duration-300 ">
-              <div className="aspect-video overflow-hidden rounded-t-lg">
-                {categoryImages.dyestuff ? (
-                  <img
-                    src={categoryImages.dyestuff}
-                    alt="Dyestuff Chemicals"
-                    className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
-                  />
-                ) : (
-                  <div className="w-full h-full bg-muted flex items-center justify-center">
-                    <p className="text-muted-foreground text-sm">
-                      Dyestuff Chemicals
-                    </p>
-                  </div>
-                )}
-              </div>
-              <CardHeader>
-                <CardTitle className="text-primary">
-                  Dyestuff Chemicals
-                </CardTitle>
-                <CardDescription>
-                  Premium chemicals for dyeing and color applications
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <ul className="space-y-2 text-sm text-muted-foreground">
-                  <li className="flex items-center">
-                    <CheckCircle className="h-4 w-4 text-accent mr-2" />
-                    Color enhancers
-                  </li>
-                  <li className="flex items-center">
-                    <CheckCircle className="h-4 w-4 text-accent mr-2" />
-                    Fixing agents
-                  </li>
-                  <li className="flex items-center">
-                    <CheckCircle className="h-4 w-4 text-accent mr-2" />
-                    Stabilizers
-                  </li>
-                </ul>
-              </CardContent>
-            </Card>
-          </div>
+                </CardContent>
+              </Card>
+            ))}          </div>
 
           <div className="text-center mt-12">
             <Button
@@ -505,80 +490,6 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Featured Client Partnership Section */}
-      <section className="py-20">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-16">
-            <h2
-              className="text-3xl lg:text-4xl font-bold text-foreground mb-4"
-              style={{ fontFamily: "var(--font-heading)" }}
-            >
-              Featured Client Partnership
-            </h2>
-            <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
-              {featuredClientsDescription}
-            </p>
-          </div>
-
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-            <Card className="hover:shadow-lg transition-shadow duration-300 py-6">
-              <CardHeader>
-                <CardTitle className="text-primary">Larsen & Toubro</CardTitle>
-                <CardDescription>Infrastructure & Construction</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <p className="text-sm text-muted-foreground mb-4">
-                  Supplying high-performance concrete admixtures for major
-                  infrastructure projects across India, ensuring durability and
-                  strength in challenging construction environments.
-                </p>
-                <div className="flex items-center text-sm text-accent">
-                  <CheckCircle className="h-4 w-4 mr-2" />
-                  5+ Years Partnership
-                </div>
-              </CardContent>
-            </Card>
-
-            <Card className="hover:shadow-lg transition-shadow duration-300 py-6">
-              <CardHeader>
-                <CardTitle className="text-primary">Tata Steel</CardTitle>
-                <CardDescription>Steel & Manufacturing</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <p className="text-sm text-muted-foreground mb-4">
-                  Providing specialized construction chemicals for industrial
-                  facilities and manufacturing plants, meeting stringent quality
-                  requirements for heavy industry applications.
-                </p>
-                <div className="flex items-center text-sm text-accent">
-                  <CheckCircle className="h-4 w-4 mr-2" />
-                  8+ Years Partnership
-                </div>
-              </CardContent>
-            </Card>
-
-            <Card className="hover:shadow-lg transition-shadow duration-300 py-6">
-              <CardHeader>
-                <CardTitle className="text-primary">
-                  Reliance Industries
-                </CardTitle>
-                <CardDescription>Petrochemicals & Textiles</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <p className="text-sm text-muted-foreground mb-4">
-                  Delivering premium textile chemicals and dyestuff solutions
-                  for large-scale manufacturing operations, ensuring consistent
-                  quality and performance standards.
-                </p>
-                <div className="flex items-center text-sm text-accent">
-                  <CheckCircle className="h-4 w-4 mr-2" />
-                  10+ Years Partnership
-                </div>
-              </CardContent>
-            </Card>
-          </div>
-        </div>
-      </section>
 
       {/* Project Categories Section */}
       <section className="py-20 bg-muted/50">
@@ -684,6 +595,144 @@ export default function HomePage() {
               <Link href="/about">Learn More About Us</Link>
             </Button>
           </div>
+        </div>
+      </section>
+
+      {/* Client Logos Ribbon */}
+      <section className="py-12 bg-muted/30">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-8">
+            <h3 className="text-xl font-semibold text-foreground mb-2">
+              Key Customers
+            </h3>
+            <p className="text-sm text-muted-foreground">
+              Leading companies that trust us for their chemical solutions
+            </p>
+          </div>
+          {clientLogos.length > 0 ? (
+            <div className="overflow-x-auto">
+              <div className="flex items-center gap-6 pb-4" style={{ width: 'fit-content', minWidth: '100%' }}>
+                {clientLogos.map((logo) => (
+                  <Card
+                    key={logo.id}
+                    className="flex-shrink-0 hover:shadow-lg transition-all duration-300 hover:scale-105 bg-background border border-border/50"
+                  >
+                    <CardContent className="p-6 flex items-center justify-center h-24">
+                      <div className="relative w-full h-full flex items-center justify-center">
+                        <img
+                          src={logo.file_path}
+                          alt={
+                            logo.alt_text ||
+                            logo.original_name.replace(
+                              /\.(jpg|jpeg|png|webp)$/i,
+                              ""
+                            )
+                          }
+                          className="max-w-full max-h-full object-contain filter grayscale hover:grayscale-0 transition-all duration-300"
+                          onError={(e) => {
+                            console.log(
+                              "Image failed to load:",
+                              logo.file_path,
+                              e
+                            );
+                            // Fallback to company name text
+                            const target = e.target as HTMLImageElement;
+                            target.style.display = "none";
+                            const parent = target.parentElement;
+                            if (parent) {
+                              parent.innerHTML = `<div class="text-xs text-center text-muted-foreground p-2">${logo.original_name.replace(
+                                /\.(jpg|jpeg|png|webp)$/i,
+                                ""
+                              )}</div>`;
+                            }
+                          }}
+                          onLoad={() =>
+                            console.log(
+                              "Image loaded successfully:",
+                              logo.original_name
+                            )
+                          }
+                        />
+                      </div>
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
+            </div>
+          ) : (
+            <div className="text-center">
+              <p className="text-muted-foreground text-sm">Loading client logos...</p>
+            </div>
+          )}
+        </div>
+      </section>
+
+      {/* Approval Logos Ribbon */}
+      <section className="py-12 bg-background">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-8">
+            <h3 className="text-xl font-semibold text-foreground mb-2">
+              Key Approvals & Certifications
+            </h3>
+            <p className="text-sm text-muted-foreground">
+              Recognized and approved by leading authorities across India
+            </p>
+          </div>
+          {approvalLogos.length > 0 ? (
+            <div className="overflow-x-auto">
+              <div className="flex items-center gap-6 pb-4" style={{ width: 'fit-content', minWidth: '100%' }}>
+                {approvalLogos.map((approval) => (
+                  <Card
+                    key={approval.id}
+                    className="flex-shrink-0 hover:shadow-lg transition-all duration-300 hover:scale-105 bg-background border border-border/50"
+                  >
+                    <CardContent className="p-6 flex items-center justify-center h-24">
+                      <div className="relative w-full h-full flex items-center justify-center">
+                        <img
+                          src={approval.file_path}
+                          alt={
+                            approval.alt_text ||
+                            approval.original_name.replace(
+                              /\.(jpg|jpeg|png|webp|svg)$/i,
+                              ""
+                            )
+                          }
+                          className="max-w-full max-h-full object-contain filter grayscale hover:grayscale-0 transition-all duration-300"
+                          onError={(e) => {
+                            console.log(
+                              "Approval image failed to load:",
+                              approval.file_path,
+                              e
+                            );
+                            // Fallback to approval name text
+                            const target = e.target as HTMLImageElement;
+                            target.style.display = "none";
+                            const parent = target.parentElement;
+                            if (parent) {
+                              parent.innerHTML = `<div class="text-xs text-center text-muted-foreground p-2">${approval.original_name.replace(
+                                /\.(jpg|jpeg|png|webp|svg)$/i,
+                                ""
+                              )}</div>`;
+                            }
+                          }}
+                          onLoad={() =>
+                            console.log(
+                              "Approval image loaded successfully:",
+                              approval.original_name
+                            )
+                          }
+                        />
+                      </div>
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
+            </div>
+          ) : (
+            <div className="text-center">
+              <p className="text-muted-foreground text-sm">Loading approval logos...</p>
+            </div>
+          )}
         </div>
       </section>
 

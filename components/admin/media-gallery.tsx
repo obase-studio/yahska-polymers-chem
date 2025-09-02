@@ -6,8 +6,63 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Badge } from "@/components/ui/badge"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Search, Filter, Download, Trash2, Eye, Copy, ExternalLink, File } from "lucide-react"
+import { Search, Filter, Download, Trash2, Eye, Copy, ExternalLink, File, ImageIcon, Loader2, RefreshCw } from "lucide-react"
 import Image from "next/image"
+import { useState as useImageState } from "react"
+
+// Enhanced Image Component with Error Handling
+interface EnhancedImageProps {
+  src: string
+  alt: string
+  width: number
+  height: number
+  className?: string
+  filename?: string
+}
+
+function EnhancedImage({ src, alt, width, height, className, filename }: EnhancedImageProps) {
+  const [loading, setLoading] = useImageState(true)
+  const [error, setError] = useImageState(false)
+  
+  const handleLoad = () => {
+    setLoading(false)
+    setError(false)
+  }
+  
+  const handleError = () => {
+    setLoading(false)
+    setError(true)
+  }
+  
+  if (error) {
+    return (
+      <div className={`${className} flex flex-col items-center justify-center bg-muted text-muted-foreground p-4`}>
+        <ImageIcon className="h-8 w-8 mb-2" />
+        <p className="text-xs text-center">{filename || 'Image failed to load'}</p>
+      </div>
+    )
+  }
+  
+  return (
+    <div className="relative">
+      {loading && (
+        <div className={`${className} absolute inset-0 flex items-center justify-center bg-muted`}>
+          <Loader2 className="h-6 w-6 animate-spin" />
+        </div>
+      )}
+      <Image
+        src={src}
+        alt={alt}
+        width={width}
+        height={height}
+        className={className}
+        onLoad={handleLoad}
+        onError={handleError}
+        loading="lazy"
+      />
+    </div>
+  )
+}
 
 interface MediaFile {
   id: number
@@ -188,12 +243,13 @@ export function MediaGallery({ mediaFiles }: MediaGalleryProps) {
                   {/* Media Preview */}
                   <div className="aspect-square bg-muted rounded-lg overflow-hidden mb-3 flex items-center justify-center">
                     {isImage ? (
-                      <Image
+                      <EnhancedImage
                         src={file.file_path}
-                        alt={file.alt_text}
+                        alt={file.alt_text || file.original_name}
                         width={200}
                         height={200}
                         className="w-full h-full object-cover"
+                        filename={file.original_name}
                       />
                     ) : (
                       <div className="text-center text-muted-foreground">
@@ -243,12 +299,13 @@ export function MediaGallery({ mediaFiles }: MediaGalleryProps) {
                 {/* Media Display */}
                 <div className="flex justify-center">
                   {selectedFile.mime_type.startsWith('image/') ? (
-                    <Image
+                    <EnhancedImage
                       src={selectedFile.file_path}
-                      alt={selectedFile.alt_text}
+                      alt={selectedFile.alt_text || selectedFile.original_name}
                       width={600}
                       height={400}
                       className="max-w-full h-auto rounded-lg"
+                      filename={selectedFile.original_name}
                     />
                   ) : (
                     <div className="text-center text-muted-foreground py-12">

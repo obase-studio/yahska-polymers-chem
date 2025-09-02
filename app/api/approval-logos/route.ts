@@ -10,8 +10,9 @@ export async function GET() {
       .filter((file: any) => file.file_path.includes("approval-logos"))
       .map((file: any) => ({
         ...file,
-        // Fix file_path encoding for spaces and special characters
+        // Fix file_path: replace approval-logos with approvals and encode properly
         file_path: file.file_path
+          .replace("approval-logos", "approvals")
           .replace(/([^:]\/)\/+/g, "$1")
           .split("/")
           .map((part: string, index: number) =>

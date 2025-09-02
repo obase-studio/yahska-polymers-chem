@@ -10,10 +10,15 @@ export async function GET() {
       .filter((file: any) => file.file_path.includes('client-logos'))
       .map((file: any) => ({
         ...file,
-        // Fix file_path encoding for spaces and special characters
-        file_path: file.file_path.replace(/([^:]\/)\/+/g, '$1').split('/').map((part: string, index: number) => 
-          index < 3 ? part : encodeURIComponent(part)
-        ).join('/')
+        // Fix file_path: replace client-logos with Client Logos and encode properly
+        file_path: file.file_path
+          .replace('client-logos', 'Client%20Logos')
+          .replace(/([^:]\/)\/+/g, '$1')
+          .split('/')
+          .map((part: string, index: number) => 
+            index < 3 ? part : (part.includes('%') ? part : encodeURIComponent(part))
+          )
+          .join('/')
       }))
       .filter((file: any, index: number, self: any[]) => 
         // Remove duplicates based on original_name
