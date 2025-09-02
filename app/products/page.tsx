@@ -25,6 +25,7 @@ import {
 import Link from "next/link";
 import { Footer } from "@/components/footer";
 import { ContentItem } from "@/lib/database-client";
+import { useProductContext } from "@/contexts/ProductContext";
 
 // Function to get specific content value
 function getContentValue(
@@ -59,13 +60,14 @@ interface Category {
 
 export default function ProductsPage() {
   const [contentItems, setContentItems] = useState<ContentItem[]>([]);
-  const [selectedCategory, setSelectedCategory] = useState("all");
   const [searchTerm, setSearchTerm] = useState("");
   const [products, setProducts] = useState<Product[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [refreshing, setRefreshing] = useState(false);
+
+  const { selectedCategory, setSelectedCategory } = useProductContext();
 
   const productOverview =
     contentItems.find(

@@ -1,52 +1,66 @@
-"use client"
+"use client";
 
-import { useState, useEffect } from "react"
-import Link from "next/link"
-import { Button } from "@/components/ui/button"
-import { Menu, X, ChevronDown } from "lucide-react"
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger, DropdownMenuSeparator } from "@/components/ui/dropdown-menu"
+import { useState, useEffect } from "react";
+import Link from "next/link";
+import { Button } from "@/components/ui/button";
+import { Menu, X, ChevronDown } from "lucide-react";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+  DropdownMenuSeparator,
+} from "@/components/ui/dropdown-menu";
+import { useProductContext } from "@/contexts/ProductContext";
 
 interface Category {
-  id: string
-  name: string
+  id: string;
+  name: string;
 }
 
 export function Navigation() {
-  const [isOpen, setIsOpen] = useState(false)
-  const [categories, setCategories] = useState<Category[]>([])
+  const [isOpen, setIsOpen] = useState(false);
+  const [categories, setCategories] = useState<Category[]>([]);
+  const [dropdownOpen, setDropdownOpen] = useState(false);
+  const { selectedCategory, setSelectedCategory } = useProductContext();
 
-  const toggleMenu = () => setIsOpen(!isOpen)
+  const toggleMenu = () => setIsOpen(!isOpen);
+
+  const handleCategorySelect = (categoryId: string) => {
+    setSelectedCategory(categoryId);
+    setDropdownOpen(false);
+  };
 
   useEffect(() => {
     // Fetch categories from API
     const fetchCategories = async () => {
       try {
-        const response = await fetch('/api/admin/categories')
-        const result = await response.json()
-        
+        const response = await fetch("/api/admin/categories");
+        const result = await response.json();
+
         if (result.success && result.data) {
           // Filter active categories and sort by sort_order
           const activeCategories = result.data
             .filter((cat: any) => cat.is_active)
             .sort((a: any, b: any) => a.sort_order - b.sort_order)
-            .slice(0, 8) // Show max 8 categories in dropdown
-          
-          setCategories(activeCategories)
+            .slice(0, 8); // Show max 8 categories in dropdown
+
+          setCategories(activeCategories);
         }
       } catch (error) {
-        console.error('Error fetching categories:', error)
+        console.error("Error fetching categories:", error);
         // Fallback to static categories
         setCategories([
-          { id: 'admixtures', name: 'Admixtures' },
-          { id: 'accelerators', name: 'Accelerators' },
-          { id: 'waterproofing', name: 'Waterproofing' },
-          { id: 'grouts', name: 'Grouts' }
-        ])
+          { id: "admixtures", name: "Admixtures" },
+          { id: "accelerators", name: "Accelerators" },
+          { id: "waterproofing", name: "Waterproofing" },
+          { id: "grouts", name: "Grouts" },
+        ]);
       }
-    }
+    };
 
-    fetchCategories()
-  }, [])
+    fetchCategories();
+  }, []);
 
   return (
     <nav className="sticky top-0 z-50 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 border-b border-border">
@@ -55,7 +69,9 @@ export function Navigation() {
           {/* Logo */}
           <div className="flex-shrink-0">
             <Link href="/" className="flex items-center">
-              <div className="text-2xl font-bold text-primary">Yahska Polymers</div>
+              <div className="text-2xl font-bold text-primary">
+                Yahska Polymers
+              </div>
             </Link>
           </div>
 
@@ -70,26 +86,26 @@ export function Navigation() {
               </Link>
 
               {/* Products Dropdown */}
-              <DropdownMenu>
+              <DropdownMenu open={dropdownOpen} onOpenChange={setDropdownOpen}>
                 <DropdownMenuTrigger className="flex items-center text-foreground hover:text-primary px-3 py-2 text-sm font-medium transition-colors duration-200">
                   Products
                   <ChevronDown className="ml-1 h-4 w-4" />
                 </DropdownMenuTrigger>
                 <DropdownMenuContent className="w-56">
                   {categories.map((category) => (
-                    <DropdownMenuItem key={category.id}>
-                      <Link 
-                        href={`/products?category=${category.id}`}
-                        className="w-full"
-                      >
+                    <DropdownMenuItem
+                      key={category.id}
+                      onClick={() => handleCategorySelect(category.id)}
+                    >
+                      <Link href="/products" className="w-full">
                         {category.name}
                       </Link>
                     </DropdownMenuItem>
                   ))}
                   {categories.length > 0 && <DropdownMenuSeparator />}
-                  <DropdownMenuItem>
-                    <Link 
-                      href="/products" 
+                  <DropdownMenuItem onClick={() => handleCategorySelect("all")}>
+                    <Link
+                      href="/products"
                       className="w-full font-semibold text-primary hover:text-primary/80"
                     >
                       See All
@@ -119,11 +135,19 @@ export function Navigation() {
             </div>
           </div>
 
-
           {/* Mobile menu button */}
           <div className="md:hidden">
-            <Button variant="ghost" size="sm" onClick={toggleMenu} className="text-foreground hover:text-primary">
-              {isOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={toggleMenu}
+              className="text-foreground hover:text-primary"
+            >
+              {isOpen ? (
+                <X className="h-6 w-6" />
+              ) : (
+                <Menu className="h-6 w-6" />
+              )}
             </Button>
           </div>
         </div>
@@ -151,9 +175,12 @@ export function Navigation() {
                   {categories.map((category) => (
                     <Link
                       key={category.id}
-                      href={`/products?category=${category.id}`}
+                      href="/products"
                       className="text-muted-foreground hover:text-primary hover:bg-muted block px-3 py-2 rounded-md text-sm transition-all duration-200"
-                      onClick={toggleMenu}
+                      onClick={() => {
+                        handleCategorySelect(category.id);
+                        toggleMenu();
+                      }}
                     >
                       {category.name}
                     </Link>
@@ -162,7 +189,10 @@ export function Navigation() {
                     <Link
                       href="/products"
                       className="text-primary hover:text-primary/80 font-semibold hover:bg-muted block px-3 py-2 rounded-md text-sm transition-all duration-200"
-                      onClick={toggleMenu}
+                      onClick={() => {
+                        handleCategorySelect("all");
+                        toggleMenu();
+                      }}
                     >
                       See All
                     </Link>
@@ -191,11 +221,10 @@ export function Navigation() {
               >
                 Contact Us
               </Link>
-
             </div>
           </div>
         )}
       </div>
     </nav>
-  )
+  );
 }
