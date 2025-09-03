@@ -41,7 +41,10 @@ export function SimplifiedProjectForm({ initialData, onSubmit, loading, onCancel
     // Convert key_features back to array format for backend
     const submitData = {
       ...formData,
-      key_features: formData.key_features.split(',').map(f => f.trim()).filter(f => f.length > 0)
+      key_features: formData.key_features
+        .split(',')
+        .map((f: string) => f.trim())
+        .filter((f: string) => f.length > 0)
     }
     
     onSubmit(submitData)
