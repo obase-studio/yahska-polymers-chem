@@ -9,7 +9,7 @@ import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { ScrollArea } from "@/components/ui/scroll-area"
-import { Upload, Image, Search, Loader2, Check, X, FolderOpen, ImageIcon, RefreshCw } from "lucide-react"
+import { Upload, Image, Search, Loader2, Check, X, FolderOpen, ImageIcon, RefreshCw, FileImage } from "lucide-react"
 import { cn } from "@/lib/utils"
 
 // Enhanced Image component with loading and error states
@@ -339,39 +339,56 @@ export function ImagePicker({
                 </div>
 
                 {/* Image Grid */}
-                <ScrollArea className="h-96">
+                <ScrollArea className="h-[500px]">
                   {loading ? (
-                    <div className="flex items-center justify-center h-32">
-                      <Loader2 className="h-8 w-8 animate-spin" />
+                    <div className="flex items-center justify-center h-48">
+                      <div className="text-center">
+                        <Loader2 className="h-8 w-8 animate-spin mx-auto mb-2" />
+                        <p className="text-sm text-muted-foreground">Loading images...</p>
+                      </div>
                     </div>
                   ) : (
-                    <div className="grid grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 p-1">
+                    <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 p-2">
                       {filteredFiles.map((file) => (
                         <Card 
                           key={file.id}
                           className={cn(
-                            "cursor-pointer transition-all hover:scale-105 relative",
-                            selectedImage === file.file_path ? "ring-2 ring-primary" : ""
+                            "cursor-pointer transition-all duration-300 hover:shadow-lg hover:scale-[1.02] relative overflow-hidden group",
+                            selectedImage === file.file_path ? "ring-2 ring-primary shadow-lg" : "hover:ring-1 hover:ring-muted-foreground/20"
                           )}
                           onClick={() => handleImageSelect(file.file_path)}
                         >
-                          <CardContent className="p-2">
-                            <div className="aspect-square relative bg-muted rounded overflow-hidden">
+                          <CardContent className="p-0">
+                            <div className="aspect-square relative bg-muted">
                               <ImageWithFallback
                                 src={file.file_path}
                                 alt={file.alt_text || file.original_name}
                                 filename={file.original_name}
                                 className="w-full h-full object-cover"
                               />
+                              
+                              {/* Overlay */}
+                              <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors duration-300" />
+                              
+                              {/* Selection indicator */}
                               {selectedImage === file.file_path && (
-                                <div className="absolute inset-0 bg-primary/20 rounded flex items-center justify-center">
-                                  <Check className="h-6 w-6 text-primary" />
+                                <div className="absolute inset-0 bg-primary/10 flex items-center justify-center">
+                                  <div className="bg-primary text-primary-foreground rounded-full p-2">
+                                    <Check className="h-5 w-5" />
+                                  </div>
                                 </div>
                               )}
+                              
+                              {/* Hover overlay with info */}
+                              <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/60 to-transparent p-3 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                                <p className="text-white text-xs font-medium truncate">
+                                  {file.original_name}
+                                </p>
+                                <p className="text-white/80 text-xs">
+                                  {(file.file_size / 1024).toFixed(1)}KB
+                                </p>
+                              </div>
                             </div>
-                            <p className="text-xs text-center mt-1 truncate">
-                              {file.original_name}
-                            </p>
                           </CardContent>
                         </Card>
                       ))}
@@ -407,42 +424,72 @@ export function ImagePicker({
                 </ScrollArea>
               </TabsContent>
 
-              <TabsContent value="upload" className="space-y-4">
-                <div className="space-y-4">
-                  <div className="border-2 border-dashed border-muted-foreground/25 rounded-lg p-8 text-center">
-                    <Upload className="h-12 w-12 mx-auto mb-4 text-muted-foreground" />
-                    <div className="space-y-2">
-                      <Label htmlFor="file-upload" className="text-lg font-medium">
-                        Upload Image
+              <TabsContent value="upload" className="space-y-6">
+                <div className="space-y-6">
+                  <div className="border-2 border-dashed border-primary/20 rounded-lg p-12 text-center hover:border-primary/40 transition-colors duration-300 bg-primary/5">
+                    <Upload className="h-16 w-16 mx-auto mb-4 text-primary" />
+                    <div className="space-y-3">
+                      <Label htmlFor="file-upload" className="text-xl font-semibold text-foreground">
+                        Upload New Image
                       </Label>
-                      <p className="text-sm text-muted-foreground">
-                        Select an image file from your computer (max 10MB)
+                      <p className="text-muted-foreground max-w-sm mx-auto">
+                        Select a high-quality image file from your computer. Supported formats: JPG, PNG, WebP
                       </p>
-                      <Input
-                        id="file-upload"
-                        type="file"
-                        accept="image/*"
-                        onChange={handleFileUpload}
-                        disabled={uploading}
-                        className="mt-4"
-                      />
+                      <div className="pt-2">
+                        <Input
+                          id="file-upload"
+                          type="file"
+                          accept="image/*"
+                          onChange={handleFileUpload}
+                          disabled={uploading}
+                          className="file:mr-4 file:py-2 file:px-6 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-primary file:text-primary-foreground hover:file:bg-primary/90 file:cursor-pointer cursor-pointer"
+                        />
+                      </div>
                     </div>
                   </div>
 
                   {uploading && (
-                    <div className="space-y-2">
-                      <div className="flex items-center justify-between text-sm">
-                        <span>Uploading...</span>
-                        <span>{uploadProgress}%</span>
-                      </div>
-                      <div className="w-full bg-muted rounded-full h-2">
-                        <div 
-                          className="bg-primary h-2 rounded-full transition-all duration-300"
-                          style={{ width: `${uploadProgress}%` }}
-                        />
-                      </div>
-                    </div>
+                    <Card>
+                      <CardContent className="pt-6">
+                        <div className="space-y-3">
+                          <div className="flex items-center justify-between text-sm">
+                            <span className="font-medium">Uploading image...</span>
+                            <span className="text-primary font-bold">{uploadProgress}%</span>
+                          </div>
+                          <div className="w-full bg-muted rounded-full h-3 overflow-hidden">
+                            <div 
+                              className="bg-primary h-3 rounded-full transition-all duration-500 ease-out"
+                              style={{ width: `${uploadProgress}%` }}
+                            />
+                          </div>
+                          <p className="text-xs text-muted-foreground">
+                            Please wait while your image is being uploaded and processed...
+                          </p>
+                        </div>
+                      </CardContent>
+                    </Card>
                   )}
+
+                  <div className="grid grid-cols-2 gap-4 text-sm">
+                    <Card>
+                      <CardContent className="pt-4">
+                        <div className="text-center">
+                          <FileImage className="h-6 w-6 mx-auto mb-2 text-primary" />
+                          <p className="font-medium">Max Size</p>
+                          <p className="text-muted-foreground">10MB</p>
+                        </div>
+                      </CardContent>
+                    </Card>
+                    <Card>
+                      <CardContent className="pt-4">
+                        <div className="text-center">
+                          <Image className="h-6 w-6 mx-auto mb-2 text-primary" />
+                          <p className="font-medium">Best Quality</p>
+                          <p className="text-muted-foreground">1200x800px+</p>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  </div>
                 </div>
               </TabsContent>
             </Tabs>

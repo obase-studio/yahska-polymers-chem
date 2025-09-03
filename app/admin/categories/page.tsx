@@ -147,12 +147,12 @@ export default function CategoriesPage() {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-8">
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">Categories</h1>
-          <p className="text-muted-foreground">
+          <h1 className="text-3xl font-bold tracking-tight">Product Categories</h1>
+          <p className="text-muted-foreground mt-2">
             Manage product categories and organization
           </p>
         </div>
@@ -163,46 +163,66 @@ export default function CategoriesPage() {
       </div>
 
       {/* Categories Grid */}
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-        {categories.map((category) => (
-          <Card key={category.id} className="hover:shadow-md transition-shadow">
-            <CardHeader className="pb-3">
-              <div className="flex items-start justify-between">
-                <div className="flex-1">
-                  <CardTitle className="text-lg">{category.name}</CardTitle>
-                  <Badge variant="secondary" className="mt-1">
-                    {category.product_count || 0} products
-                  </Badge>
+      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+        {categories.map((category) => {
+          const getCategoryIcon = () => {
+            if (category.name.toLowerCase().includes('admixture')) return '🔧'
+            if (category.name.toLowerCase().includes('accelerator')) return '⚡'
+            return '📦'
+          }
+          
+          return (
+            <Card key={category.id} className="border-2 shadow-sm hover:shadow-md transition-shadow bg-white">
+              <CardHeader className="pb-6 px-8 pt-8">
+                <div className="flex items-start justify-between">
+                  <div className="space-y-3 flex-1">
+                    <CardTitle className="text-lg flex items-center gap-4 font-semibold">
+                      <div className="p-3 bg-primary/10 rounded-lg">
+                        <span className="text-xl">{getCategoryIcon()}</span>
+                      </div>
+                      {category.name}
+                    </CardTitle>
+                    <CardDescription className="text-sm leading-relaxed ml-1">
+                      {category.description}
+                    </CardDescription>
+                  </div>
                 </div>
-                <div className="flex gap-1">
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={() => startEdit(category)}
-                  >
-                    <Edit className="h-3 w-3" />
-                  </Button>
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={() => handleDelete(category.id)}
-                    className="text-destructive hover:text-destructive"
-                  >
-                    <Trash2 className="h-3 w-3" />
-                  </Button>
+              </CardHeader>
+              <CardContent className="px-8 pb-8">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-baseline gap-3">
+                    <span className="text-2xl font-bold text-primary">{category.product_count || 0}</span>
+                    <span className="text-sm text-muted-foreground font-medium">
+                      product{(category.product_count || 0) !== 1 ? 's' : ''}
+                    </span>
+                  </div>
+                  <div className="flex gap-3 flex-shrink-0">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => startEdit(category)}
+                    >
+                      <Edit className="h-4 w-4 mr-1" />
+                      Edit
+                    </Button>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => handleDelete(category.id)}
+                      className="text-destructive hover:text-destructive"
+                    >
+                      <Trash2 className="h-4 w-4 mr-1" />
+                      Delete
+                    </Button>
+                  </div>
                 </div>
-              </div>
-            </CardHeader>
-            <CardContent>
-              <CardDescription>
-                {category.description}
-              </CardDescription>
-              <div className="mt-3 text-xs text-muted-foreground">
-                Sort order: {category.sort_order}
-              </div>
-            </CardContent>
-          </Card>
-        ))}
+                <div className="mt-4 text-xs text-muted-foreground bg-muted/30 px-3 py-2 rounded">
+                  Sort order: {category.sort_order}
+                </div>
+              </CardContent>
+            </Card>
+          )
+        })}
       </div>
 
       {/* Add/Edit Dialog */}
@@ -220,15 +240,16 @@ export default function CategoriesPage() {
             </DialogDescription>
           </DialogHeader>
 
-          <form onSubmit={handleSubmit} className="space-y-4">
-            <div className="grid gap-4 md:grid-cols-2">
+          <form onSubmit={handleSubmit} className="space-y-6">
+            <div className="grid gap-6 md:grid-cols-2">
               <div className="space-y-2">
-                <Label htmlFor="category-id">Category ID</Label>
+                <Label htmlFor="category-id" className="text-sm font-medium">Category ID</Label>
                 <Input
                   id="category-id"
                   value={formData.id}
                   onChange={(e) => setFormData(prev => ({ ...prev, id: e.target.value }))}
                   placeholder="e.g., grouts"
+                  className="mt-1"
                   required
                   disabled={!!editingCategory}
                 />
@@ -237,46 +258,50 @@ export default function CategoriesPage() {
                 </p>
               </div>
               <div className="space-y-2">
-                <Label htmlFor="sort-order">Sort Order</Label>
+                <Label htmlFor="sort-order" className="text-sm font-medium">Sort Order</Label>
                 <Input
                   id="sort-order"
                   type="number"
                   value={formData.sort_order}
                   onChange={(e) => setFormData(prev => ({ ...prev, sort_order: parseInt(e.target.value) || 1 }))}
+                  className="mt-1"
                   required
                 />
               </div>
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="category-name">Category Name</Label>
+              <Label htmlFor="category-name" className="text-sm font-medium">Category Name</Label>
               <Input
                 id="category-name"
                 value={formData.name}
                 onChange={(e) => setFormData(prev => ({ ...prev, name: e.target.value }))}
                 placeholder="e.g., Grouts"
+                className="mt-1"
                 required
               />
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="category-description">Description</Label>
+              <Label htmlFor="category-description" className="text-sm font-medium">Description</Label>
               <Textarea
                 id="category-description"
                 value={formData.description}
                 onChange={(e) => setFormData(prev => ({ ...prev, description: e.target.value }))}
                 placeholder="Describe this category..."
                 rows={3}
+                className="mt-1 resize-none"
                 required
               />
             </div>
 
-            <div className="flex gap-2 justify-end pt-4">
+            <div className="flex justify-end gap-3 pt-6 border-t">
               <Button
                 type="button"
                 variant="outline"
                 onClick={() => setShowAddDialog(false)}
               >
+                <X className="h-4 w-4 mr-2" />
                 Cancel
               </Button>
               <Button type="submit" disabled={loading}>

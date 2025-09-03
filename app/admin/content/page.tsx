@@ -266,40 +266,48 @@ export default function ContentPage() {
   const contentSections = getSectionsForPage(selectedPage)
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-8">
       {/* Header */}
-      <div>
-        <h1 className="text-3xl font-bold tracking-tight">Content Management</h1>
-        <p className="text-muted-foreground">
-          Edit website content and messaging
-        </p>
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-3xl font-bold tracking-tight">Content Management</h1>
+          <p className="text-muted-foreground mt-2">
+            Edit website content and messaging
+          </p>
+        </div>
       </div>
 
       {/* Page Selector */}
-      <div>
-        <Select value={selectedPage} onValueChange={setSelectedPage}>
-          <SelectTrigger className="w-64">
-            <SelectValue placeholder="Select Page" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="home">Home</SelectItem>
-            <SelectItem value="about">About</SelectItem>
-            <SelectItem value="products">Products</SelectItem>
-            <SelectItem value="projects">Projects</SelectItem>
-            <SelectItem value="contact">Contact</SelectItem>
-          </SelectContent>
-        </Select>
-      </div>
+      <Card className="border-2 shadow-sm bg-white">
+        <CardHeader className="px-8 pt-8 pb-6">
+          <CardTitle className="text-lg font-semibold">Select Page to Edit</CardTitle>
+          <CardDescription>Choose which page content you want to modify</CardDescription>
+        </CardHeader>
+        <CardContent className="px-8 pb-8">
+          <Select value={selectedPage} onValueChange={setSelectedPage}>
+            <SelectTrigger className="w-80 h-12">
+              <SelectValue placeholder="Select Page" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="home">Home</SelectItem>
+              <SelectItem value="about">About</SelectItem>
+              <SelectItem value="products">Products</SelectItem>
+              <SelectItem value="projects">Projects</SelectItem>
+              <SelectItem value="contact">Contact</SelectItem>
+            </SelectContent>
+          </Select>
+        </CardContent>
+      </Card>
 
       {/* Content Sections */}
       <div className="space-y-6">
         {contentSections.map((section) => (
-          <Card key={section.id}>
-            <CardHeader>
-              <CardTitle>{section.title}</CardTitle>
-              <CardDescription>{section.description}</CardDescription>
+          <Card key={section.id} className="border-2 shadow-sm bg-white">
+            <CardHeader className="px-8 pt-8 pb-6">
+              <CardTitle className="text-lg font-semibold">{section.title}</CardTitle>
+              <CardDescription className="text-sm leading-relaxed">{section.description}</CardDescription>
             </CardHeader>
-            <CardContent>
+            <CardContent className="px-8 pb-8">
               <ContentEditorWithMedia section={section} page={selectedPage} />
             </CardContent>
           </Card>

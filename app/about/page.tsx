@@ -276,64 +276,6 @@ export default function AboutPage() {
       </section>
 
 
-      {/* Key Highlights */}
-      <section className="py-20">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-16">
-            <h2
-              className="text-3xl lg:text-4xl font-bold text-foreground mb-4"
-              style={{ fontFamily: "var(--font-heading)" }}
-            >
-              Why We Stand Out
-            </h2>
-            <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
-              Our commitment to excellence is reflected in every aspect of our operations
-            </p>
-          </div>
-
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
-            <div className="text-center">
-              <div className="bg-accent/10 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-6">
-                <Award className="h-8 w-8 text-accent" />
-              </div>
-              <h3 className="text-xl font-semibold mb-4">ISO Certified</h3>
-              <p className="text-muted-foreground">
-                Quality management systems certified to international standards ensuring consistent product quality.
-              </p>
-            </div>
-
-            <div className="text-center">
-              <div className="bg-accent/10 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-6">
-                <Factory className="h-8 w-8 text-accent" />
-              </div>
-              <h3 className="text-xl font-semibold mb-4">Modern Facilities</h3>
-              <p className="text-muted-foreground">
-                State-of-the-art manufacturing equipment and quality control laboratories for superior products.
-              </p>
-            </div>
-
-            <div className="text-center">
-              <div className="bg-accent/10 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-6">
-                <Users className="h-8 w-8 text-accent" />
-              </div>
-              <h3 className="text-xl font-semibold mb-4">Expert Team</h3>
-              <p className="text-muted-foreground">
-                Experienced chemists and engineers dedicated to innovation and customer satisfaction.
-              </p>
-            </div>
-
-            <div className="text-center">
-              <div className="bg-accent/10 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-6">
-                <Target className="h-8 w-8 text-accent" />
-              </div>
-              <h3 className="text-xl font-semibold mb-4">Customer Focus</h3>
-              <p className="text-muted-foreground">
-                Tailored solutions and comprehensive support to meet specific industry requirements.
-              </p>
-            </div>
-          </div>
-        </div>
-      </section>
 
       {/* Quality Commitment */}
       {qualityCommitment && (
@@ -382,30 +324,6 @@ export default function AboutPage() {
         </section>
       )}
 
-      {/* CTA Section */}
-      <section className="py-20 bg-primary text-primary-foreground">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h2 className="text-3xl lg:text-4xl font-bold mb-4" style={{ fontFamily: "var(--font-heading)" }}>
-            Partner with Experience
-          </h2>
-          <p className="text-xl mb-8 opacity-90 max-w-2xl mx-auto">
-            Join hundreds of satisfied clients who trust Yahska Polymers for their chemical solution needs.
-          </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Button asChild size="lg" variant="secondary">
-              <Link href="/contact">Get in Touch</Link>
-            </Button>
-            <Button
-              asChild
-              size="lg"
-              variant="outline"
-              className="border-primary-foreground text-primary-foreground hover:bg-primary-foreground hover:text-primary bg-transparent"
-            >
-              <Link href="/products">View Our Products</Link>
-            </Button>
-          </div>
-        </div>
-      </section>
 
       {(lastUpdated || lastKnownTimestamp > 0) && (
         <div className="text-center py-2 bg-gray-50 text-xs text-gray-500">

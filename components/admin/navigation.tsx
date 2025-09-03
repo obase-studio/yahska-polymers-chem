@@ -26,9 +26,8 @@ const navigation = [
   { name: "Content", href: "/admin/content", icon: FileText },
   { name: "Products", href: "/admin/products", icon: Package },
   { name: "Projects", href: "/admin/projects", icon: Building2 },
-  { name: "Categories", href: "/admin/categories", icon: Tags },
-  { name: "Clients", href: "/admin/clients", icon: Users },
-  { name: "SEO", href: "/admin/seo", icon: Search },
+  { name: "Product Categories", href: "/admin/categories", icon: Tags },
+  { name: "Project Categories", href: "/admin/project-categories", icon: Building2 },
   { name: "Media", href: "/admin/media", icon: Image },
 ]
 

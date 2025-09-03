@@ -12,7 +12,7 @@ import {
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { ArrowLeft, Mail, Phone, Loader2, AlertCircle, Package } from "lucide-react";
+import { ArrowLeft, Loader2, AlertCircle, Package } from "lucide-react";
 import Link from "next/link";
 import { Footer } from "@/components/footer";
 
@@ -301,41 +301,6 @@ export default function ProductDetailPage() {
         </div>
       </section>
 
-      {/* Contact CTA */}
-      <section className="py-20 bg-primary text-primary-foreground">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h2
-            className="text-3xl lg:text-4xl font-bold mb-4"
-            style={{ fontFamily: "var(--font-heading)" }}
-          >
-            Need More Information?
-          </h2>
-          <p className="text-xl mb-8 opacity-90 max-w-2xl mx-auto">
-            Our technical experts can provide detailed specifications,
-            application guidance, and custom solutions for your specific
-            requirements.
-          </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Button asChild size="lg" variant="secondary">
-              <Link href="/contact">
-                <Mail className="mr-2 h-5 w-5" />
-                Contact Our Experts
-              </Link>
-            </Button>
-            <Button
-              asChild
-              size="lg"
-              variant="outline"
-              className="border-primary-foreground text-primary-foreground hover:bg-primary-foreground hover:text-primary bg-transparent"
-            >
-              <Link href="tel:+919825012345">
-                <Phone className="mr-2 h-5 w-5" />
-                Call Now
-              </Link>
-            </Button>
-          </div>
-        </div>
-      </section>
 
       <Footer />
     </div>

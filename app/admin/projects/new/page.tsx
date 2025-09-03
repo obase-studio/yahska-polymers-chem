@@ -6,7 +6,7 @@ import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { ArrowLeft } from "lucide-react"
-import { ProjectForm } from "@/components/admin/project-form"
+import { SimplifiedProjectForm } from "@/components/admin/simplified-project-form"
 
 export default function NewProject() {
   const router = useRouter()
@@ -38,25 +38,27 @@ export default function NewProject() {
   }
 
   return (
-    <div className="container mx-auto py-8">
-      <div className="flex items-center gap-4 mb-8">
+    <div className="space-y-8">
+      <div className="flex items-center gap-4">
         <Button asChild variant="outline" size="sm">
           <Link href="/admin/projects">
             <ArrowLeft className="h-4 w-4 mr-2" />
             Back to Projects
           </Link>
         </Button>
-        <h1 className="text-3xl font-bold">Add New Project</h1>
+        <div>
+          <h1 className="text-3xl font-bold tracking-tight">Add New Project</h1>
+          <p className="text-muted-foreground mt-2">
+            Create a new project in your portfolio
+          </p>
+        </div>
       </div>
 
-      <Card>
-        <CardHeader>
-          <CardTitle>Project Details</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <ProjectForm onSubmit={handleSubmit} loading={loading} />
-        </CardContent>
-      </Card>
+      <SimplifiedProjectForm 
+        onSubmit={handleSubmit} 
+        loading={loading} 
+        onCancel={() => router.push('/admin/projects')}
+      />
     </div>
   )
 }

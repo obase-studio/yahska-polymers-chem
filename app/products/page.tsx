@@ -6,8 +6,6 @@ import {
   Card,
   CardContent,
   CardDescription,
-  CardHeader,
-  CardTitle,
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -16,11 +14,17 @@ import {
   Search,
   ArrowRight,
   Mail,
-  Phone,
   ExternalLink,
   Loader2,
   RefreshCw,
   Package,
+  Zap,
+  Building2,
+  Wrench,
+  CheckCircle,
+  Factory,
+  Award,
+  Truck
 } from "lucide-react";
 import Link from "next/link";
 import { Footer } from "@/components/footer";
@@ -400,74 +404,99 @@ export default function ProductsPage() {
                 </div>
               ) : (
                 <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
-                  {filteredProducts.map((product) => (
-                    <Card
-                      key={product.id}
-                      className="h-full hover:shadow-lg transition-shadow duration-300 flex flex-col py-6"
-                    >
-                      <CardHeader>
-                        <div className="flex items-start justify-between">
-                          <div className="flex-1">
-                            <CardTitle className="text-lg mb-2 line-clamp-2">
-                              {product.name}
-                            </CardTitle>
-                            <Badge variant="secondary" className="mb-2">
+                  {filteredProducts.map((product) => {
+                    // Get unique icon for each category based on name
+                    const getCategoryIcon = (categoryName: string) => {
+                      if (categoryName.toLowerCase().includes('admixture')) return Package
+                      if (categoryName.toLowerCase().includes('accelerator')) return Zap
+                      if (categoryName.toLowerCase().includes('waterproofing')) return Building2
+                      if (categoryName.toLowerCase().includes('grout')) return Wrench
+                      if (categoryName.toLowerCase().includes('curing')) return CheckCircle
+                      if (categoryName.toLowerCase().includes('micro silica')) return Factory
+                      if (categoryName.toLowerCase().includes('floor')) return Building2
+                      if (categoryName.toLowerCase().includes('structural')) return Building2
+                      if (categoryName.toLowerCase().includes('corrosion')) return Award
+                      if (categoryName.toLowerCase().includes('release')) return Truck
+                      return Package
+                    }
+                    const CategoryIcon = getCategoryIcon(product.category_name)
+
+                    return (
+                      <Card
+                        key={product.id}
+                        className="group h-full hover:shadow-xl hover:scale-[1.02] transition-all duration-300 border border-border/50 hover:border-primary/30 overflow-hidden"
+                      >
+                        {/* Header with gradient and icon */}
+                        <div className="aspect-[4/3] bg-gradient-to-br from-primary/5 to-accent/5 relative p-6 flex items-center justify-center">
+                          {/* Category tag on top left */}
+                          <div className="absolute top-4 left-4 z-10">
+                            <Badge variant="secondary" className="bg-white/90 backdrop-blur-sm text-foreground border-border">
                               {product.category_name}
                             </Badge>
                           </div>
-                        </div>
-                      </CardHeader>
-                      <CardContent className="flex-1 flex flex-col">
-                        <div className="flex-1">
-                          <CardDescription className="mb-4 line-clamp-3">
-                            {product.description}
-                          </CardDescription>
-
-                          {product.features && product.features.length > 0 && (
-                            <div className="mb-4">
-                              <p className="text-sm font-medium text-foreground mb-2">
-                                Key Features:
-                              </p>
-                              <div className="flex flex-wrap gap-1">
-                                {product.features
-                                  .slice(0, 3)
-                                  .map((feature, index) => (
-                                    <Badge
-                                      key={index}
-                                      variant="outline"
-                                      className="text-xs"
-                                    >
-                                      {feature}
-                                    </Badge>
-                                  ))}
-                                {product.features.length > 3 && (
-                                  <Badge variant="outline" className="text-xs">
-                                    +{product.features.length - 3} more
-                                  </Badge>
-                                )}
-                              </div>
+                          
+                          {/* Background overlay */}
+                          <div className="absolute inset-0 bg-gradient-to-br from-primary/10 to-accent/10 group-hover:from-primary/20 group-hover:to-accent/20 transition-colors duration-300" />
+                          
+                          {/* Main content */}
+                          <div className="relative text-center">
+                            <div className="bg-white/90 backdrop-blur-sm rounded-full p-4 group-hover:bg-primary group-hover:text-white transition-all duration-300 mb-4 inline-flex">
+                              <CategoryIcon className="h-8 w-8" />
                             </div>
-                          )}
+                            <h3 className="text-lg font-bold text-foreground group-hover:text-primary transition-colors duration-300 mb-2">
+                              {product.name}
+                            </h3>
+                          </div>
+
+                          {/* Hover overlay with quick info */}
+                          <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-primary/80 to-transparent p-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                            <p className="text-white text-sm font-medium">Industrial Grade Quality</p>
+                          </div>
                         </div>
 
-                        <div className="flex gap-2 mt-6">
-                          <Button
-                            asChild
-                            className="w-full flex items-center justify-center"
-                            size="sm"
-                          >
-                            <Link
-                              href={`/products/${product.id}`}
-                              className="flex items-center justify-center w-full"
-                            >
-                              <ArrowRight className="h-4 w-4 mr-2" />
-                              View Details
+                        <CardContent className="p-6">
+                          <div className="flex-1">
+                            <CardDescription className="mb-4 line-clamp-3 leading-relaxed">
+                              {product.description}
+                            </CardDescription>
+
+                            {product.features && product.features.length > 0 && (
+                              <div className="mb-4">
+                                <p className="text-sm font-medium text-foreground mb-2">
+                                  Key Features:
+                                </p>
+                                <div className="flex flex-wrap gap-1">
+                                  {product.features
+                                    .slice(0, 3)
+                                    .map((feature, index) => (
+                                      <Badge
+                                        key={index}
+                                        variant="secondary"
+                                        className="text-xs bg-muted/50 text-muted-foreground border-0"
+                                      >
+                                        {feature}
+                                      </Badge>
+                                    ))}
+                                  {product.features.length > 3 && (
+                                    <Badge variant="secondary" className="text-xs bg-muted/50 text-muted-foreground border-0">
+                                      +{product.features.length - 3} more
+                                    </Badge>
+                                  )}
+                                </div>
+                              </div>
+                            )}
+                          </div>
+
+                          <Button asChild variant="outline" className="w-full bg-muted hover:bg-muted/80 text-muted-foreground hover:text-foreground group-hover:bg-primary group-hover:text-white transition-all duration-300 justify-between border-muted group-hover:border-primary mt-4">
+                            <Link href={`/products/${product.id}`}>
+                              <span>View Details</span>
+                              <ArrowRight className="h-4 w-4 group-hover:translate-x-1 transition-transform duration-300" />
                             </Link>
                           </Button>
-                        </div>
-                      </CardContent>
-                    </Card>
-                  ))}
+                        </CardContent>
+                      </Card>
+                    )
+                  })}
                 </div>
               )}
             </div>
@@ -475,37 +504,6 @@ export default function ProductsPage() {
         </div>
       </section>
 
-      {/* Contact CTA Section */}
-      <section className="py-20 bg-primary text-primary-foreground">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h2
-            className="text-3xl lg:text-4xl font-bold mb-4"
-            style={{ fontFamily: "var(--font-heading)" }}
-          >
-            Need Technical Assistance?
-          </h2>
-          <p className="text-xl mb-8 opacity-90 max-w-2xl mx-auto">
-            Our technical experts are ready to help you select the right
-            products for your specific applications.
-          </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Button asChild size="lg" variant="secondary">
-              <Link href="/contact">Contact Our Experts</Link>
-            </Button>
-            <Button
-              asChild
-              size="lg"
-              variant="outline"
-              className="border-primary-foreground text-primary-foreground hover:bg-primary-foreground hover:text-primary bg-transparent"
-            >
-              <Link href="tel:+918890913222">
-                <Phone className="h-5 w-5 mr-2" />
-                Call Now
-              </Link>
-            </Button>
-          </div>
-        </div>
-      </section>
 
       <Footer />
     </div>

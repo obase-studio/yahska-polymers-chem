@@ -15,6 +15,7 @@ import { Badge } from "@/components/ui/badge";
 import {
   Search,
   ExternalLink,
+  ArrowRight,
   Building2,
   Train,
   Factory,
@@ -429,9 +430,11 @@ export default function ProjectsPage() {
                   {filteredProjects.map((project) => (
                     <Card
                       key={project.id}
-                      className="h-full hover:shadow-lg transition-shadow duration-300 flex flex-col"
+                      className="group h-full hover:shadow-xl hover:scale-[1.02] transition-all duration-300 border border-border/50 hover:border-primary/30 overflow-hidden flex flex-col"
                     >
-                      <div className="aspect-video relative overflow-hidden bg-muted rounded-t-lg">
+                      <div className="aspect-video relative overflow-hidden bg-gradient-to-br from-primary/5 to-accent/5 rounded-t-lg">
+                        {/* Background overlay */}
+                        <div className="absolute inset-0 bg-gradient-to-br from-primary/10 to-accent/10 group-hover:from-primary/20 group-hover:to-accent/20 transition-colors duration-300" />
                         {project.image_url ? (
                           <Image
                             src={project.image_url}
@@ -444,12 +447,8 @@ export default function ProjectsPage() {
                             <Building2 className="h-16 w-16 text-muted-foreground/50" />
                           </div>
                         )}
-                        <div className="absolute top-2 right-2">
-                          <Badge
-                            variant="secondary"
-                            className="flex items-center gap-1"
-                          >
-                            {getCategoryIcon(project.category)}
+                        <div className="absolute top-4 left-4 z-10">
+                          <Badge variant="secondary" className="bg-white/90 backdrop-blur-sm text-foreground border-border">
                             {getCategoryName(project.category)}
                           </Badge>
                         </div>
@@ -461,6 +460,11 @@ export default function ProjectsPage() {
                             </Badge>
                           </div>
                         )}
+                        
+                        {/* Hover overlay with quick info */}
+                        <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-primary/80 to-transparent p-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                          <p className="text-white text-sm font-medium">Professional Grade Solutions</p>
+                        </div>
                       </div>
                       <CardContent className="p-6 flex-1 flex flex-col">
                         <div className="flex-1 space-y-3">
@@ -524,16 +528,16 @@ export default function ProjectsPage() {
                                     .map((feature, index) => (
                                       <Badge
                                         key={index}
-                                        variant="outline"
-                                        className="text-xs"
+                                        variant="secondary"
+                                        className="text-xs bg-muted/50 text-muted-foreground border-0"
                                       >
                                         {feature}
                                       </Badge>
                                     ))}
                                   {project.key_features.length > 3 && (
                                     <Badge
-                                      variant="outline"
-                                      className="text-xs"
+                                      variant="secondary"
+                                      className="text-xs bg-muted/50 text-muted-foreground border-0"
                                     >
                                       +{project.key_features.length - 3} more
                                     </Badge>
@@ -545,15 +549,16 @@ export default function ProjectsPage() {
 
                         <Button
                           asChild
-                          className="w-full mt-6 flex items-center justify-center"
+                          variant="outline"
+                          className="w-full bg-muted hover:bg-muted/80 text-muted-foreground hover:text-foreground group-hover:bg-primary group-hover:text-white transition-all duration-300 justify-between border-muted group-hover:border-primary mt-6"
                           size="sm"
                         >
                           <Link
                             href={`/projects/${project.id}`}
-                            className="flex items-center justify-center w-full"
+                            className="flex items-center justify-between w-full"
                           >
-                            <ExternalLink className="h-4 w-4 mr-2" />
-                            View Details
+                            <span>View Details</span>
+                            <ArrowRight className="h-4 w-4 group-hover:translate-x-1 transition-transform duration-300" />
                           </Link>
                         </Button>
                       </CardContent>
@@ -566,34 +571,6 @@ export default function ProjectsPage() {
         </div>
       </section>
 
-      {/* Contact CTA Section */}
-      <section className="py-20 bg-primary text-primary-foreground">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h2
-            className="text-3xl lg:text-4xl font-bold mb-4"
-            style={{ fontFamily: "var(--font-heading)" }}
-          >
-            Ready to Start Your Next Project?
-          </h2>
-          <p className="text-xl mb-8 opacity-90 max-w-2xl mx-auto">
-            Let our experienced team help you achieve exceptional results with
-            our proven chemical solutions.
-          </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Button asChild size="lg" variant="secondary">
-              <Link href="/contact">Contact Our Team</Link>
-            </Button>
-            <Button
-              asChild
-              size="lg"
-              variant="outline"
-              className="border-primary-foreground text-primary-foreground hover:bg-primary-foreground hover:text-primary bg-transparent"
-            >
-              <Link href="tel:+918890913222">Call Now</Link>
-            </Button>
-          </div>
-        </div>
-      </section>
 
       <Footer />
     </div>

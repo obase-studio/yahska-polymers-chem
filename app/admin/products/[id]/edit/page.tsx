@@ -20,10 +20,10 @@ export default async function EditProductPage({ params }: EditProductPageProps) 
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-8">
       {/* Header */}
       <div className="flex items-center gap-4">
-        <Button asChild variant="ghost" size="sm">
+        <Button asChild variant="outline" size="sm">
           <Link href="/admin/products">
             <ArrowLeft className="h-4 w-4 mr-2" />
             Back to Products
@@ -31,21 +31,21 @@ export default async function EditProductPage({ params }: EditProductPageProps) 
         </Button>
         <div>
           <h1 className="text-3xl font-bold tracking-tight">Edit Product</h1>
-          <p className="text-muted-foreground">
+          <p className="text-muted-foreground mt-2">
             Update product information and details
           </p>
         </div>
       </div>
 
       {/* Form */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Product Information</CardTitle>
-          <CardDescription>
+      <Card className="border-2 shadow-sm bg-white">
+        <CardHeader className="px-8 pt-8 pb-6">
+          <CardTitle className="text-xl font-semibold">Product Information</CardTitle>
+          <CardDescription className="text-sm leading-relaxed mt-2">
             Edit the details for "{product.name}"
           </CardDescription>
         </CardHeader>
-        <CardContent>
+        <CardContent className="px-8 pb-8">
           <ProductForm categories={categories} product={product} isEdit={true} />
         </CardContent>
       </Card>

@@ -6,25 +6,15 @@ import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { ArrowLeft, Loader2 } from "lucide-react"
-import { ProjectForm } from "@/components/admin/project-form"
+import { SimplifiedProjectForm } from "@/components/admin/simplified-project-form"
 
 interface Project {
   id: number
   name: string
   description: string
   category: string
-  location: string
-  client_name: string
-  completion_date: string
-  project_value: number
   key_features: string[]
-  challenges: string
-  solutions: string
   image_url: string
-  gallery_images: string[]
-  is_featured: boolean
-  is_active: boolean
-  sort_order: number
 }
 
 export default function EditProject() {
@@ -89,10 +79,10 @@ export default function EditProject() {
 
   if (initialLoading) {
     return (
-      <div className="container mx-auto py-8">
-        <div className="text-center">
+      <div className="space-y-8">
+        <div className="text-center py-16">
           <Loader2 className="h-8 w-8 animate-spin mx-auto mb-4" />
-          <p>Loading project...</p>
+          <p className="text-muted-foreground">Loading project...</p>
         </div>
       </div>
     )
@@ -100,10 +90,10 @@ export default function EditProject() {
 
   if (!project) {
     return (
-      <div className="container mx-auto py-8">
-        <div className="text-center">
-          <p>Project not found</p>
-          <Button asChild className="mt-4">
+      <div className="space-y-8">
+        <div className="text-center py-16">
+          <p className="text-muted-foreground mb-4">Project not found</p>
+          <Button asChild>
             <Link href="/admin/projects">Back to Projects</Link>
           </Button>
         </div>
@@ -112,29 +102,28 @@ export default function EditProject() {
   }
 
   return (
-    <div className="container mx-auto py-8">
-      <div className="flex items-center gap-4 mb-8">
+    <div className="space-y-8">
+      <div className="flex items-center gap-4">
         <Button asChild variant="outline" size="sm">
           <Link href="/admin/projects">
             <ArrowLeft className="h-4 w-4 mr-2" />
             Back to Projects
           </Link>
         </Button>
-        <h1 className="text-3xl font-bold">Edit Project</h1>
+        <div>
+          <h1 className="text-3xl font-bold tracking-tight">Edit Project</h1>
+          <p className="text-muted-foreground mt-2">
+            Update project information and details
+          </p>
+        </div>
       </div>
 
-      <Card>
-        <CardHeader>
-          <CardTitle>Project Details</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <ProjectForm 
-            initialData={project}
-            onSubmit={handleSubmit} 
-            loading={loading} 
-          />
-        </CardContent>
-      </Card>
+      <SimplifiedProjectForm 
+        initialData={project}
+        onSubmit={handleSubmit} 
+        loading={loading} 
+        onCancel={() => router.push('/admin/projects')}
+      />
     </div>
   )
 }

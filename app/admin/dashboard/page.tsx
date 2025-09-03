@@ -4,14 +4,25 @@ import { supabaseHelpers } from "@/lib/supabase-helpers"
 export default async function AdminDashboard() {
   // Get basic stats from database
   const products = await supabaseHelpers.getAllProducts()
-  const testimonials = await supabaseHelpers.getAllTestimonials()
   const mediaFiles = await supabaseHelpers.getAllMediaFiles()
+  
+  // Get projects count (placeholder for now)
+  let projectsCount = 0
+  try {
+    const response = await fetch(`${process.env.NEXT_PUBLIC_APP_URL}/api/admin/projects`, {
+      cache: 'no-store'
+    })
+    const projectsData = await response.json()
+    projectsCount = projectsData.success ? projectsData.data.length : 0
+  } catch (error) {
+    console.error('Error fetching projects:', error)
+  }
 
   const stats = {
     products: products.length,
-    testimonials: testimonials.length,
+    projects: projectsCount,
     mediaFiles: mediaFiles.length,
-    contentPages: 5 // Home, About, Products, Projects, Contact
+    contentPages: 4 // Home, About, Contact, Certifications
   }
 
   return (

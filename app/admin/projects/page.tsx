@@ -88,14 +88,14 @@ export default function ProjectsAdmin() {
 
   if (loading) {
     return (
-      <div className="container mx-auto py-8">
-        <div className="text-center">Loading projects...</div>
+      <div className="container mx-auto py-6">
+        <div className="text-center text-sm">Loading projects...</div>
       </div>
     )
   }
 
   return (
-    <div className="container mx-auto py-8">
+    <div className="container mx-auto py-6">
       <div className="flex justify-between items-center mb-8">
         <h1 className="text-3xl font-bold">Projects Management</h1>
         <Button asChild>
@@ -108,11 +108,11 @@ export default function ProjectsAdmin() {
 
       <div className="grid gap-6">
         {projects.length === 0 ? (
-          <Card>
-            <CardContent className="text-center py-8">
-              <Building2 className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
-              <p className="text-muted-foreground">No projects found</p>
-              <Button asChild className="mt-4">
+          <Card className="border-2 shadow-sm bg-white">
+            <CardContent className="text-center py-16 px-8">
+              <Building2 className="h-16 w-16 mx-auto text-muted-foreground mb-6" />
+              <p className="text-muted-foreground mb-6">No projects found</p>
+              <Button asChild>
                 <Link href="/admin/projects/new">
                   <Plus className="h-4 w-4 mr-2" />
                   Create your first project
@@ -122,32 +122,33 @@ export default function ProjectsAdmin() {
           </Card>
         ) : (
           projects.map((project) => (
-            <Card key={project.id}>
-              <CardHeader>
+            <Card key={project.id} className="border-2 shadow-sm hover:shadow-md transition-shadow bg-white">
+              <CardHeader className="px-8 pt-8 pb-6">
                 <div className="flex justify-between items-start">
-                  <div className="flex-1">
-                    <div className="flex items-center gap-2 mb-2">
-                      <CardTitle className="text-xl">{project.name}</CardTitle>
+                  <div className="flex-1 pr-6">
+                    <div className="flex items-center gap-3 mb-3">
+                      <CardTitle className="text-xl font-semibold">{project.name}</CardTitle>
                       <div className="flex gap-2">
                         {project.is_featured && (
-                          <Badge variant="default">Featured</Badge>
+                          <Badge variant="default" className="px-3 py-1">Featured</Badge>
                         )}
-                        <Badge variant={project.is_active ? "secondary" : "outline"}>
+                        <Badge variant={project.is_active ? "secondary" : "outline"} className="px-3 py-1">
                           {project.is_active ? 'Active' : 'Inactive'}
                         </Badge>
-                        <Badge variant="outline">
+                        <Badge variant="outline" className="px-3 py-1">
                           {getCategoryName(project.category)}
                         </Badge>
                       </div>
                     </div>
-                    <p className="text-muted-foreground line-clamp-2">
+                    <p className="text-muted-foreground line-clamp-2 leading-relaxed">
                       {project.description}
                     </p>
                   </div>
-                  <div className="flex gap-2">
+                  <div className="flex gap-3 flex-shrink-0">
                     <Button asChild variant="outline" size="sm">
                       <Link href={`/admin/projects/${project.id}/edit`}>
-                        <Edit className="h-4 w-4" />
+                        <Edit className="h-4 w-4 mr-1" />
+                        Edit
                       </Link>
                     </Button>
                     <Button
@@ -156,43 +157,44 @@ export default function ProjectsAdmin() {
                       onClick={() => deleteProject(project.id)}
                       className="text-destructive hover:text-destructive"
                     >
-                      <Trash2 className="h-4 w-4" />
+                      <Trash2 className="h-4 w-4 mr-1" />
+                      Delete
                     </Button>
                   </div>
                 </div>
               </CardHeader>
-              <CardContent>
-                <div className="flex flex-wrap gap-4 text-sm text-muted-foreground">
+              <CardContent className="px-8 pb-8">
+                <div className="flex flex-wrap gap-6 text-sm text-muted-foreground mb-6">
                   {project.client_name && (
-                    <div className="flex items-center gap-1">
+                    <div className="flex items-center gap-2">
                       <Users className="h-4 w-4" />
                       <span>{project.client_name}</span>
                     </div>
                   )}
                   {project.location && (
-                    <div className="flex items-center gap-1">
+                    <div className="flex items-center gap-2">
                       <MapPin className="h-4 w-4" />
                       <span>{project.location}</span>
                     </div>
                   )}
                   {project.completion_date && (
-                    <div className="flex items-center gap-1">
+                    <div className="flex items-center gap-2">
                       <Calendar className="h-4 w-4" />
                       <span>Completed: {new Date(project.completion_date).getFullYear()}</span>
                     </div>
                   )}
                 </div>
                 {project.key_features && project.key_features.length > 0 && (
-                  <div className="mt-4">
-                    <p className="text-sm font-medium mb-2">Key Features:</p>
-                    <div className="flex flex-wrap gap-1">
+                  <div>
+                    <p className="text-sm font-semibold mb-3">Key Features:</p>
+                    <div className="flex flex-wrap gap-2">
                       {project.key_features.slice(0, 3).map((feature, index) => (
-                        <Badge key={index} variant="outline" className="text-xs">
+                        <Badge key={index} variant="outline" className="text-xs px-2 py-1">
                           {feature}
                         </Badge>
                       ))}
                       {project.key_features.length > 3 && (
-                        <Badge variant="outline" className="text-xs">
+                        <Badge variant="outline" className="text-xs px-2 py-1">
                           +{project.key_features.length - 3} more
                         </Badge>
                       )}

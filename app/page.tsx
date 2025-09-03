@@ -393,102 +393,72 @@ export default function HomePage() {
           </div>
 
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
-            {categories.map((category) => (
-              <Card key={category.id} className="hover:shadow-lg transition-shadow duration-300">
-                <div className="aspect-video overflow-hidden rounded-t-lg bg-muted">
-                  <CategoryImage
-                    categoryId={category.id}
-                    categoryName={category.name}
-                    categoryImages={categoryImages}
-                  />
-                </div>
-                <CardHeader>
-                  <CardTitle className="text-primary">
-                    {category.name}
-                  </CardTitle>
-                  <CardDescription>
-                    {category.description || `Quality ${category.name.toLowerCase()} for industrial applications`}
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <div className="flex justify-center">
-                    <Button asChild variant="outline" size="sm">
+            {categories.map((category, index) => {
+              // Get unique icon for each category based on name
+              const getCategoryIcon = (name: string) => {
+                if (name.toLowerCase().includes('admixture')) return Package
+                if (name.toLowerCase().includes('accelerator')) return Zap
+                if (name.toLowerCase().includes('waterproofing')) return Building2
+                if (name.toLowerCase().includes('grout')) return Wrench
+                if (name.toLowerCase().includes('curing')) return CheckCircle
+                if (name.toLowerCase().includes('micro silica')) return Factory
+                if (name.toLowerCase().includes('floor')) return Building2
+                if (name.toLowerCase().includes('structural')) return Building2
+                if (name.toLowerCase().includes('corrosion')) return Award
+                if (name.toLowerCase().includes('release')) return Truck
+                return Package
+              }
+              const CategoryIcon = getCategoryIcon(category.name)
+
+              return (
+                <Card key={category.id} className="group hover:shadow-xl hover:scale-[1.02] transition-all duration-300 border border-border/50 hover:border-primary/30 overflow-hidden">
+                  <div className="aspect-[4/3] overflow-hidden bg-gradient-to-br from-primary/5 to-accent/5 relative">
+                    <CategoryImage
+                      categoryId={category.id}
+                      categoryName={category.name}
+                      categoryImages={categoryImages}
+                    />
+                    {/* Overlay */}
+                    <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors duration-300" />
+                    {/* Hover overlay with quick info */}
+                    <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-primary/80 to-transparent p-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                      <p className="text-white text-sm font-medium">Industrial Grade Quality</p>
+                    </div>
+                  </div>
+                  <CardContent className="p-6">
+                    <div className="mb-4">
+                      <CardTitle className="text-lg font-bold text-foreground mb-2 group-hover:text-primary transition-colors duration-300">
+                        {category.name}
+                      </CardTitle>
+                      <CardDescription className="text-sm text-muted-foreground leading-relaxed line-clamp-3">
+                        {category.description || `Professional grade ${category.name.toLowerCase()} solutions designed for demanding industrial applications and construction projects.`}
+                      </CardDescription>
+                    </div>
+                    <Button asChild variant="outline" className="w-full bg-muted hover:bg-muted/80 text-muted-foreground hover:text-foreground group-hover:bg-primary group-hover:text-white transition-all duration-300 justify-between border-muted group-hover:border-primary">
                       <Link href={`/products?category=${category.id}`}>
-                        View Products
-                        <ArrowRight className="ml-2 h-4 w-4" />
+                        <span>View Products</span>
+                        <ArrowRight className="h-4 w-4 group-hover:translate-x-1 transition-transform duration-300" />
                       </Link>
                     </Button>
-                  </div>
-                </CardContent>
-              </Card>
-            ))}          </div>
+                  </CardContent>
+                </Card>
+              )
+            })}
+          </div>
 
+          {/* See All Products Button */}
           <div className="text-center mt-12">
-            <Button
-              asChild
-              size="lg"
-              className="bg-primary hover:bg-primary/90"
-            >
+            <Button asChild variant="outline" size="lg" className="bg-muted hover:bg-muted/80 text-muted-foreground hover:text-foreground border-muted px-8">
               <Link href="/products">
-                View All Products
-                <ArrowRight className="ml-2 h-5 w-5" />
+                <span>See All Products</span>
+                <ArrowRight className="h-5 w-5 ml-2" />
               </Link>
             </Button>
           </div>
+
         </div>
       </section>
 
-      {/* Why Choose Us */}
-      <section className="py-20 bg-muted/50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-16">
-            <h2
-              className="text-3xl lg:text-4xl font-bold text-foreground mb-4"
-              style={{ fontFamily: "var(--font-heading)" }}
-            >
-              Why Choose Yahska Polymers
-            </h2>
-            <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
-              {whyChooseUsDescription}
-            </p>
-          </div>
-
-          <div className="grid md:grid-cols-3 gap-8">
-            <div className="text-center">
-              <div className="bg-primary/10 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-6">
-                <Award className="h-8 w-8 text-primary" />
-              </div>
-              <h3 className="text-xl font-semibold mb-4">Quality Excellence</h3>
-              <p className="text-muted-foreground">
-                ISO certified manufacturing processes ensuring consistent
-                quality and reliability in every product batch.
-              </p>
-            </div>
-
-            <div className="text-center">
-              <div className="bg-primary/10 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-6">
-                <Users className="h-8 w-8 text-primary" />
-              </div>
-              <h3 className="text-xl font-semibold mb-4">Expert Support</h3>
-              <p className="text-muted-foreground">
-                Dedicated technical team providing comprehensive support from
-                product selection to application guidance.
-              </p>
-            </div>
-
-            <div className="text-center">
-              <div className="bg-primary/10 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-6">
-                <Globe className="h-8 w-8 text-primary" />
-              </div>
-              <h3 className="text-xl font-semibold mb-4">Global Reach</h3>
-              <p className="text-muted-foreground">
-                Serving clients across multiple countries with reliable supply
-                chain and logistics network.
-              </p>
-            </div>
-          </div>
-        </div>
-      </section>
 
 
       {/* Project Categories Section */}
@@ -560,7 +530,7 @@ export default function HomePage() {
           </div>
 
           <div className="text-center mt-12">
-            <Button asChild size="lg" variant="outline">
+            <Button asChild size="lg" variant="outline" className="bg-muted hover:bg-muted/80 text-muted-foreground hover:text-foreground border-muted px-8">
               <Link href="/projects">
                 View All Projects
                 <ArrowRight className="ml-2 h-5 w-5" />
@@ -570,42 +540,18 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* CTA Section */}
-      <section className="py-20 bg-primary text-primary-foreground">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h2
-            className="text-3xl lg:text-4xl font-bold mb-4"
-            style={{ fontFamily: "var(--font-heading)" }}
-          >
-            {ctaHeadline}
-          </h2>
-          <p className="text-xl mb-8 opacity-90 max-w-2xl mx-auto">
-            {ctaDescription}
-          </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Button asChild size="lg" variant="secondary">
-              <Link href="/contact">Contact Us Today</Link>
-            </Button>
-            <Button
-              asChild
-              size="lg"
-              variant="outline"
-              className="border-primary-foreground text-primary-foreground hover:bg-primary-foreground hover:text-primary bg-transparent"
-            >
-              <Link href="/about">Learn More About Us</Link>
-            </Button>
-          </div>
-        </div>
-      </section>
 
       {/* Client Logos Ribbon */}
       <section className="py-12 bg-muted/30">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-8">
-            <h3 className="text-xl font-semibold text-foreground mb-2">
+          <div className="text-center mb-12">
+            <h2
+              className="text-3xl lg:text-4xl font-bold text-foreground mb-4"
+              style={{ fontFamily: "var(--font-heading)" }}
+            >
               Key Customers
-            </h3>
-            <p className="text-sm text-muted-foreground">
+            </h2>
+            <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
               Leading companies that trust us for their chemical solutions
             </p>
           </div>
@@ -670,11 +616,14 @@ export default function HomePage() {
       {/* Approval Logos Ribbon */}
       <section className="py-12 bg-background">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-8">
-            <h3 className="text-xl font-semibold text-foreground mb-2">
+          <div className="text-center mb-12">
+            <h2
+              className="text-3xl lg:text-4xl font-bold text-foreground mb-4"
+              style={{ fontFamily: "var(--font-heading)" }}
+            >
               Key Approvals & Certifications
-            </h3>
-            <p className="text-sm text-muted-foreground">
+            </h2>
+            <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
               Recognized and approved by leading authorities across India
             </p>
           </div>

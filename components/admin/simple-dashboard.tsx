@@ -11,14 +11,19 @@ import {
   ArrowRight,
   Edit,
   Upload,
-  Settings
+  Settings,
+  TrendingUp,
+  BarChart3,
+  Activity,
+  Plus,
+  Building2
 } from "lucide-react"
 import Link from "next/link"
 
 interface SimpleDashboardProps {
   stats: {
     products: number
-    testimonials: number
+    projects: number
     mediaFiles: number
     contentPages: number
   }
@@ -33,7 +38,9 @@ export function SimpleDashboard({ stats, recentProducts }: SimpleDashboardProps)
       description: "Total products in catalog",
       icon: Package,
       href: "/admin/products",
-      color: "text-blue-600"
+      gradient: "bg-gradient-to-br from-blue-500 to-blue-600",
+      iconBg: "bg-blue-50",
+      iconColor: "text-blue-600"
     },
     {
       title: "Media Files", 
@@ -41,15 +48,19 @@ export function SimpleDashboard({ stats, recentProducts }: SimpleDashboardProps)
       description: "Images and documents",
       icon: Image,
       href: "/admin/media",
-      color: "text-green-600"
+      gradient: "bg-gradient-to-br from-green-500 to-green-600",
+      iconBg: "bg-green-50",
+      iconColor: "text-green-600"
     },
     {
-      title: "Testimonials",
-      value: stats.testimonials,
-      description: "Client testimonials",
-      icon: Users,
-      href: "/admin/clients",
-      color: "text-purple-600"
+      title: "Projects",
+      value: stats.projects,
+      description: "Showcase projects",
+      icon: Building2,
+      href: "/admin/projects",
+      gradient: "bg-gradient-to-br from-purple-500 to-purple-600",
+      iconBg: "bg-purple-50",
+      iconColor: "text-purple-600"
     },
     {
       title: "Content Pages",
@@ -57,7 +68,9 @@ export function SimpleDashboard({ stats, recentProducts }: SimpleDashboardProps)
       description: "Website pages",
       icon: FileText,
       href: "/admin/content",
-      color: "text-orange-600"
+      gradient: "bg-gradient-to-br from-orange-500 to-orange-600",
+      iconBg: "bg-orange-50",
+      iconColor: "text-orange-600"
     }
   ]
 
@@ -95,14 +108,14 @@ export function SimpleDashboard({ stats, recentProducts }: SimpleDashboardProps)
   return (
     <div className="space-y-8">
       {/* Header */}
-      <div className="flex items-center justify-between">
+      <div className="flex items-center justify-between mb-6">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">Admin Dashboard</h1>
-          <p className="text-muted-foreground mt-2">
-            Manage your website content and settings
+          <h1 className="text-2xl font-semibold">Dashboard</h1>
+          <p className="text-sm text-muted-foreground mt-1">
+            Manage your website content
           </p>
         </div>
-        <Button asChild variant="outline">
+        <Button asChild variant="outline" size="sm">
           <Link href="/" target="_blank">
             <ExternalLink className="h-4 w-4 mr-2" />
             View Website
@@ -111,27 +124,28 @@ export function SimpleDashboard({ stats, recentProducts }: SimpleDashboardProps)
       </div>
 
       {/* Stats Overview */}
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-        {mainStats.map((stat) => {
+      <div className="grid gap-6 md:grid-cols-3">
+        {mainStats.slice(0, 3).map((stat) => {
           const Icon = stat.icon
           return (
-            <Card key={stat.title} className="hover:shadow-md transition-shadow">
-              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">
-                  {stat.title}
-                </CardTitle>
-                <Icon className={`h-4 w-4 ${stat.color}`} />
-              </CardHeader>
-              <CardContent>
-                <div className="text-2xl font-bold">{stat.value}</div>
-                <p className="text-xs text-muted-foreground mb-3">
-                  {stat.description}
-                </p>
-                <Button asChild variant="ghost" size="sm" className="p-0 h-auto">
-                  <Link href={stat.href} className="text-xs">
-                    Manage <ArrowRight className="h-3 w-3 ml-1" />
-                  </Link>
-                </Button>
+            <Card key={stat.title} className="border-2 shadow-sm hover:shadow-md transition-shadow bg-white">
+              <CardContent className="p-8">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center space-x-5">
+                    <div className="w-14 h-14 rounded-lg bg-primary/10 flex items-center justify-center">
+                      <Icon className="h-7 w-7 text-primary" />
+                    </div>
+                    <div>
+                      <p className="text-sm font-medium text-muted-foreground mb-1">{stat.title}</p>
+                      <p className="text-2xl font-bold text-foreground">{stat.value}</p>
+                    </div>
+                  </div>
+                  <Button asChild variant="outline" className="ml-4">
+                    <Link href={stat.href}>
+                      <ArrowRight className="h-4 w-4" />
+                    </Link>
+                  </Button>
+                </div>
               </CardContent>
             </Card>
           )
@@ -140,21 +154,25 @@ export function SimpleDashboard({ stats, recentProducts }: SimpleDashboardProps)
 
       {/* Quick Actions */}
       <div>
-        <h2 className="text-xl font-semibold mb-4">Quick Actions</h2>
-        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+        <h2 className="text-xl font-semibold mb-6">Quick Actions</h2>
+        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
           {quickActions.map((action) => {
             const Icon = action.icon
             return (
-              <Card key={action.title} className="hover:shadow-md transition-shadow cursor-pointer">
-                <Link href={action.href}>
-                  <CardHeader className="pb-3">
-                    <div className="flex items-center space-x-2">
-                      <Icon className={`h-5 w-5 ${action.primary ? 'text-blue-600' : 'text-muted-foreground'}`} />
-                      <CardTitle className="text-base">{action.title}</CardTitle>
+              <Card key={action.title} className="border-2 shadow-sm hover:shadow-md transition-shadow bg-white">
+                <Link href={action.href} className="block">
+                  <CardContent className="p-8">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center space-x-5">
+                        <div className="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center">
+                          <Icon className="h-6 w-6 text-primary" />
+                        </div>
+                        <div>
+                          <p className="text-sm font-semibold">{action.title}</p>
+                        </div>
+                      </div>
+                      <ArrowRight className="h-4 w-4 text-muted-foreground ml-4" />
                     </div>
-                  </CardHeader>
-                  <CardContent>
-                    <CardDescription>{action.description}</CardDescription>
                   </CardContent>
                 </Link>
               </Card>
@@ -163,95 +181,41 @@ export function SimpleDashboard({ stats, recentProducts }: SimpleDashboardProps)
         </div>
       </div>
 
-      {/* Content Overview */}
-      <div className="grid gap-6 lg:grid-cols-2">
-        {/* Recent Products */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Package className="h-5 w-5" />
-              Products Overview
-            </CardTitle>
-            <CardDescription>
-              Recent products in your catalog
-            </CardDescription>
+      {/* Recent Activity */}
+      <div>
+        <Card className="border-2 shadow-sm bg-white">
+          <CardHeader className="pb-6 px-8 pt-8">
+            <CardTitle className="text-xl font-semibold">Recent Products</CardTitle>
           </CardHeader>
-          <CardContent>
+          <CardContent className="pt-0 px-8 pb-8">
             {recentProducts.length > 0 ? (
-              <div className="space-y-3">
+              <div className="space-y-4">
                 {recentProducts.slice(0, 3).map((product: any) => (
-                  <div key={product.id} className="flex items-center justify-between p-3 border rounded-lg">
+                  <div key={product.id} className="flex items-center justify-between p-6 rounded-lg border bg-card hover:bg-muted/50 transition-colors">
                     <div>
-                      <p className="font-medium">{product.name}</p>
-                      <p className="text-sm text-muted-foreground">{product.category_name}</p>
-                    </div>
-                    <div className="text-sm text-muted-foreground">
-                      {product.price}
+                      <p className="text-sm font-semibold">{product.name}</p>
+                      <p className="text-sm text-muted-foreground mt-2">{product.category_name}</p>
                     </div>
                   </div>
                 ))}
-                <Button asChild variant="outline" size="sm" className="w-full">
-                  <Link href="/admin/products">
-                    View All Products <ArrowRight className="h-4 w-4 ml-2" />
-                  </Link>
-                </Button>
+                <div className="pt-2">
+                  <Button asChild variant="outline" className="w-full">
+                    <Link href="/admin/products">
+                      View All Products
+                    </Link>
+                  </Button>
+                </div>
               </div>
             ) : (
-              <div className="text-center py-6 text-muted-foreground">
-                <Package className="h-12 w-12 mx-auto mb-2 opacity-50" />
-                <p>No products yet</p>
-                <Button asChild size="sm" className="mt-2">
-                  <Link href="/admin/products/new">Add First Product</Link>
+              <div className="text-center py-6">
+                <p className="text-sm text-muted-foreground mb-3">No products yet</p>
+                <Button asChild size="sm">
+                  <Link href="/admin/products/new">
+                    Add Product
+                  </Link>
                 </Button>
               </div>
             )}
-          </CardContent>
-        </Card>
-
-        {/* Website Status */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Settings className="h-5 w-5" />
-              Website Status
-            </CardTitle>
-            <CardDescription>
-              Current website information
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="flex justify-between items-center">
-              <span className="text-sm">Content Pages</span>
-              <span className="text-sm font-medium">{stats.contentPages} pages</span>
-            </div>
-            <div className="flex justify-between items-center">
-              <span className="text-sm">Media Files</span>
-              <span className="text-sm font-medium">{stats.mediaFiles} files</span>
-            </div>
-            <div className="flex justify-between items-center">
-              <span className="text-sm">Products</span>
-              <span className="text-sm font-medium">{stats.products} items</span>
-            </div>
-            <div className="flex justify-between items-center">
-              <span className="text-sm">Client Testimonials</span>
-              <span className="text-sm font-medium">{stats.testimonials} testimonials</span>
-            </div>
-            <div className="pt-3 border-t">
-              <div className="flex gap-2">
-                <Button asChild size="sm" variant="outline" className="flex-1">
-                  <Link href="/admin/content">
-                    <Edit className="h-4 w-4 mr-2" />
-                    Edit Content
-                  </Link>
-                </Button>
-                <Button asChild size="sm" variant="outline" className="flex-1">
-                  <Link href="/" target="_blank">
-                    <ExternalLink className="h-4 w-4 mr-2" />
-                    Preview
-                  </Link>
-                </Button>
-              </div>
-            </div>
           </CardContent>
         </Card>
       </div>
