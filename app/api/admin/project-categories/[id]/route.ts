@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server'
 
-export async function PUT(request: NextRequest, { params }: { params: { id: string } }) {
+// Note: Next.js 15 validates the second argument type of Route Handlers.
+// Using a broad type here avoids mismatches with internal types during build.
+export async function PUT(request: NextRequest, { params }: any) {
   try {
     const { name, description, sort_order, is_active } = await request.json()
     
@@ -18,7 +20,7 @@ export async function PUT(request: NextRequest, { params }: { params: { id: stri
   }
 }
 
-export async function DELETE(request: NextRequest, { params }: { params: { id: string } }) {
+export async function DELETE(request: NextRequest, { params }: any) {
   try {
     // For now, return success - in a real implementation, you'd delete from database
     return NextResponse.json({
