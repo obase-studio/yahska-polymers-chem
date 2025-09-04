@@ -29,6 +29,7 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { Footer } from "@/components/footer";
+import { AutoScrollLogos } from "@/components/auto-scroll-logos";
 import { ContentItem } from "@/lib/database-client";
 
 // Enhanced Category Image Component
@@ -542,148 +543,20 @@ export default function HomePage() {
 
 
       {/* Client Logos Ribbon */}
-      <section className="py-12 bg-muted/30">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-12">
-            <h2
-              className="text-3xl lg:text-4xl font-bold text-foreground mb-4"
-              style={{ fontFamily: "var(--font-heading)" }}
-            >
-              Key Customers
-            </h2>
-            <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
-              Leading companies that trust us for their chemical solutions
-            </p>
-          </div>
-          {clientLogos.length > 0 ? (
-            <div className="overflow-x-auto">
-              <div className="flex items-center gap-6 pb-4" style={{ width: 'fit-content', minWidth: '100%' }}>
-                {clientLogos.map((logo) => (
-                  <Card
-                    key={logo.id}
-                    className="flex-shrink-0 hover:shadow-lg transition-all duration-300 hover:scale-105 bg-background border border-border/50"
-                  >
-                    <CardContent className="p-6 flex items-center justify-center h-24">
-                      <div className="relative w-full h-full flex items-center justify-center">
-                        <img
-                          src={logo.file_path}
-                          alt={
-                            logo.alt_text ||
-                            logo.original_name.replace(
-                              /\.(jpg|jpeg|png|webp)$/i,
-                              ""
-                            )
-                          }
-                          className="max-w-full max-h-full object-contain filter grayscale hover:grayscale-0 transition-all duration-300"
-                          onError={(e) => {
-                            console.log(
-                              "Image failed to load:",
-                              logo.file_path,
-                              e
-                            );
-                            // Fallback to company name text
-                            const target = e.target as HTMLImageElement;
-                            target.style.display = "none";
-                            const parent = target.parentElement;
-                            if (parent) {
-                              parent.innerHTML = `<div class="text-xs text-center text-muted-foreground p-2">${logo.original_name.replace(
-                                /\.(jpg|jpeg|png|webp)$/i,
-                                ""
-                              )}</div>`;
-                            }
-                          }}
-                          onLoad={() =>
-                            console.log(
-                              "Image loaded successfully:",
-                              logo.original_name
-                            )
-                          }
-                        />
-                      </div>
-                    </CardContent>
-                  </Card>
-                ))}
-              </div>
-            </div>
-          ) : (
-            <div className="text-center">
-              <p className="text-muted-foreground text-sm">Loading client logos...</p>
-            </div>
-          )}
-        </div>
-      </section>
+      <AutoScrollLogos
+        logos={clientLogos.slice(0, 12)} 
+        title="Key Customers"
+        description="Leading companies that trust us for their chemical solutions"
+        className="bg-muted/30"
+      />
 
       {/* Approval Logos Ribbon */}
-      <section className="py-12 bg-background">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-12">
-            <h2
-              className="text-3xl lg:text-4xl font-bold text-foreground mb-4"
-              style={{ fontFamily: "var(--font-heading)" }}
-            >
-              Key Approvals & Certifications
-            </h2>
-            <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
-              Recognized and approved by leading authorities across India
-            </p>
-          </div>
-          {approvalLogos.length > 0 ? (
-            <div className="overflow-x-auto">
-              <div className="flex items-center gap-6 pb-4" style={{ width: 'fit-content', minWidth: '100%' }}>
-                {approvalLogos.map((approval) => (
-                  <Card
-                    key={approval.id}
-                    className="flex-shrink-0 hover:shadow-lg transition-all duration-300 hover:scale-105 bg-background border border-border/50"
-                  >
-                    <CardContent className="p-6 flex items-center justify-center h-24">
-                      <div className="relative w-full h-full flex items-center justify-center">
-                        <img
-                          src={approval.file_path}
-                          alt={
-                            approval.alt_text ||
-                            approval.original_name.replace(
-                              /\.(jpg|jpeg|png|webp|svg)$/i,
-                              ""
-                            )
-                          }
-                          className="max-w-full max-h-full object-contain filter grayscale hover:grayscale-0 transition-all duration-300"
-                          onError={(e) => {
-                            console.log(
-                              "Approval image failed to load:",
-                              approval.file_path,
-                              e
-                            );
-                            // Fallback to approval name text
-                            const target = e.target as HTMLImageElement;
-                            target.style.display = "none";
-                            const parent = target.parentElement;
-                            if (parent) {
-                              parent.innerHTML = `<div class="text-xs text-center text-muted-foreground p-2">${approval.original_name.replace(
-                                /\.(jpg|jpeg|png|webp|svg)$/i,
-                                ""
-                              )}</div>`;
-                            }
-                          }}
-                          onLoad={() =>
-                            console.log(
-                              "Approval image loaded successfully:",
-                              approval.original_name
-                            )
-                          }
-                        />
-                      </div>
-                    </CardContent>
-                  </Card>
-                ))}
-              </div>
-            </div>
-          ) : (
-            <div className="text-center">
-              <p className="text-muted-foreground text-sm">Loading approval logos...</p>
-            </div>
-          )}
-        </div>
-      </section>
+      <AutoScrollLogos
+        logos={approvalLogos.slice(0, 8)}
+        title="Key Approvals & Certifications"
+        description="Recognized and approved by leading authorities across India"
+        className="bg-background"
+      />
 
       <Footer />
     </div>
