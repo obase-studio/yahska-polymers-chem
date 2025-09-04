@@ -85,53 +85,6 @@ export default function ClientsPage() {
         className="bg-background"
       />
 
-      {/* Additional Content Section */}
-      <section className="py-20 bg-muted/50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid md:grid-cols-2 gap-12 items-center">
-            <div>
-              <h2
-                className="text-3xl lg:text-4xl font-bold text-foreground mb-6"
-                style={{ fontFamily: "var(--font-heading)" }}
-              >
-                Building Trust Through Excellence
-              </h2>
-              <p className="text-lg text-muted-foreground mb-6 leading-relaxed">
-                Our extensive client portfolio spans across major infrastructure projects, 
-                commercial buildings, and industrial facilities. Each partnership represents 
-                our commitment to delivering superior chemical solutions that meet the highest 
-                standards of quality and performance.
-              </p>
-              <p className="text-lg text-muted-foreground leading-relaxed">
-                With certifications from leading authorities, we ensure that every product 
-                meets stringent quality requirements and regulatory compliance standards.
-              </p>
-            </div>
-            <div className="space-y-6">
-              <div className="bg-background p-6 rounded-lg border border-border/50 shadow-sm">
-                <h3 className="text-xl font-semibold text-foreground mb-3">Industries We Serve</h3>
-                <ul className="text-muted-foreground space-y-2">
-                  <li>• High-Speed Rail & Metro Projects</li>
-                  <li>• Commercial & Residential Buildings</li>
-                  <li>• Industrial Manufacturing Facilities</li>
-                  <li>• Infrastructure & Road Construction</li>
-                  <li>• Water Treatment Plants</li>
-                </ul>
-              </div>
-              <div className="bg-background p-6 rounded-lg border border-border/50 shadow-sm">
-                <h3 className="text-xl font-semibold text-foreground mb-3">Quality Assurance</h3>
-                <ul className="text-muted-foreground space-y-2">
-                  <li>• ISO Certified Manufacturing</li>
-                  <li>• Government Approved Products</li>
-                  <li>• International Standard Compliance</li>
-                  <li>• Regular Quality Audits</li>
-                  <li>• Technical Support & Consultation</li>
-                </ul>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
 
       <Footer />
     </div>
