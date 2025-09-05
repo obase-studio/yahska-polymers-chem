@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { Navigation } from "@/components/navigation";
 import { Footer } from "@/components/footer";
 import { AutoScrollLogos } from "@/components/auto-scroll-logos";
+import { ContentItem } from "@/lib/database-client";
 
 interface Logo {
   id: string;
@@ -15,15 +16,29 @@ interface Logo {
 export default function ClientsPage() {
   const [clientLogos, setClientLogos] = useState<Logo[]>([]);
   const [approvalLogos, setApprovalLogos] = useState<Logo[]>([]);
+  const [contentItems, setContentItems] = useState<ContentItem[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const fetchLogos = async () => {
+    const fetchContent = async () => {
       try {
         setLoading(true);
         
+        // Fetch content for clients page
+        const [contentResponse, clientLogosResponse, approvalLogosResponse] = await Promise.all([
+          fetch("/api/content?page=clients"),
+          fetch("/api/client-logos"),
+          fetch("/api/approval-logos")
+        ]);
+
+        if (contentResponse.ok) {
+          const contentResult = await contentResponse.json();
+          if (contentResult.success) {
+            setContentItems(contentResult.data.content);
+          }
+        }
+        
         // Fetch client logos
-        const clientLogosResponse = await fetch("/api/client-logos");
         if (clientLogosResponse.ok) {
           const clientLogosData = await clientLogosResponse.json();
           console.log('Client logos loaded successfully:', clientLogosData.length, 'logos');
@@ -31,21 +46,45 @@ export default function ClientsPage() {
         }
 
         // Fetch approval logos
-        const approvalLogosResponse = await fetch("/api/approval-logos");
         if (approvalLogosResponse.ok) {
           const approvalLogosData = await approvalLogosResponse.json();
           console.log('Approval logos loaded successfully:', approvalLogosData.length, 'logos');
           setApprovalLogos(approvalLogosData); // Show all approval logos on dedicated page
         }
       } catch (error) {
-        console.error("Error fetching logos:", error);
+        console.error("Error fetching content:", error);
       } finally {
         setLoading(false);
       }
     };
 
-    fetchLogos();
+    fetchContent();
   }, []);
+
+  // Get content values
+  const heroHeadline = contentItems.find(
+    (item) => item.section === "hero" && item.content_key === "headline"
+  )?.content_value || "Our Clients & Approvals";
+
+  const heroDescription = contentItems.find(
+    (item) => item.section === "hero" && item.content_key === "description"
+  )?.content_value || "Trusted by industry leaders and recognized by prestigious authorities, we take pride in our extensive network of satisfied clients and official certifications.";
+
+  const clientSectionTitle = contentItems.find(
+    (item) => item.section === "client_section" && item.content_key === "title"
+  )?.content_value || "Key Customers";
+
+  const clientSectionDescription = contentItems.find(
+    (item) => item.section === "client_section" && item.content_key === "description"
+  )?.content_value || "Leading companies that trust us for their chemical solutions";
+
+  const approvalSectionTitle = contentItems.find(
+    (item) => item.section === "approval_section" && item.content_key === "title"
+  )?.content_value || "Key Approvals & Certifications";
+
+  const approvalSectionDescription = contentItems.find(
+    (item) => item.section === "approval_section" && item.content_key === "description"
+  )?.content_value || "Recognized and approved by leading authorities across India";
 
   return (
     <div className="min-h-screen bg-background">
@@ -59,11 +98,10 @@ export default function ClientsPage() {
               className="text-4xl lg:text-6xl font-black text-foreground mb-6"
               style={{ fontFamily: "var(--font-heading)" }}
             >
-              Our Clients & Approvals
+              {heroHeadline}
             </h1>
             <p className="text-xl text-muted-foreground max-w-3xl mx-auto leading-relaxed">
-              Trusted by industry leaders and recognized by prestigious authorities, 
-              we take pride in our extensive network of satisfied clients and official certifications.
+              {heroDescription}
             </p>
           </div>
         </div>
@@ -72,16 +110,16 @@ export default function ClientsPage() {
       {/* Key Customers Section */}
       <AutoScrollLogos
         logos={clientLogos}
-        title="Key Customers"
-        description="Leading companies that trust us for their chemical solutions"
+        title={clientSectionTitle}
+        description={clientSectionDescription}
         className="bg-muted/30"
       />
 
       {/* Key Approvals Section */}
       <AutoScrollLogos
         logos={approvalLogos}
-        title="Key Approvals & Certifications"
-        description="Recognized and approved by leading authorities across India"
+        title={approvalSectionTitle}
+        description={approvalSectionDescription}
         className="bg-background"
       />
 

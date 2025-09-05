@@ -34,6 +34,22 @@ export const supabaseHelpers = {
     return data
   },
 
+  deleteContent: async (page: string, section: string, contentKey?: string) => {
+    let query = supabaseAdmin
+      .from('site_content')
+      .delete()
+      .eq('page', page)
+      .eq('section', section)
+    
+    if (contentKey) {
+      query = query.eq('content_key', contentKey)
+    }
+    
+    const { data, error } = await query
+    if (error) throw error
+    return data
+  },
+
   // Products
   getAllProducts: async () => {
     const { data, error } = await supabase

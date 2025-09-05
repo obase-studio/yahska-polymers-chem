@@ -68,3 +68,40 @@ export async function POST(request: NextRequest) {
     )
   }
 }
+
+export async function DELETE(request: NextRequest) {
+  try {
+    const { page, section, content_key } = await request.json()
+    
+    console.log('Admin content DELETE - Received data:', { page, section, content_key })
+    
+    if (!page || !section) {
+      return NextResponse.json(
+        { error: "Page and section are required" },
+        { status: 400 }
+      )
+    }
+    
+    // Delete from database
+    const result = await supabaseHelpers.deleteContent(page, section, content_key)
+    console.log('Admin content DELETE - Database result:', result)
+    
+    return NextResponse.json({ 
+      message: "Content deleted successfully",
+      timestamp: new Date().toISOString()
+    }, { 
+      status: 200, 
+      headers: { 
+        'Cache-Control': 'no-store, no-cache, must-revalidate',
+        'Pragma': 'no-cache',
+        'Expires': '0'
+      } 
+    })
+  } catch (error) {
+    console.error("Delete content error:", error)
+    return NextResponse.json(
+      { error: "Failed to delete content", details: error instanceof Error ? error.message : String(error) },
+      { status: 500 }
+    )
+  }
+}

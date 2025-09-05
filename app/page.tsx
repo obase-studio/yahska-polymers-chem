@@ -259,24 +259,6 @@ export default function HomePage() {
         item.content_key === "description"
     )?.content_value || "";
 
-  const whyChooseUsDescription =
-    contentItems.find(
-      (item) =>
-        item.section === "why_choose_us" && item.content_key === "description"
-    )?.content_value || "";
-
-  const featuredClientsDescription =
-    contentItems.find(
-      (item) =>
-        item.section === "featured_clients" &&
-        item.content_key === "description"
-    )?.content_value || "";
-
-  const industriesDescription =
-    contentItems.find(
-      (item) =>
-        item.section === "industries" && item.content_key === "description"
-    )?.content_value || "";
 
   const ctaHeadline =
     contentItems.find(

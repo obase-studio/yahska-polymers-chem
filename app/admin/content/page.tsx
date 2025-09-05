@@ -37,39 +37,6 @@ export default function ContentPage() {
             { key: 'description', label: 'Description', type: 'textarea' as const }
           ]
         },
-        {
-          id: 'why_choose_us',
-          title: 'Why Choose Us',
-          description: 'Why choose us section text',
-          fields: [
-            { key: 'description', label: 'Description', type: 'textarea' as const }
-          ]
-        },
-        {
-          id: 'featured_clients',
-          title: 'Featured Clients',
-          description: 'Featured clients section text',
-          fields: [
-            { key: 'description', label: 'Description', type: 'textarea' as const }
-          ]
-        },
-        {
-          id: 'industries',
-          title: 'Industries We Serve',
-          description: 'Industries section text',
-          fields: [
-            { key: 'description', label: 'Description', type: 'textarea' as const }
-          ]
-        },
-        {
-          id: 'cta',
-          title: 'Homepage CTA',
-          description: 'Call to action content',
-          fields: [
-            { key: 'headline', label: 'CTA Headline', type: 'text' as const },
-            { key: 'description', label: 'CTA Description', type: 'textarea' as const }
-          ]
-        }
       ]
     }
 
@@ -92,17 +59,6 @@ export default function ContentPage() {
           ]
         },
         {
-          id: 'mission_vision',
-          title: 'Mission, Vision, Values',
-          description: 'Company mission, vision and values',
-          fields: [
-            { key: 'mission', label: 'Mission', type: 'textarea' as const },
-            { key: 'vision', label: 'Vision', type: 'textarea' as const },
-            { key: 'values', label: 'Values', type: 'textarea' as const },
-            { key: 'content', label: 'Overview (optional)', type: 'textarea' as const }
-          ]
-        },
-        {
           id: 'our_story',
           title: 'Our Story',
           description: 'Company history and background story',
@@ -118,19 +74,6 @@ export default function ContentPage() {
             { key: 'content', label: 'Quality Content', type: 'textarea' as const }
           ]
         },
-        {
-          id: 'company_details',
-          title: 'Company Details',
-          description: 'Key company facts',
-          fields: [
-            { key: 'established_year', label: 'Established Year', type: 'text' as const },
-            { key: 'company_age', label: 'Company Age', type: 'text' as const },
-            { key: 'legal_status', label: 'Legal Status', type: 'text' as const },
-            { key: 'location', label: 'Location', type: 'text' as const },
-            { key: 'business_type', label: 'Business Type', type: 'textarea' as const },
-            { key: 'key_personnel', label: 'Key Personnel', type: 'textarea' as const }
-          ]
-        }
       ]
     }
 
@@ -152,22 +95,6 @@ export default function ContentPage() {
             { key: 'content', label: 'Overview Content', type: 'textarea' as const }
           ]
         },
-        {
-          id: 'categories',
-          title: 'Categories Intro',
-          description: 'Intro text for product categories section',
-          fields: [
-            { key: 'content', label: 'Categories Content', type: 'textarea' as const }
-          ]
-        },
-        {
-          id: 'quality_standards',
-          title: 'Quality Standards',
-          description: 'Quality note for products',
-          fields: [
-            { key: 'content', label: 'Quality Content', type: 'textarea' as const }
-          ]
-        }
       ]
     }
 
@@ -189,20 +116,36 @@ export default function ContentPage() {
             { key: 'content', label: 'Overview Content', type: 'textarea' as const }
           ]
         },
+      ]
+    }
+
+    if (page === 'clients') {
+      return [
         {
-          id: 'categories',
-          title: 'Categories Intro',
-          description: 'Intro text for project categories section',
+          id: 'hero',
+          title: 'Clients Hero Section',
+          description: 'Main headline and description for clients page',
           fields: [
-            { key: 'content', label: 'Categories Content', type: 'textarea' as const }
+            { key: 'headline', label: 'Page Headline', type: 'text' as const },
+            { key: 'description', label: 'Hero Description', type: 'textarea' as const }
           ]
         },
         {
-          id: 'achievements',
-          title: 'Achievements',
-          description: 'Key achievements section content',
+          id: 'client_section',
+          title: 'Client Section',
+          description: 'Description above client logos',
           fields: [
-            { key: 'content', label: 'Achievements Content', type: 'textarea' as const }
+            { key: 'title', label: 'Section Title', type: 'text' as const },
+            { key: 'description', label: 'Section Description', type: 'textarea' as const }
+          ]
+        },
+        {
+          id: 'approval_section',
+          title: 'Approvals Section',
+          description: 'Description above approval/certification logos',
+          fields: [
+            { key: 'title', label: 'Section Title', type: 'text' as const },
+            { key: 'description', label: 'Section Description', type: 'textarea' as const }
           ]
         }
       ]
@@ -213,51 +156,47 @@ export default function ContentPage() {
       {
         id: 'hero',
         title: 'Contact Hero Section',
-        description: 'Contact page hero image and headline',
+        description: 'Contact page headline and description',
         fields: [
-          { key: 'hero_image', label: 'Contact Hero Image', type: 'image' as const },
+          { key: 'headline', label: 'Page Headline', type: 'text' as const },
           { key: 'description', label: 'Hero Description', type: 'textarea' as const }
         ]
       },
       {
-        id: 'contact_form',
-        title: 'Form Intro',
-        description: 'Description above contact form',
+        id: 'form_section',
+        title: 'Contact Form Section',
+        description: 'Form heading and description',
         fields: [
+          { key: 'title', label: 'Form Section Title', type: 'text' as const },
           { key: 'description', label: 'Form Description', type: 'textarea' as const }
         ]
       },
       {
-        id: 'contact_info',
-        title: 'Contact Info',
-        description: 'Address block (use new lines)',
+        id: 'contact_info_section',
+        title: 'Contact Info Section',
+        description: 'Right side contact information section',
         fields: [
-          { key: 'content', label: 'Address/Info', type: 'textarea' as const }
+          { key: 'title', label: 'Section Title', type: 'text' as const }
         ]
       },
       {
-        id: 'business_hours',
-        title: 'Business Hours',
-        description: 'Working hours (use new lines)',
-        fields: [
-          { key: 'content', label: 'Business Hours', type: 'textarea' as const }
-        ]
-      },
-      {
-        id: 'office_locations',
+        id: 'locations',
         title: 'Office Locations',
-        description: 'Locations text (optional)',
+        description: 'Company office addresses',
         fields: [
-          { key: 'content', label: 'Office Locations', type: 'textarea' as const }
+          { key: 'unit1_title', label: 'Unit 1 Title', type: 'text' as const },
+          { key: 'unit1_address', label: 'Unit 1 Address', type: 'textarea' as const },
+          { key: 'unit2_title', label: 'Unit 2 Title', type: 'text' as const },
+          { key: 'unit2_address', label: 'Unit 2 Address', type: 'textarea' as const }
         ]
       },
       {
-        id: 'cta',
-        title: 'CTA',
-        description: 'Footer call to action',
+        id: 'contact_details',
+        title: 'Contact Details',
+        description: 'Phone and email information',
         fields: [
-          { key: 'headline', label: 'CTA Headline', type: 'text' as const },
-          { key: 'description', label: 'CTA Description', type: 'textarea' as const }
+          { key: 'phone', label: 'Phone Number', type: 'text' as const },
+          { key: 'email', label: 'Email Address', type: 'text' as const }
         ]
       }
     ]
@@ -294,6 +233,7 @@ export default function ContentPage() {
               <SelectItem value="products">Products</SelectItem>
               <SelectItem value="projects">Projects</SelectItem>
               <SelectItem value="contact">Contact</SelectItem>
+              <SelectItem value="clients">Clients</SelectItem>
             </SelectContent>
           </Select>
         </CardContent>
