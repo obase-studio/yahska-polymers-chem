@@ -129,31 +129,16 @@ export default function HomePage() {
     const fetchContent = async () => {
       try {
         setLoading(true);
-        const [homeResponse, aboutResponse, categoriesResponse] = await Promise.all([
+        const [homeResponse, categoriesResponse] = await Promise.all([
           fetch("/api/content?page=home"),
-          fetch("/api/content?page=about"),
           fetch("/api/admin/categories"),
         ]);
 
         const homeResult = await homeResponse.json();
-        const aboutResult = await aboutResponse.json();
         const categoriesResult = await categoriesResponse.json();
 
         if (homeResult.success) {
-          let allContent = homeResult.data.content;
-
-          // Add About page content for "Our Story"
-          if (aboutResult.success && aboutResult.data.content) {
-            const ourStoryItem = aboutResult.data.content.find(
-              (item: any) =>
-                item.section === "our_story" && item.content_key === "content"
-            );
-            if (ourStoryItem) {
-              allContent = [...allContent, ourStoryItem];
-            }
-          }
-
-          setContentItems(allContent);
+          setContentItems(homeResult.data.content);
         }
 
         // Set categories
@@ -239,54 +224,56 @@ export default function HomePage() {
     fetchContent();
   }, []);
 
-  // Get content values
+  // Get content values from new structure
   const heroHeadline =
     contentItems.find(
       (item) => item.section === "hero" && item.content_key === "headline"
     )?.content_value || "Leading Chemical Solutions for Industrial Excellence";
 
-  const companyDescription =
+  const heroDescription =
     contentItems.find(
-      (item) =>
-        item.section === "company_overview" &&
-        item.content_key === "company_description"
-    )?.content_value || "";
+      (item) => item.section === "hero" && item.content_key === "description"
+    )?.content_value || "Yahska Polymers Pvt Ltd is a leading construction chemicals manufacturer based in Ahmedabad, proudly serving the Indian construction industry with innovative and reliable solutions for over two decades. As one of the leading names in the field, our mission is simple—to build stronger, safer, and more sustainable structures through chemistry that performs.";
+
+  const productCategoriesTitle =
+    contentItems.find(
+      (item) => item.section === "product_categories" && item.content_key === "title"
+    )?.content_value || "Our Product Categories";
 
   const productCategoriesDescription =
     contentItems.find(
-      (item) =>
-        item.section === "product_categories" &&
-        item.content_key === "description"
-    )?.content_value || "";
+      (item) => item.section === "product_categories" && item.content_key === "description"
+    )?.content_value || "Comprehensive chemical solutions across multiple industries with uncompromising quality standards";
 
-
-  const ctaHeadline =
+  const projectCategoriesTitle =
     contentItems.find(
-      (item) => item.section === "cta" && item.content_key === "headline"
-    )?.content_value || "";
+      (item) => item.section === "project_categories" && item.content_key === "title"
+    )?.content_value || "Our Project Categories";
 
-  const ctaDescription =
+  const projectCategoriesDescription =
     contentItems.find(
-      (item) => item.section === "cta" && item.content_key === "description"
-    )?.content_value || "";
+      (item) => item.section === "project_categories" && item.content_key === "description"
+    )?.content_value || "Diverse infrastructure and construction projects showcasing our expertise across major industry sectors";
 
-  // Get full "Our Story" content from About page
-  const getFullStoryDescription = () => {
-    const ourStoryContent = contentItems.find(
-      (item) => item.section === "our_story" && item.content_key === "content"
-    )?.content_value;
+  const keyCustomersTitle =
+    contentItems.find(
+      (item) => item.section === "key_customers" && item.content_key === "title"
+    )?.content_value || "Key Customers";
 
-    if (ourStoryContent) {
-      // Extract the first paragraph which is the main introduction
-      const firstParagraph = ourStoryContent.split("\n")[0];
-      return firstParagraph;
-    }
+  const keyCustomersDescription =
+    contentItems.find(
+      (item) => item.section === "key_customers" && item.content_key === "description"
+    )?.content_value || "Leading companies that trust us for their chemical solutions";
 
-    return (
-      companyDescription ||
-      "Yahska Polymers Pvt Ltd is a leading construction chemicals manufacturer based in Ahmedabad, proudly serving the Indian construction industry with innovative and reliable solutions for over two decades. As one of the leading names in the field, our mission is simple—to build stronger, safer, and more sustainable structures through chemistry that performs."
-    );
-  };
+  const keyApprovalsTitle =
+    contentItems.find(
+      (item) => item.section === "key_approvals" && item.content_key === "title"
+    )?.content_value || "Key Approvals & Certifications";
+
+  const keyApprovalsDescription =
+    contentItems.find(
+      (item) => item.section === "key_approvals" && item.content_key === "description"
+    )?.content_value || "Recognized and approved by leading authorities across India";
 
   return (
     <div className="min-h-screen bg-background">
@@ -304,7 +291,7 @@ export default function HomePage() {
                 {heroHeadline}
               </h1>
               <p className="text-xl text-muted-foreground mb-8 leading-relaxed">
-                {getFullStoryDescription()}
+                {heroDescription}
               </p>
               <div className="flex flex-col sm:flex-row gap-4">
                 <Button
@@ -368,7 +355,7 @@ export default function HomePage() {
               className="text-3xl lg:text-4xl font-bold text-foreground mb-4"
               style={{ fontFamily: "var(--font-heading)" }}
             >
-              Our Product Categories
+              {productCategoriesTitle}
             </h2>
             <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
               {productCategoriesDescription}
@@ -452,11 +439,10 @@ export default function HomePage() {
               className="text-3xl lg:text-4xl font-bold text-foreground mb-4"
               style={{ fontFamily: "var(--font-heading)" }}
             >
-              Our Project Categories
+              {projectCategoriesTitle}
             </h2>
             <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
-              Diverse infrastructure and construction projects showcasing our
-              expertise across major industry sectors
+              {projectCategoriesDescription}
             </p>
           </div>
 
@@ -527,16 +513,16 @@ export default function HomePage() {
       {/* Client Logos Ribbon */}
       <AutoScrollLogos
         logos={clientLogos.slice(0, 12)} 
-        title="Key Customers"
-        description="Leading companies that trust us for their chemical solutions"
+        title={keyCustomersTitle}
+        description={keyCustomersDescription}
         className="bg-muted/30"
       />
 
       {/* Approval Logos Ribbon */}
       <AutoScrollLogos
         logos={approvalLogos.slice(0, 8)}
-        title="Key Approvals & Certifications"
-        description="Recognized and approved by leading authorities across India"
+        title={keyApprovalsTitle}
+        description={keyApprovalsDescription}
         className="bg-background"
       />
 

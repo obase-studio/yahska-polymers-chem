@@ -14,7 +14,7 @@ export default function ContentPage() {
         {
           id: 'hero',
           title: 'Hero Section',
-          description: 'Main headline and hero content',
+          description: 'Hero image, main headline, and description',
           fields: [
             { key: 'hero_image', label: 'Hero Background Image', type: 'image' as const },
             { key: 'headline', label: 'Main Headline', type: 'text' as const },
@@ -22,21 +22,41 @@ export default function ContentPage() {
           ]
         },
         {
-          id: 'company_overview',
-          title: 'Company Overview',
-          description: 'Homepage company description',
+          id: 'product_categories',
+          title: 'Our Product Categories',
+          description: 'Section title and description for product categories',
           fields: [
-            { key: 'company_description', label: 'Company Description', type: 'textarea' as const }
+            { key: 'title', label: 'Section Title', type: 'text' as const },
+            { key: 'description', label: 'Section Description', type: 'textarea' as const }
           ]
         },
         {
-          id: 'product_categories',
-          title: 'Product Categories Intro',
-          description: 'Intro text for product categories',
+          id: 'project_categories',
+          title: 'Our Project Categories',
+          description: 'Section title and description for project categories',
           fields: [
-            { key: 'description', label: 'Description', type: 'textarea' as const }
+            { key: 'title', label: 'Section Title', type: 'text' as const },
+            { key: 'description', label: 'Section Description', type: 'textarea' as const }
           ]
         },
+        {
+          id: 'key_customers',
+          title: 'Key Customers',
+          description: 'Section title and description for client logos',
+          fields: [
+            { key: 'title', label: 'Section Title', type: 'text' as const },
+            { key: 'description', label: 'Section Description', type: 'textarea' as const }
+          ]
+        },
+        {
+          id: 'key_approvals',
+          title: 'Key Approvals & Certifications',
+          description: 'Section title and description for approval/certification logos',
+          fields: [
+            { key: 'title', label: 'Section Title', type: 'text' as const },
+            { key: 'description', label: 'Section Description', type: 'textarea' as const }
+          ]
+        }
       ]
     }
 
