@@ -156,27 +156,38 @@ export const supabaseHelpers = {
   },
 
   createProduct: async (product: any) => {
+    console.log("supabaseHelpers.createProduct - Input:", product);
+
+    const insertData = {
+      name: product.name,
+      description: product.description,
+      price: product.price,
+      category_id: product.category_id,
+      applications: product.applications || [],
+      features: product.features || [],
+      image_url: product.image_url,
+      usage: product.usage,
+      advantages: product.advantages,
+      technical_specifications: product.technical_specifications,
+      packaging_info: product.packaging_info,
+      safety_information: product.safety_information,
+      product_code: product.product_code,
+      specification_pdf: product.specification_pdf,
+    };
+
+    console.log("supabaseHelpers.createProduct - Insert data:", insertData);
+
     const { data, error } = await supabase
       .from("products")
-      .insert({
-        name: product.name,
-        description: product.description,
-        price: product.price,
-        category_id: product.category_id,
-        applications: product.applications || [],
-        features: product.features || [],
-        image_url: product.image_url,
-        usage: product.usage,
-        advantages: product.advantages,
-        technical_specifications: product.technical_specifications,
-        packaging_info: product.packaging_info,
-        safety_information: product.safety_information,
-        product_code: product.product_code,
-        specification_pdf: product.specification_pdf,
-      })
+      .insert(insertData)
       .select();
 
-    if (error) throw error;
+    console.log("supabaseHelpers.createProduct - Result:", { data, error });
+
+    if (error) {
+      console.error("Supabase create error:", error);
+      throw error;
+    }
     return data;
   },
 

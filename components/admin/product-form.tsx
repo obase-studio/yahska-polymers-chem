@@ -166,10 +166,17 @@ export function ProductForm({
         router.push("/admin/products");
         router.refresh();
       } else {
-        console.log("Failed to save product");
+        const errorData = await response.json();
+        console.log("Failed to save product:", errorData);
+        alert(`Failed to save product: ${errorData.error || "Unknown error"}`);
       }
     } catch (error) {
       console.log("Error saving product:", error);
+      alert(
+        `Error saving product: ${
+          error instanceof Error ? error.message : "Unknown error"
+        }`
+      );
     } finally {
       setIsLoading(false);
     }
