@@ -25,19 +25,22 @@ export default function CertificationsPage() {
       try {
         setLoading(true);
         const response = await fetch("/api/approval-logos");
-        
+
         if (!response.ok) {
           throw new Error("Failed to fetch approval logos");
         }
-        
+
         const data = await response.json();
-        
+
         if (data.success && data.data) {
-          setApprovalLogos(data.data.sort((a: ApprovalLogo, b: ApprovalLogo) => 
-            a.sort_order - b.sort_order
-          ));
+          setApprovalLogos(
+            data.data.sort(
+              (a: ApprovalLogo, b: ApprovalLogo) => a.sort_order - b.sort_order
+            )
+          );
         } else {
-          throw new Error(data.error || "Failed to load certifications");
+          console.log(data.error);
+          // throw new Error(data.error || "Failed to load certifications");
         }
       } catch (err) {
         setError(err instanceof Error ? err.message : "An error occurred");
@@ -84,9 +87,10 @@ export default function CertificationsPage() {
               Certifications & Approvals
             </h1>
             <p className="text-xl text-muted-foreground max-w-3xl mx-auto leading-relaxed">
-              Our commitment to quality is validated by prestigious certifications and approvals 
-              from leading authorities across India. These recognitions demonstrate our adherence 
-              to the highest standards in manufacturing and quality assurance.
+              Our commitment to quality is validated by prestigious
+              certifications and approvals from leading authorities across
+              India. These recognitions demonstrate our adherence to the highest
+              standards in manufacturing and quality assurance.
             </p>
           </div>
         </div>
@@ -97,7 +101,9 @@ export default function CertificationsPage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
             <div className="text-center">
-              <div className="text-4xl font-bold text-primary mb-2">{approvalLogos.length}+</div>
+              <div className="text-4xl font-bold text-primary mb-2">
+                {approvalLogos.length}+
+              </div>
               <div className="text-muted-foreground">Certifications</div>
             </div>
             <div className="text-center">
@@ -127,14 +133,17 @@ export default function CertificationsPage() {
               Our Certifications
             </h2>
             <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
-              Recognized and approved by leading regulatory bodies and industry authorities
+              Recognized and approved by leading regulatory bodies and industry
+              authorities
             </p>
           </div>
 
           {error ? (
             <div className="text-center py-12">
               <div className="bg-destructive/15 border border-destructive/20 rounded-lg p-6 max-w-md mx-auto">
-                <p className="text-destructive text-sm mb-2">Failed to load certifications</p>
+                <p className="text-destructive text-sm mb-2">
+                  Failed to load certifications
+                </p>
                 <p className="text-xs text-muted-foreground">{error}</p>
               </div>
             </div>
@@ -151,8 +160,8 @@ export default function CertificationsPage() {
           ) : (
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-6">
               {approvalLogos.map((approval) => (
-                <Card 
-                  key={approval.id} 
+                <Card
+                  key={approval.id}
                   className="group hover:shadow-lg transition-all duration-300 hover:scale-[1.02] border border-border/50 hover:border-primary/30"
                 >
                   <CardContent className="p-6 text-center">
@@ -162,7 +171,7 @@ export default function CertificationsPage() {
                         alt={approval.alt_text || approval.name}
                         className="max-w-full max-h-full object-contain group-hover:scale-105 transition-transform duration-300"
                         onError={(e) => {
-                          (e.target as HTMLImageElement).style.display = 'none';
+                          (e.target as HTMLImageElement).style.display = "none";
                         }}
                       />
                     </div>
@@ -192,10 +201,11 @@ export default function CertificationsPage() {
             Our Quality Commitment
           </h2>
           <p className="text-xl mb-8 opacity-90 max-w-3xl mx-auto">
-            These certifications represent our unwavering commitment to quality, safety, 
-            and environmental responsibility in everything we manufacture and deliver.
+            These certifications represent our unwavering commitment to quality,
+            safety, and environmental responsibility in everything we
+            manufacture and deliver.
           </p>
-          
+
           <div className="grid md:grid-cols-3 gap-8 mt-12">
             <div className="text-center">
               <div className="bg-white/10 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
@@ -203,7 +213,8 @@ export default function CertificationsPage() {
               </div>
               <h3 className="text-xl font-semibold mb-2">Safety First</h3>
               <p className="text-primary-foreground/80">
-                All our products meet the highest safety standards and regulatory requirements.
+                All our products meet the highest safety standards and
+                regulatory requirements.
               </p>
             </div>
             <div className="text-center">
@@ -212,7 +223,8 @@ export default function CertificationsPage() {
               </div>
               <h3 className="text-xl font-semibold mb-2">Excellence</h3>
               <p className="text-primary-foreground/80">
-                Continuous improvement and adherence to international quality standards.
+                Continuous improvement and adherence to international quality
+                standards.
               </p>
             </div>
             <div className="text-center">
@@ -221,7 +233,8 @@ export default function CertificationsPage() {
               </div>
               <h3 className="text-xl font-semibold mb-2">Compliance</h3>
               <p className="text-primary-foreground/80">
-                Full compliance with all relevant industry regulations and standards.
+                Full compliance with all relevant industry regulations and
+                standards.
               </p>
             </div>
           </div>

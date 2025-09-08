@@ -39,31 +39,35 @@ interface CategoryImageProps {
   categoryImages: Record<string, string>;
 }
 
-function CategoryImage({ categoryId, categoryName, categoryImages }: CategoryImageProps) {
+function CategoryImage({
+  categoryId,
+  categoryName,
+  categoryImages,
+}: CategoryImageProps) {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
   const [retryCount, setRetryCount] = useState(0);
-  
+
   const imageUrl = categoryImages[categoryId];
-  
+
   const handleLoad = () => {
     setLoading(false);
     setError(false);
   };
-  
+
   const handleError = () => {
     setLoading(false);
     setError(true);
   };
-  
+
   const handleRetry = () => {
     if (retryCount < 2) {
       setError(false);
       setLoading(true);
-      setRetryCount(prev => prev + 1);
+      setRetryCount((prev) => prev + 1);
     }
   };
-  
+
   if (!imageUrl) {
     return (
       <div className="w-full h-full flex items-center justify-center">
@@ -74,14 +78,14 @@ function CategoryImage({ categoryId, categoryName, categoryImages }: CategoryIma
       </div>
     );
   }
-  
+
   if (error && retryCount >= 2) {
     return (
       <div className="w-full h-full flex items-center justify-center">
         <div className="text-center">
           <Package className="h-8 w-8 mx-auto mb-2 text-muted-foreground" />
           <p className="text-muted-foreground text-xs mb-2">{categoryName}</p>
-          <button 
+          <button
             onClick={handleRetry}
             className="text-xs text-primary hover:underline"
           >
@@ -91,7 +95,7 @@ function CategoryImage({ categoryId, categoryName, categoryImages }: CategoryIma
       </div>
     );
   }
-  
+
   return (
     <div className="relative w-full h-full">
       {loading && (
@@ -103,7 +107,7 @@ function CategoryImage({ categoryId, categoryName, categoryImages }: CategoryIma
         src={`${imageUrl}?retry=${retryCount}`}
         alt={categoryName}
         className={`w-full h-full object-cover hover:scale-105 transition-transform duration-300 ${
-          loading ? 'opacity-0' : 'opacity-100'
+          loading ? "opacity-0" : "opacity-100"
         }`}
         onLoad={handleLoad}
         onError={handleError}
@@ -191,8 +195,12 @@ export default function HomePage() {
             const clientLogosResponse = await fetch("/api/client-logos");
             if (clientLogosResponse.ok) {
               const clientLogosData = await clientLogosResponse.json();
-              console.log('Client logos loaded successfully:', clientLogosData.length, 'logos');
-              
+              console.log(
+                "Client logos loaded successfully:",
+                clientLogosData.length,
+                "logos"
+              );
+
               // Use URLs directly from API as they're already properly encoded
               setClientLogos(clientLogosData.slice(0, 12)); // Show max 12 client logos
             }
@@ -205,8 +213,12 @@ export default function HomePage() {
             const approvalLogosResponse = await fetch("/api/approval-logos");
             if (approvalLogosResponse.ok) {
               const approvalLogosData = await approvalLogosResponse.json();
-              console.log('Approval logos loaded successfully:', approvalLogosData.length, 'logos');
-              
+              console.log(
+                "Approval logos loaded successfully:",
+                approvalLogosData.length,
+                "logos"
+              );
+
               // Use URLs directly from API as they should be properly encoded
               setApprovalLogos(approvalLogosData.slice(0, 8)); // Show max 8 approval logos
             }
@@ -228,32 +240,41 @@ export default function HomePage() {
   const heroHeadline =
     contentItems.find(
       (item) => item.section === "hero" && item.content_key === "headline"
-    )?.content_value || "Leading Chemical Solutions for Industrial Excellence";
+    )?.content_value || "Leading Chemical Solutions for Industrial Excellence!";
 
   const heroDescription =
     contentItems.find(
       (item) => item.section === "hero" && item.content_key === "description"
-    )?.content_value || "Yahska Polymers Pvt Ltd is a leading construction chemicals manufacturer based in Ahmedabad, proudly serving the Indian construction industry with innovative and reliable solutions for over two decades. As one of the leading names in the field, our mission is simple—to build stronger, safer, and more sustainable structures through chemistry that performs.";
+    )?.content_value ||
+    "Yahska Polymers Pvt Ltd is a leading construction chemicals manufacturer based in Ahmedabad, proudly serving the Indian construction industry with innovative and reliable solutions for over two decades.";
 
   const productCategoriesTitle =
     contentItems.find(
-      (item) => item.section === "product_categories" && item.content_key === "title"
+      (item) =>
+        item.section === "product_categories" && item.content_key === "title"
     )?.content_value || "Our Product Categories";
 
   const productCategoriesDescription =
     contentItems.find(
-      (item) => item.section === "product_categories" && item.content_key === "description"
-    )?.content_value || "Comprehensive chemical solutions across multiple industries with uncompromising quality standards";
+      (item) =>
+        item.section === "product_categories" &&
+        item.content_key === "description"
+    )?.content_value ||
+    "Comprehensive chemical solutions across multiple industries with uncompromising quality standards";
 
   const projectCategoriesTitle =
     contentItems.find(
-      (item) => item.section === "project_categories" && item.content_key === "title"
+      (item) =>
+        item.section === "project_categories" && item.content_key === "title"
     )?.content_value || "Our Project Categories";
 
   const projectCategoriesDescription =
     contentItems.find(
-      (item) => item.section === "project_categories" && item.content_key === "description"
-    )?.content_value || "Diverse infrastructure and construction projects showcasing our expertise across major industry sectors";
+      (item) =>
+        item.section === "project_categories" &&
+        item.content_key === "description"
+    )?.content_value ||
+    "Diverse infrastructure and construction projects showcasing our expertise across major industry sectors";
 
   const keyCustomersTitle =
     contentItems.find(
@@ -262,8 +283,10 @@ export default function HomePage() {
 
   const keyCustomersDescription =
     contentItems.find(
-      (item) => item.section === "key_customers" && item.content_key === "description"
-    )?.content_value || "Leading companies that trust us for their chemical solutions";
+      (item) =>
+        item.section === "key_customers" && item.content_key === "description"
+    )?.content_value ||
+    "Leading companies that trust us for their chemical solutions";
 
   const keyApprovalsTitle =
     contentItems.find(
@@ -272,8 +295,10 @@ export default function HomePage() {
 
   const keyApprovalsDescription =
     contentItems.find(
-      (item) => item.section === "key_approvals" && item.content_key === "description"
-    )?.content_value || "Recognized and approved by leading authorities across India";
+      (item) =>
+        item.section === "key_approvals" && item.content_key === "description"
+    )?.content_value ||
+    "Recognized and approved by leading authorities across India";
 
   return (
     <div className="min-h-screen bg-background">
@@ -366,22 +391,26 @@ export default function HomePage() {
             {categories.map((category, index) => {
               // Get unique icon for each category based on name
               const getCategoryIcon = (name: string) => {
-                if (name.toLowerCase().includes('admixture')) return Package
-                if (name.toLowerCase().includes('accelerator')) return Zap
-                if (name.toLowerCase().includes('waterproofing')) return Building2
-                if (name.toLowerCase().includes('grout')) return Wrench
-                if (name.toLowerCase().includes('curing')) return CheckCircle
-                if (name.toLowerCase().includes('micro silica')) return Factory
-                if (name.toLowerCase().includes('floor')) return Building2
-                if (name.toLowerCase().includes('structural')) return Building2
-                if (name.toLowerCase().includes('corrosion')) return Award
-                if (name.toLowerCase().includes('release')) return Truck
-                return Package
-              }
-              const CategoryIcon = getCategoryIcon(category.name)
+                if (name.toLowerCase().includes("admixture")) return Package;
+                if (name.toLowerCase().includes("accelerator")) return Zap;
+                if (name.toLowerCase().includes("waterproofing"))
+                  return Building2;
+                if (name.toLowerCase().includes("grout")) return Wrench;
+                if (name.toLowerCase().includes("curing")) return CheckCircle;
+                if (name.toLowerCase().includes("micro silica")) return Factory;
+                if (name.toLowerCase().includes("floor")) return Building2;
+                if (name.toLowerCase().includes("structural")) return Building2;
+                if (name.toLowerCase().includes("corrosion")) return Award;
+                if (name.toLowerCase().includes("release")) return Truck;
+                return Package;
+              };
+              const CategoryIcon = getCategoryIcon(category.name);
 
               return (
-                <Card key={category.id} className="group hover:shadow-xl hover:scale-[1.02] transition-all duration-300 border border-border/50 hover:border-primary/30 overflow-hidden">
+                <Card
+                  key={category.id}
+                  className="group hover:shadow-xl hover:scale-[1.02] transition-all duration-300 border border-border/50 hover:border-primary/30 overflow-hidden"
+                >
                   <div className="aspect-[4/3] overflow-hidden bg-gradient-to-br from-primary/5 to-accent/5 relative">
                     <CategoryImage
                       categoryId={category.id}
@@ -392,7 +421,9 @@ export default function HomePage() {
                     <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors duration-300" />
                     {/* Hover overlay with quick info */}
                     <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-primary/80 to-transparent p-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                      <p className="text-white text-sm font-medium">Industrial Grade Quality</p>
+                      <p className="text-white text-sm font-medium">
+                        Industrial Grade Quality
+                      </p>
                     </div>
                   </div>
                   <CardContent className="p-6">
@@ -401,10 +432,15 @@ export default function HomePage() {
                         {category.name}
                       </CardTitle>
                       <CardDescription className="text-sm text-muted-foreground leading-relaxed line-clamp-3">
-                        {category.description || `Professional grade ${category.name.toLowerCase()} solutions designed for demanding industrial applications and construction projects.`}
+                        {category.description ||
+                          `Professional grade ${category.name.toLowerCase()} solutions designed for demanding industrial applications and construction projects.`}
                       </CardDescription>
                     </div>
-                    <Button asChild variant="outline" className="w-full bg-muted hover:bg-muted/80 text-muted-foreground hover:text-foreground group-hover:bg-primary group-hover:text-white transition-all duration-300 justify-between border-muted group-hover:border-primary">
+                    <Button
+                      asChild
+                      variant="outline"
+                      className="w-full bg-muted hover:bg-muted/80 text-muted-foreground hover:text-foreground group-hover:bg-primary group-hover:text-white transition-all duration-300 justify-between border-muted group-hover:border-primary"
+                    >
                       <Link href={`/products?category=${category.id}`}>
                         <span>View Products</span>
                         <ArrowRight className="h-4 w-4 group-hover:translate-x-1 transition-transform duration-300" />
@@ -412,24 +448,26 @@ export default function HomePage() {
                     </Button>
                   </CardContent>
                 </Card>
-              )
+              );
             })}
           </div>
 
           {/* See All Products Button */}
           <div className="text-center mt-12">
-            <Button asChild variant="outline" size="lg" className="bg-muted hover:bg-muted/80 text-muted-foreground hover:text-foreground border-muted px-8">
+            <Button
+              asChild
+              variant="outline"
+              size="lg"
+              className="bg-muted hover:bg-muted/80 text-muted-foreground hover:text-foreground border-muted px-8"
+            >
               <Link href="/products">
                 <span>See All Products</span>
                 <ArrowRight className="h-5 w-5 ml-2" />
               </Link>
             </Button>
           </div>
-
         </div>
       </section>
-
-
 
       {/* Project Categories Section */}
       <section className="py-20 bg-muted/50">
@@ -499,7 +537,12 @@ export default function HomePage() {
           </div>
 
           <div className="text-center mt-12">
-            <Button asChild size="lg" variant="outline" className="bg-muted hover:bg-muted/80 text-muted-foreground hover:text-foreground border-muted px-8">
+            <Button
+              asChild
+              size="lg"
+              variant="outline"
+              className="bg-muted hover:bg-muted/80 text-muted-foreground hover:text-foreground border-muted px-8"
+            >
               <Link href="/projects">
                 View All Projects
                 <ArrowRight className="ml-2 h-5 w-5" />
@@ -509,10 +552,9 @@ export default function HomePage() {
         </div>
       </section>
 
-
       {/* Client Logos Ribbon */}
       <AutoScrollLogos
-        logos={clientLogos.slice(0, 12)} 
+        logos={clientLogos.slice(0, 12)}
         title={keyCustomersTitle}
         description={keyCustomersDescription}
         className="bg-muted/30"

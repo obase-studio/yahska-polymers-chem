@@ -1,12 +1,9 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { useSearchParams } from "next/navigation";
 import { Navigation } from "@/components/navigation";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-} from "@/components/ui/card";
+import { Card, CardContent, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
@@ -24,7 +21,7 @@ import {
   CheckCircle,
   Factory,
   Award,
-  Truck
+  Truck,
 } from "lucide-react";
 import Link from "next/link";
 import { Footer } from "@/components/footer";
@@ -72,6 +69,7 @@ export default function ProductsPage() {
   const [refreshing, setRefreshing] = useState(false);
 
   const { selectedCategory, setSelectedCategory } = useProductContext();
+  const searchParams = useSearchParams();
 
   const productOverview =
     contentItems.find(
@@ -84,6 +82,17 @@ export default function ProductsPage() {
       (item) =>
         item.section === "quality_standards" && item.content_key === "content"
     )?.content_value || "";
+
+  // Handle URL parameters for category filtering
+  useEffect(() => {
+    const categoryParam = searchParams.get("category");
+    if (categoryParam) {
+      setSelectedCategory(categoryParam);
+    } else {
+      // Reset to "all" when no category parameter is present
+      setSelectedCategory("all");
+    }
+  }, [searchParams, setSelectedCategory]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -141,17 +150,22 @@ export default function ProductsPage() {
   // Get filtered products
   const filteredProducts = products
     .filter((product) => product.is_active)
-    .filter(
-      (product) =>
+    .filter((product) => {
+      // If there's a search term, search across all products regardless of category
+      if (searchTerm !== "") {
+        return (
+          product.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          product.description
+            .toLowerCase()
+            .includes(searchTerm.toLowerCase()) ||
+          product.category_name.toLowerCase().includes(searchTerm.toLowerCase())
+        );
+      }
+      // If no search term, filter by selected category
+      return (
         selectedCategory === "all" || product.category_id === selectedCategory
-    )
-    .filter(
-      (product) =>
-        searchTerm === "" ||
-        product.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        product.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        product.category_name.toLowerCase().includes(searchTerm.toLowerCase())
-    );
+      );
+    });
 
   // Get category by ID
   const getCategoryById = (id: string) => {
@@ -353,14 +367,16 @@ export default function ProductsPage() {
               <div className="flex items-center justify-between mb-6">
                 <div>
                   <h2 className="text-2xl font-bold text-foreground">
-                    {selectedCategory === "all"
+                    {searchTerm
+                      ? `Search Results for "${searchTerm}"`
+                      : selectedCategory === "all"
                       ? "All Products"
                       : getCategoryById(selectedCategory)?.name || "Products"}
                   </h2>
                   <p className="text-muted-foreground mt-1">
                     {filteredProducts.length} product
                     {filteredProducts.length !== 1 ? "s" : ""} found
-                    {searchTerm && ` for "${searchTerm}"`}
+                    {searchTerm && " across all categories"}
                   </p>
                 </div>
               </div>
@@ -407,19 +423,29 @@ export default function ProductsPage() {
                   {filteredProducts.map((product) => {
                     // Get unique icon for each category based on name
                     const getCategoryIcon = (categoryName: string) => {
-                      if (categoryName.toLowerCase().includes('admixture')) return Package
-                      if (categoryName.toLowerCase().includes('accelerator')) return Zap
-                      if (categoryName.toLowerCase().includes('waterproofing')) return Building2
-                      if (categoryName.toLowerCase().includes('grout')) return Wrench
-                      if (categoryName.toLowerCase().includes('curing')) return CheckCircle
-                      if (categoryName.toLowerCase().includes('micro silica')) return Factory
-                      if (categoryName.toLowerCase().includes('floor')) return Building2
-                      if (categoryName.toLowerCase().includes('structural')) return Building2
-                      if (categoryName.toLowerCase().includes('corrosion')) return Award
-                      if (categoryName.toLowerCase().includes('release')) return Truck
-                      return Package
-                    }
-                    const CategoryIcon = getCategoryIcon(product.category_name)
+                      if (categoryName.toLowerCase().includes("admixture"))
+                        return Package;
+                      if (categoryName.toLowerCase().includes("accelerator"))
+                        return Zap;
+                      if (categoryName.toLowerCase().includes("waterproofing"))
+                        return Building2;
+                      if (categoryName.toLowerCase().includes("grout"))
+                        return Wrench;
+                      if (categoryName.toLowerCase().includes("curing"))
+                        return CheckCircle;
+                      if (categoryName.toLowerCase().includes("micro silica"))
+                        return Factory;
+                      if (categoryName.toLowerCase().includes("floor"))
+                        return Building2;
+                      if (categoryName.toLowerCase().includes("structural"))
+                        return Building2;
+                      if (categoryName.toLowerCase().includes("corrosion"))
+                        return Award;
+                      if (categoryName.toLowerCase().includes("release"))
+                        return Truck;
+                      return Package;
+                    };
+                    const CategoryIcon = getCategoryIcon(product.category_name);
 
                     return (
                       <Card
@@ -430,14 +456,17 @@ export default function ProductsPage() {
                         <div className="aspect-[4/3] bg-gradient-to-br from-primary/5 to-accent/5 relative p-6 flex items-center justify-center">
                           {/* Category tag on top left */}
                           <div className="absolute top-4 left-4 z-10">
-                            <Badge variant="secondary" className="bg-white/90 backdrop-blur-sm text-foreground border-border">
+                            <Badge
+                              variant="secondary"
+                              className="bg-white/90 backdrop-blur-sm text-foreground border-border"
+                            >
                               {product.category_name}
                             </Badge>
                           </div>
-                          
+
                           {/* Background overlay */}
                           <div className="absolute inset-0 bg-gradient-to-br from-primary/10 to-accent/10 group-hover:from-primary/20 group-hover:to-accent/20 transition-colors duration-300" />
-                          
+
                           {/* Main content */}
                           <div className="relative text-center">
                             <div className="bg-white/90 backdrop-blur-sm rounded-full p-4 group-hover:bg-primary group-hover:text-white transition-all duration-300 mb-4 inline-flex">
@@ -450,44 +479,54 @@ export default function ProductsPage() {
 
                           {/* Hover overlay with quick info */}
                           <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-primary/80 to-transparent p-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                            <p className="text-white text-sm font-medium">Industrial Grade Quality</p>
+                            <p className="text-white text-sm font-medium">
+                              Industrial Grade Quality
+                            </p>
                           </div>
                         </div>
 
-                        <CardContent className="p-6">
+                        <CardContent className="p-6 flex flex-col h-full">
                           <div className="flex-1">
                             <CardDescription className="mb-4 line-clamp-3 leading-relaxed">
                               {product.description}
                             </CardDescription>
 
-                            {product.features && product.features.length > 0 && (
-                              <div className="mb-4">
-                                <p className="text-sm font-medium text-foreground mb-2">
-                                  Key Features:
-                                </p>
-                                <div className="flex flex-wrap gap-1">
-                                  {product.features
-                                    .slice(0, 3)
-                                    .map((feature, index) => (
+                            {product.features &&
+                              product.features.length > 0 && (
+                                <div className="mb-4">
+                                  <p className="text-sm font-medium text-foreground mb-2">
+                                    Key Features:
+                                  </p>
+                                  <div className="flex flex-wrap gap-1">
+                                    {product.features
+                                      .slice(0, 3)
+                                      .map((feature, index) => (
+                                        <Badge
+                                          key={index}
+                                          variant="secondary"
+                                          className="text-xs bg-muted/50 text-muted-foreground border-0"
+                                        >
+                                          {feature}
+                                        </Badge>
+                                      ))}
+                                    {product.features.length > 3 && (
                                       <Badge
-                                        key={index}
                                         variant="secondary"
                                         className="text-xs bg-muted/50 text-muted-foreground border-0"
                                       >
-                                        {feature}
+                                        +{product.features.length - 3} more
                                       </Badge>
-                                    ))}
-                                  {product.features.length > 3 && (
-                                    <Badge variant="secondary" className="text-xs bg-muted/50 text-muted-foreground border-0">
-                                      +{product.features.length - 3} more
-                                    </Badge>
-                                  )}
+                                    )}
+                                  </div>
                                 </div>
-                              </div>
-                            )}
+                              )}
                           </div>
 
-                          <Button asChild variant="outline" className="w-full bg-muted hover:bg-muted/80 text-muted-foreground hover:text-foreground group-hover:bg-primary group-hover:text-white transition-all duration-300 justify-between border-muted group-hover:border-primary mt-4">
+                          <Button
+                            asChild
+                            variant="outline"
+                            className="w-full bg-muted hover:bg-muted/80 text-muted-foreground hover:text-foreground group-hover:bg-primary group-hover:text-white transition-all duration-300 justify-between border-muted group-hover:border-primary mt-auto"
+                          >
                             <Link href={`/products/${product.id}`}>
                               <span>View Details</span>
                               <ArrowRight className="h-4 w-4 group-hover:translate-x-1 transition-transform duration-300" />
@@ -495,7 +534,7 @@ export default function ProductsPage() {
                           </Button>
                         </CardContent>
                       </Card>
-                    )
+                    );
                   })}
                 </div>
               )}
@@ -503,7 +542,6 @@ export default function ProductsPage() {
           </div>
         </div>
       </section>
-
 
       <Footer />
     </div>
