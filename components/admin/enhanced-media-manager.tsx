@@ -1,20 +1,32 @@
-"use client"
+"use client";
 
-import { useState, useEffect, useCallback } from "react"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Badge } from "@/components/ui/badge"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { 
-  Search, 
-  Upload, 
-  Image as ImageIcon, 
-  File, 
-  Trash2, 
-  Eye, 
-  Copy, 
+import { useState, useEffect, useCallback } from "react";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Badge } from "@/components/ui/badge";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import {
+  Search,
+  Upload,
+  Image as ImageIcon,
+  File,
+  Trash2,
+  Eye,
+  Copy,
   Download,
   FolderOpen,
   Grid3x3,
@@ -31,27 +43,32 @@ import {
   Move,
   Archive,
   Tag,
-  MoreHorizontal
-} from "lucide-react"
-import Image from "next/image"
-import { cn } from "@/lib/utils"
-import { getImageUrl, getThumbnailUrl, isImageFile, formatFileSize } from "@/lib/image-utils"
+  MoreHorizontal,
+} from "lucide-react";
+import Image from "next/image";
+import { cn } from "@/lib/utils";
+import {
+  getImageUrl,
+  getThumbnailUrl,
+  isImageFile,
+  formatFileSize,
+} from "@/lib/image-utils";
 
 interface MediaFile {
-  id: number
-  filename: string
-  original_name: string
-  file_path: string
-  file_size: number
-  mime_type: string
-  alt_text: string
-  category?: string
-  subcategory?: string
-  uploaded_at: string
+  id: number;
+  filename: string;
+  original_name: string;
+  file_path: string;
+  file_size: number;
+  mime_type: string;
+  alt_text: string;
+  category?: string;
+  subcategory?: string;
+  uploaded_at: string;
 }
 
 interface EnhancedMediaManagerProps {
-  initialMediaFiles?: MediaFile[]
+  initialMediaFiles?: MediaFile[];
 }
 
 const MEDIA_CATEGORIES = [
@@ -61,250 +78,267 @@ const MEDIA_CATEGORIES = [
   { value: "approval-logos", label: "Approval Logos", icon: ImageIcon },
   { value: "homepage", label: "Homepage Images", icon: ImageIcon },
   { value: "product-images", label: "Product Images", icon: ImageIcon },
-]
+];
 
 const PROJECT_SUBCATEGORIES = [
   "metro-rail",
-  "road-projects", 
+  "road-projects",
   "buildings-factories",
   "bullet",
-  "others"
-]
+  "others",
+];
 
-export function EnhancedMediaManager({ initialMediaFiles = [] }: EnhancedMediaManagerProps) {
-  const [mediaFiles, setMediaFiles] = useState<MediaFile[]>(initialMediaFiles)
-  const [searchTerm, setSearchTerm] = useState("")
-  const [selectedCategory, setSelectedCategory] = useState("all")
-  const [selectedFile, setSelectedFile] = useState<MediaFile | null>(null)
-  const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid')
-  const [isLoading, setIsLoading] = useState(false)
-  const [isUploading, setIsUploading] = useState(false)
-  const [uploadProgress, setUploadProgress] = useState(0)
-  const [selectedFiles, setSelectedFiles] = useState<Set<number>>(new Set())
-  const [bulkActionMode, setBulkActionMode] = useState(false)
-  const [isProcessingBulk, setIsProcessingBulk] = useState(false)
-  const [sortBy, setSortBy] = useState<'name' | 'date' | 'size' | 'type'>('date')
-  const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc')
+export function EnhancedMediaManager({
+  initialMediaFiles = [],
+}: EnhancedMediaManagerProps) {
+  const [mediaFiles, setMediaFiles] = useState<MediaFile[]>(initialMediaFiles);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [selectedCategory, setSelectedCategory] = useState("all");
+  const [selectedFile, setSelectedFile] = useState<MediaFile | null>(null);
+  const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
+  const [isLoading, setIsLoading] = useState(false);
+  const [isUploading, setIsUploading] = useState(false);
+  const [uploadProgress, setUploadProgress] = useState(0);
+  const [selectedFiles, setSelectedFiles] = useState<Set<number>>(new Set());
+  const [bulkActionMode, setBulkActionMode] = useState(false);
+  const [isProcessingBulk, setIsProcessingBulk] = useState(false);
+  const [sortBy, setSortBy] = useState<"name" | "date" | "size" | "type">(
+    "date"
+  );
+  const [sortOrder, setSortOrder] = useState<"asc" | "desc">("desc");
 
   // Load media files
   const loadMediaFiles = useCallback(async () => {
-    setIsLoading(true)
+    setIsLoading(true);
     try {
-      const response = await fetch('/api/admin/media')
+      const response = await fetch("/api/admin/media");
       if (response.ok) {
-        const files = await response.json()
-        setMediaFiles(files)
+        const files = await response.json();
+        setMediaFiles(files);
       }
     } catch (error) {
-      console.error('Error loading media files:', error)
+      console.error("Error loading media files:", error);
     } finally {
-      setIsLoading(false)
+      setIsLoading(false);
     }
-  }, [])
+  }, []);
 
   useEffect(() => {
     if (initialMediaFiles.length === 0) {
-      loadMediaFiles()
+      loadMediaFiles();
     }
-  }, [initialMediaFiles, loadMediaFiles])
+  }, [initialMediaFiles, loadMediaFiles]);
 
   // Filter media files
-  const filteredFiles = mediaFiles.filter(file => {
-    const matchesSearch = file.original_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         file.alt_text.toLowerCase().includes(searchTerm.toLowerCase())
-    
-    const matchesCategory = selectedCategory === "all" || 
-                           file.file_path.includes(selectedCategory)
-    
-    return matchesSearch && matchesCategory
-  })
+  const filteredFiles = mediaFiles.filter((file) => {
+    const matchesSearch =
+      file.original_name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      file.alt_text?.toLowerCase().includes(searchTerm.toLowerCase());
+
+    const matchesCategory =
+      selectedCategory === "all" || file?.file_path?.includes(selectedCategory);
+
+    return matchesSearch && matchesCategory;
+  });
 
   // File upload handling
   const handleFileUpload = async (files: FileList | null) => {
-    if (!files || files.length === 0) return
+    if (!files || files.length === 0) return;
 
-    setIsUploading(true)
-    setUploadProgress(0)
+    setIsUploading(true);
+    setUploadProgress(0);
 
     try {
       const uploadPromises = Array.from(files).map(async (file, index) => {
-        const formData = new FormData()
-        formData.append('file', file)
-        formData.append('category', selectedCategory === 'all' ? 'uploads' : selectedCategory)
+        const formData = new FormData();
+        formData.append("file", file);
+        formData.append(
+          "category",
+          selectedCategory === "all" ? "uploads" : selectedCategory
+        );
 
-        const response = await fetch('/api/admin/media/upload', {
-          method: 'POST',
+        const response = await fetch("/api/admin/media/upload", {
+          method: "POST",
           body: formData,
-        })
+        });
 
         if (response.ok) {
-          const uploadedFile = await response.json()
-          setMediaFiles(prev => [...prev, uploadedFile])
+          const uploadedFile = await response.json();
+          setMediaFiles((prev) => [...prev, uploadedFile]);
         }
 
         // Update progress
-        const progress = ((index + 1) / files.length) * 100
-        setUploadProgress(progress)
-      })
+        const progress = ((index + 1) / files.length) * 100;
+        setUploadProgress(progress);
+      });
 
-      await Promise.all(uploadPromises)
-      await loadMediaFiles() // Refresh the list
+      await Promise.all(uploadPromises);
+      await loadMediaFiles(); // Refresh the list
     } catch (error) {
-      console.error('Upload error:', error)
+      console.error("Upload error:", error);
     } finally {
-      setIsUploading(false)
-      setUploadProgress(0)
+      setIsUploading(false);
+      setUploadProgress(0);
     }
-  }
+  };
 
   // Delete file
   const deleteFile = async (fileId: number) => {
-    if (!confirm('Are you sure you want to delete this file?')) return
+    if (!confirm("Are you sure you want to delete this file?")) return;
 
     try {
       const response = await fetch(`/api/admin/media/${fileId}`, {
-        method: 'DELETE'
-      })
+        method: "DELETE",
+      });
 
       if (response.ok) {
-        setMediaFiles(prev => prev.filter(file => file.id !== fileId))
+        setMediaFiles((prev) => prev.filter((file) => file.id !== fileId));
         if (selectedFile && selectedFile.id === fileId) {
-          setSelectedFile(null)
+          setSelectedFile(null);
         }
       }
     } catch (error) {
-      console.error('Error deleting file:', error)
+      console.error("Error deleting file:", error);
     }
-  }
+  };
 
   // Copy file path
   const copyFilePath = (filePath: string) => {
-    navigator.clipboard.writeText(filePath)
-  }
+    navigator.clipboard.writeText(filePath);
+  };
 
   // Download file
   const downloadFile = (file: MediaFile) => {
-    const link = document.createElement('a')
-    link.href = file.file_path
-    link.download = file.original_name
-    document.body.appendChild(link)
-    link.click()
-    document.body.removeChild(link)
-  }
-
+    const link = document.createElement("a");
+    link.href = file?.file_path;
+    link.download = file.original_name;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
 
   // Bulk operations
   const toggleFileSelection = (fileId: number) => {
-    setSelectedFiles(prev => {
-      const newSet = new Set(prev)
+    setSelectedFiles((prev) => {
+      const newSet = new Set(prev);
       if (newSet.has(fileId)) {
-        newSet.delete(fileId)
+        newSet.delete(fileId);
       } else {
-        newSet.add(fileId)
+        newSet.add(fileId);
       }
-      return newSet
-    })
-  }
+      return newSet;
+    });
+  };
 
   const selectAllFiles = () => {
-    setSelectedFiles(new Set(filteredFiles.map(file => file.id)))
-  }
+    setSelectedFiles(new Set(filteredFiles.map((file) => file.id)));
+  };
 
   const deselectAllFiles = () => {
-    setSelectedFiles(new Set())
-  }
+    setSelectedFiles(new Set());
+  };
 
   const bulkDelete = async () => {
-    if (selectedFiles.size === 0) return
-    
-    const confirmed = confirm(`Are you sure you want to delete ${selectedFiles.size} selected files?`)
-    if (!confirmed) return
+    if (selectedFiles.size === 0) return;
 
-    setIsProcessingBulk(true)
+    const confirmed = confirm(
+      `Are you sure you want to delete ${selectedFiles.size} selected files?`
+    );
+    if (!confirmed) return;
+
+    setIsProcessingBulk(true);
     try {
-      const deletePromises = Array.from(selectedFiles).map(fileId => 
-        fetch(`/api/admin/media/${fileId}`, { method: 'DELETE' })
-      )
-      
-      await Promise.all(deletePromises)
-      
+      const deletePromises = Array.from(selectedFiles).map((fileId) =>
+        fetch(`/api/admin/media/${fileId}`, { method: "DELETE" })
+      );
+
+      await Promise.all(deletePromises);
+
       // Remove deleted files from state
-      setMediaFiles(prev => prev.filter(file => !selectedFiles.has(file.id)))
-      setSelectedFiles(new Set())
-      
+      setMediaFiles((prev) =>
+        prev.filter((file) => !selectedFiles.has(file.id))
+      );
+      setSelectedFiles(new Set());
+
       if (selectedFile && selectedFiles.has(selectedFile.id)) {
-        setSelectedFile(null)
+        setSelectedFile(null);
       }
     } catch (error) {
-      console.error('Bulk delete error:', error)
+      console.error("Bulk delete error:", error);
     } finally {
-      setIsProcessingBulk(false)
+      setIsProcessingBulk(false);
     }
-  }
+  };
 
   const bulkMove = async (newCategory: string) => {
-    if (selectedFiles.size === 0) return
+    if (selectedFiles.size === 0) return;
 
-    setIsProcessingBulk(true)
+    setIsProcessingBulk(true);
     try {
-      const movePromises = Array.from(selectedFiles).map(fileId => 
+      const movePromises = Array.from(selectedFiles).map((fileId) =>
         fetch(`/api/admin/media/${fileId}/move`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ category: newCategory })
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ category: newCategory }),
         })
-      )
-      
-      await Promise.all(movePromises)
-      await loadMediaFiles() // Refresh to show updated categories
-      setSelectedFiles(new Set())
+      );
+
+      await Promise.all(movePromises);
+      await loadMediaFiles(); // Refresh to show updated categories
+      setSelectedFiles(new Set());
     } catch (error) {
-      console.error('Bulk move error:', error)
+      console.error("Bulk move error:", error);
     } finally {
-      setIsProcessingBulk(false)
+      setIsProcessingBulk(false);
     }
-  }
+  };
 
   const bulkDownload = () => {
-    const selectedMediaFiles = mediaFiles.filter(file => selectedFiles.has(file.id))
-    selectedMediaFiles.forEach(file => downloadFile(file))
-  }
+    const selectedMediaFiles = mediaFiles.filter((file) =>
+      selectedFiles.has(file.id)
+    );
+    selectedMediaFiles.forEach((file) => downloadFile(file));
+  };
 
   // Sorting functionality
   const sortedFiles = [...filteredFiles].sort((a, b) => {
-    let comparison = 0
-    
+    let comparison = 0;
+
     switch (sortBy) {
-      case 'name':
-        comparison = a.original_name.localeCompare(b.original_name)
-        break
-      case 'date':
-        comparison = new Date(a.uploaded_at).getTime() - new Date(b.uploaded_at).getTime()
-        break
-      case 'size':
-        comparison = a.file_size - b.file_size
-        break
-      case 'type':
-        comparison = a.mime_type.localeCompare(b.mime_type)
-        break
+      case "name":
+        comparison = a?.original_name?.localeCompare(b?.original_name);
+        break;
+      case "date":
+        comparison =
+          new Date(a?.uploaded_at).getTime() -
+          new Date(b?.uploaded_at).getTime();
+        break;
+      case "size":
+        comparison = a?.file_size - b?.file_size;
+        break;
+      case "type":
+        comparison = a?.mime_type?.localeCompare(b?.mime_type);
+        break;
     }
-    
-    return sortOrder === 'asc' ? comparison : -comparison
-  })
+
+    return sortOrder === "asc" ? comparison : -comparison;
+  });
 
   // Get category from path
   const getCategoryFromPath = (filePath: string) => {
-    if (filePath.includes('client-logos')) return 'Client Logos'
-    if (filePath.includes('approval-logos')) return 'Approval Logos'
-    if (filePath.includes('project-photos/metro-rail')) return 'Metro Rail'
-    if (filePath.includes('project-photos/road-projects')) return 'Road Projects'
-    if (filePath.includes('project-photos/buildings-factories')) return 'Buildings & Factories'
-    if (filePath.includes('project-photos/bullet')) return 'Bullet Train'
-    if (filePath.includes('project-photos/others')) return 'Other Projects'
-    if (filePath.includes('homepage')) return 'Homepage'
-    if (filePath.includes('product-images')) return 'Product Images'
-    return 'Other'
-  }
+    if (filePath?.includes("client-logos")) return "Client Logos";
+    if (filePath?.includes("approval-logos")) return "Approval Logos";
+    if (filePath?.includes("project-photos/metro-rail")) return "Metro Rail";
+    if (filePath?.includes("project-photos/road-projects"))
+      return "Road Projects";
+    if (filePath?.includes("project-photos/buildings-factories"))
+      return "Buildings & Factories";
+    if (filePath?.includes("project-photos/bullet")) return "Bullet Train";
+    if (filePath?.includes("project-photos/others")) return "Other Projects";
+    if (filePath?.includes("homepage")) return "Homepage";
+    if (filePath?.includes("product-images")) return "Product Images";
+    return "Other";
+  };
 
   if (isLoading) {
     return (
@@ -312,7 +346,7 @@ export function EnhancedMediaManager({ initialMediaFiles = [] }: EnhancedMediaMa
         <Loader2 className="h-8 w-8 animate-spin" />
         <span className="ml-2">Loading media files...</span>
       </div>
-    )
+    );
   }
 
   return (
@@ -321,7 +355,9 @@ export function EnhancedMediaManager({ initialMediaFiles = [] }: EnhancedMediaMa
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-3xl font-bold">Enhanced Media Management</h1>
-          <p className="text-muted-foreground">Upload, organize and manage all your media files</p>
+          <p className="text-muted-foreground">
+            Upload, organize and manage all your media files
+          </p>
         </div>
         <div className="flex gap-2">
           <Button
@@ -329,27 +365,34 @@ export function EnhancedMediaManager({ initialMediaFiles = [] }: EnhancedMediaMa
             onClick={loadMediaFiles}
             disabled={isLoading}
           >
-            <RefreshCw className={cn("h-4 w-4 mr-2", isLoading && "animate-spin")} />
+            <RefreshCw
+              className={cn("h-4 w-4 mr-2", isLoading && "animate-spin")}
+            />
             Refresh
           </Button>
           <Button
-            onClick={() => setViewMode(viewMode === 'grid' ? 'list' : 'grid')}
+            onClick={() => setViewMode(viewMode === "grid" ? "list" : "grid")}
             variant="outline"
           >
-            {viewMode === 'grid' ? <List className="h-4 w-4" /> : <Grid3x3 className="h-4 w-4" />}
+            {viewMode === "grid" ? (
+              <List className="h-4 w-4" />
+            ) : (
+              <Grid3x3 className="h-4 w-4" />
+            )}
           </Button>
         </div>
       </div>
 
       {/* Upload Section */}
-      <Card>
+      <Card className="py-6">
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <Upload className="h-5 w-5" />
             Upload Media Files
           </CardTitle>
           <CardDescription>
-            Drag and drop files or click to browse. Supported formats: Images, Documents, Videos
+            Drag and drop files or click to browse. Supported formats: Images,
+            Documents, Videos
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -357,16 +400,21 @@ export function EnhancedMediaManager({ initialMediaFiles = [] }: EnhancedMediaMa
             {/* Category Selection for Upload */}
             <div className="flex items-center gap-4">
               <Label>Upload Category:</Label>
-              <Select value={selectedCategory} onValueChange={setSelectedCategory}>
+              <Select
+                value={selectedCategory}
+                onValueChange={setSelectedCategory}
+              >
                 <SelectTrigger className="w-48">
                   <SelectValue placeholder="Select category" />
                 </SelectTrigger>
                 <SelectContent>
-                  {MEDIA_CATEGORIES.filter(cat => cat.value !== 'all').map((category) => (
-                    <SelectItem key={category.value} value={category.value}>
-                      {category.label}
-                    </SelectItem>
-                  ))}
+                  {MEDIA_CATEGORIES.filter((cat) => cat.value !== "all").map(
+                    (category) => (
+                      <SelectItem key={category.value} value={category.value}>
+                        {category.label}
+                      </SelectItem>
+                    )
+                  )}
                 </SelectContent>
               </Select>
             </div>
@@ -388,22 +436,26 @@ export function EnhancedMediaManager({ initialMediaFiles = [] }: EnhancedMediaMa
               >
                 <Upload className="h-12 w-12 text-gray-400" />
                 <span className="text-lg font-medium">
-                  {isUploading ? "Uploading..." : "Click to upload or drag files here"}
+                  {isUploading
+                    ? "Uploading..."
+                    : "Click to upload or drag files here"}
                 </span>
                 <span className="text-sm text-muted-foreground">
                   PNG, JPG, PDF, DOC up to 10MB each
                 </span>
               </Label>
-              
+
               {isUploading && (
                 <div className="mt-4">
                   <div className="w-full bg-gray-200 rounded-full h-2">
-                    <div 
+                    <div
                       className="bg-blue-600 h-2 rounded-full transition-all duration-300"
                       style={{ width: `${uploadProgress}%` }}
                     ></div>
                   </div>
-                  <p className="text-sm text-muted-foreground mt-2">{uploadProgress.toFixed(0)}% uploaded</p>
+                  <p className="text-sm text-muted-foreground mt-2">
+                    {uploadProgress.toFixed(0)}% uploaded
+                  </p>
                 </div>
               )}
             </div>
@@ -417,15 +469,14 @@ export function EnhancedMediaManager({ initialMediaFiles = [] }: EnhancedMediaMa
           <CardContent className="pt-4">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-4">
-                <Badge variant="secondary" className="bg-blue-100 text-blue-800">
+                <Badge
+                  variant="secondary"
+                  className="bg-blue-100 text-blue-800"
+                >
                   {selectedFiles.size} files selected
                 </Badge>
                 <div className="flex items-center gap-2">
-                  <Button
-                    size="sm"
-                    variant="outline"
-                    onClick={selectAllFiles}
-                  >
+                  <Button size="sm" variant="outline" onClick={selectAllFiles}>
                     <CheckSquare className="h-4 w-4 mr-2" />
                     Select All
                   </Button>
@@ -439,22 +490,24 @@ export function EnhancedMediaManager({ initialMediaFiles = [] }: EnhancedMediaMa
                   </Button>
                 </div>
               </div>
-              
+
               <div className="flex items-center gap-2">
                 <Select onValueChange={bulkMove}>
                   <SelectTrigger className="w-40">
                     <SelectValue placeholder="Move to..." />
                   </SelectTrigger>
                   <SelectContent>
-                    {MEDIA_CATEGORIES.filter(cat => cat.value !== 'all').map((category) => (
-                      <SelectItem key={category.value} value={category.value}>
-                        <Move className="h-4 w-4 mr-2" />
-                        {category.label}
-                      </SelectItem>
-                    ))}
+                    {MEDIA_CATEGORIES.filter((cat) => cat.value !== "all").map(
+                      (category) => (
+                        <SelectItem key={category.value} value={category.value}>
+                          <Move className="h-4 w-4 mr-2" />
+                          {category.label}
+                        </SelectItem>
+                      )
+                    )}
                   </SelectContent>
                 </Select>
-                
+
                 <Button
                   size="sm"
                   variant="outline"
@@ -464,7 +517,7 @@ export function EnhancedMediaManager({ initialMediaFiles = [] }: EnhancedMediaMa
                   <Download className="h-4 w-4 mr-2" />
                   Download
                 </Button>
-                
+
                 <Button
                   size="sm"
                   variant="destructive"
@@ -509,13 +562,18 @@ export function EnhancedMediaManager({ initialMediaFiles = [] }: EnhancedMediaMa
             </SelectContent>
           </Select>
         </div>
-        
+
         {/* Advanced Controls */}
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-4">
             <div className="flex items-center gap-2">
               <Label className="text-sm">Sort by:</Label>
-              <Select value={sortBy} onValueChange={(value: 'name' | 'date' | 'size' | 'type') => setSortBy(value)}>
+              <Select
+                value={sortBy}
+                onValueChange={(value: "name" | "date" | "size" | "type") =>
+                  setSortBy(value)
+                }
+              >
                 <SelectTrigger className="w-32">
                   <SelectValue />
                 </SelectTrigger>
@@ -529,12 +587,14 @@ export function EnhancedMediaManager({ initialMediaFiles = [] }: EnhancedMediaMa
               <Button
                 size="sm"
                 variant="outline"
-                onClick={() => setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc')}
+                onClick={() =>
+                  setSortOrder(sortOrder === "asc" ? "desc" : "asc")
+                }
               >
-                {sortOrder === 'asc' ? '↑' : '↓'}
+                {sortOrder === "asc" ? "↑" : "↓"}
               </Button>
             </div>
-            
+
             <div className="flex items-center gap-2">
               <Label className="text-sm">Bulk Actions:</Label>
               <Button
@@ -553,25 +613,32 @@ export function EnhancedMediaManager({ initialMediaFiles = [] }: EnhancedMediaMa
       {/* Stats */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
         <Card>
-          <CardContent className="pt-6">
+          <CardContent className="pt-3 pb-3">
             <div className="flex items-center">
               <File className="h-8 w-8 text-blue-600" />
               <div className="ml-4">
-                <p className="text-sm font-medium text-muted-foreground">Total Files</p>
+                <p className="text-sm font-medium text-muted-foreground">
+                  Total Files
+                </p>
                 <p className="text-2xl font-bold">{mediaFiles.length}</p>
               </div>
             </div>
           </CardContent>
         </Card>
-        
+
         <Card>
-          <CardContent className="pt-6">
+          <CardContent className="pt-3 pb-3">
             <div className="flex items-center">
               <ImageIcon className="h-8 w-8 text-green-600" />
               <div className="ml-4">
-                <p className="text-sm font-medium text-muted-foreground">Images</p>
+                <p className="text-sm font-medium text-muted-foreground">
+                  Images
+                </p>
                 <p className="text-2xl font-bold">
-                  {mediaFiles.filter(f => f.mime_type.startsWith('image/')).length}
+                  {
+                    mediaFiles.filter((f) => f?.mime_type?.startsWith("image/"))
+                      .length
+                  }
                 </p>
               </div>
             </div>
@@ -579,11 +646,13 @@ export function EnhancedMediaManager({ initialMediaFiles = [] }: EnhancedMediaMa
         </Card>
 
         <Card>
-          <CardContent className="pt-6">
+          <CardContent className="pt-3 pb-3">
             <div className="flex items-center">
               <Filter className="h-8 w-8 text-orange-600" />
               <div className="ml-4">
-                <p className="text-sm font-medium text-muted-foreground">Filtered</p>
+                <p className="text-sm font-medium text-muted-foreground">
+                  Filtered
+                </p>
                 <p className="text-2xl font-bold">{filteredFiles.length}</p>
               </div>
             </div>
@@ -591,11 +660,13 @@ export function EnhancedMediaManager({ initialMediaFiles = [] }: EnhancedMediaMa
         </Card>
 
         <Card>
-          <CardContent className="pt-6">
+          <CardContent className="pt-3 pb-3">
             <div className="flex items-center">
               <CheckCircle className="h-8 w-8 text-purple-600" />
               <div className="ml-4">
-                <p className="text-sm font-medium text-muted-foreground">Selected</p>
+                <p className="text-sm font-medium text-muted-foreground">
+                  Selected
+                </p>
                 <p className="text-2xl font-bold">{selectedFiles.size}</p>
               </div>
             </div>
@@ -612,8 +683,10 @@ export function EnhancedMediaManager({ initialMediaFiles = [] }: EnhancedMediaMa
         <div className="flex items-center gap-2">
           <Filter className="h-4 w-4 text-muted-foreground" />
           <span className="text-sm text-muted-foreground">
-            {selectedCategory === "all" ? "All Categories" : 
-             MEDIA_CATEGORIES.find(c => c.value === selectedCategory)?.label}
+            {selectedCategory === "all"
+              ? "All Categories"
+              : MEDIA_CATEGORIES.find((c) => c.value === selectedCategory)
+                  ?.label}
           </span>
         </div>
       </div>
@@ -623,28 +696,35 @@ export function EnhancedMediaManager({ initialMediaFiles = [] }: EnhancedMediaMa
         <Card>
           <CardContent className="py-12 text-center">
             <ImageIcon className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-            <p className="text-muted-foreground">No media files found matching your criteria.</p>
+            <p className="text-muted-foreground">
+              No media files found matching your criteria.
+            </p>
           </CardContent>
         </Card>
       ) : (
-        <div className={cn(
-          "grid gap-6",
-          viewMode === 'grid' 
-            ? "grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4" 
-            : "grid-cols-1"
-        )}>
+        <div
+          className={cn(
+            "grid gap-6",
+            viewMode === "grid"
+              ? "grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4"
+              : "grid-cols-1"
+          )}
+        >
           {sortedFiles.map((file) => {
-            const isImage = isImageFile(file.mime_type, file.original_name)
-            const category = getCategoryFromPath(file.file_path)
-            const isSelected = selectedFiles.has(file.id)
-            const imageUrl = getImageUrl(file.file_path)
-            const thumbnailUrl = getThumbnailUrl(file.file_path)
-            
+            const isImage = isImageFile(file.mime_type, file.original_name);
+            const category = getCategoryFromPath(file.file_path);
+            const isSelected = selectedFiles.has(file.id);
+            const imageUrl = getImageUrl(file.file_path);
+            const thumbnailUrl = getThumbnailUrl(file.file_path);
+
             return (
-              <Card key={file.id} className={cn(
-                "group hover:shadow-lg transition-all duration-300",
-                isSelected && "ring-2 ring-blue-500"
-              )}>
+              <Card
+                key={file.id}
+                className={cn(
+                  "group hover:shadow-lg transition-all duration-300",
+                  isSelected && "ring-2 ring-blue-500"
+                )}
+              >
                 <CardHeader className="p-4 pb-2">
                   <div className="flex items-start justify-between">
                     <div className="flex items-center gap-2">
@@ -702,7 +782,7 @@ export function EnhancedMediaManager({ initialMediaFiles = [] }: EnhancedMediaMa
                     </div>
                   </div>
                 </CardHeader>
-                
+
                 <CardContent className="p-4 pt-0">
                   {/* Media Preview */}
                   <div className="aspect-square bg-muted rounded-lg overflow-hidden mb-3 flex items-center justify-center">
@@ -715,7 +795,7 @@ export function EnhancedMediaManager({ initialMediaFiles = [] }: EnhancedMediaMa
                         className="w-full h-full object-cover"
                         onError={(e) => {
                           // Fallback to original URL if thumbnail fails
-                          e.currentTarget.src = imageUrl
+                          e.currentTarget.src = imageUrl;
                         }}
                       />
                     ) : (
@@ -725,10 +805,13 @@ export function EnhancedMediaManager({ initialMediaFiles = [] }: EnhancedMediaMa
                       </div>
                     )}
                   </div>
-                  
+
                   {/* File Info */}
                   <div className="space-y-2">
-                    <h4 className="font-medium text-sm truncate" title={file.original_name}>
+                    <h4
+                      className="font-medium text-sm truncate"
+                      title={file.original_name}
+                    >
                       {file.original_name}
                     </h4>
                     <p className="text-xs text-muted-foreground line-clamp-2">
@@ -736,12 +819,14 @@ export function EnhancedMediaManager({ initialMediaFiles = [] }: EnhancedMediaMa
                     </p>
                     <div className="flex items-center justify-between text-xs text-muted-foreground">
                       <span>{formatFileSize(file.file_size)}</span>
-                      <span>{new Date(file.uploaded_at).toLocaleDateString()}</span>
+                      <span>
+                        {new Date(file.uploaded_at).toLocaleDateString()}
+                      </span>
                     </div>
                   </div>
                 </CardContent>
               </Card>
-            )
+            );
           })}
         </div>
       )}
@@ -761,11 +846,14 @@ export function EnhancedMediaManager({ initialMediaFiles = [] }: EnhancedMediaMa
                   <X className="h-4 w-4" />
                 </Button>
               </div>
-              
+
               <div className="space-y-4">
                 {/* Media Display */}
                 <div className="flex justify-center">
-                  {isImageFile(selectedFile.mime_type, selectedFile.original_name) ? (
+                  {isImageFile(
+                    selectedFile.mime_type,
+                    selectedFile.original_name
+                  ) ? (
                     <Image
                       src={getImageUrl(selectedFile.file_path)}
                       alt={selectedFile.alt_text || selectedFile.original_name}
@@ -781,20 +869,26 @@ export function EnhancedMediaManager({ initialMediaFiles = [] }: EnhancedMediaMa
                     </div>
                   )}
                 </div>
-                
+
                 {/* File Details */}
                 <div className="grid grid-cols-2 gap-4 text-sm">
                   <div>
                     <span className="font-medium">Filename:</span>
-                    <p className="text-muted-foreground">{selectedFile.original_name}</p>
+                    <p className="text-muted-foreground">
+                      {selectedFile.original_name}
+                    </p>
                   </div>
                   <div>
                     <span className="font-medium">Category:</span>
-                    <p className="text-muted-foreground">{getCategoryFromPath(selectedFile.file_path)}</p>
+                    <p className="text-muted-foreground">
+                      {getCategoryFromPath(selectedFile.file_path)}
+                    </p>
                   </div>
                   <div>
                     <span className="font-medium">File Size:</span>
-                    <p className="text-muted-foreground">{formatFileSize(selectedFile.file_size)}</p>
+                    <p className="text-muted-foreground">
+                      {formatFileSize(selectedFile.file_size)}
+                    </p>
                   </div>
                   <div>
                     <span className="font-medium">Uploaded:</span>
@@ -804,7 +898,9 @@ export function EnhancedMediaManager({ initialMediaFiles = [] }: EnhancedMediaMa
                   </div>
                   <div className="col-span-2">
                     <span className="font-medium">Description:</span>
-                    <p className="text-muted-foreground">{selectedFile.alt_text}</p>
+                    <p className="text-muted-foreground">
+                      {selectedFile.alt_text}
+                    </p>
                   </div>
                   <div className="col-span-2">
                     <span className="font-medium">File Path:</span>
@@ -822,7 +918,7 @@ export function EnhancedMediaManager({ initialMediaFiles = [] }: EnhancedMediaMa
                     </div>
                   </div>
                 </div>
-                
+
                 {/* Actions */}
                 <div className="flex gap-2 pt-4 border-t">
                   <Button onClick={() => downloadFile(selectedFile)}>
@@ -830,7 +926,11 @@ export function EnhancedMediaManager({ initialMediaFiles = [] }: EnhancedMediaMa
                     Download
                   </Button>
                   <Button variant="outline" asChild>
-                    <a href={selectedFile.file_path} target="_blank" rel="noopener noreferrer">
+                    <a
+                      href={selectedFile.file_path}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
                       <Eye className="mr-2 h-4 w-4" />
                       Open
                     </a>
@@ -838,8 +938,8 @@ export function EnhancedMediaManager({ initialMediaFiles = [] }: EnhancedMediaMa
                   <Button
                     variant="destructive"
                     onClick={() => {
-                      deleteFile(selectedFile.id)
-                      setSelectedFile(null)
+                      deleteFile(selectedFile.id);
+                      setSelectedFile(null);
                     }}
                   >
                     <Trash2 className="mr-2 h-4 w-4" />
@@ -852,5 +952,5 @@ export function EnhancedMediaManager({ initialMediaFiles = [] }: EnhancedMediaMa
         </div>
       )}
     </div>
-  )
+  );
 }
