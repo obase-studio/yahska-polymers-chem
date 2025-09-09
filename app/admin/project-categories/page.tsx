@@ -1,13 +1,19 @@
-"use client"
+"use client";
 
-import { useState, useEffect } from "react"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Textarea } from "@/components/ui/textarea"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
-import { Plus, Edit, Trash2, Save, X, Building2 } from "lucide-react"
+import { useState, useEffect } from "react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Plus, Edit, Trash2, Save, X, Building2 } from "lucide-react";
 import {
   Dialog,
   DialogContent,
@@ -15,150 +21,157 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from "@/components/ui/dialog"
+} from "@/components/ui/dialog";
 
 interface ProjectCategory {
-  id: string
-  name: string
-  description: string
-  sort_order: number
-  is_active: boolean
-  project_count?: number
+  id: string;
+  name: string;
+  description: string;
+  sort_order: number;
+  is_active: boolean;
+  project_count?: number;
 }
 
 export default function ProjectCategoriesPage() {
-  const [categories, setCategories] = useState<ProjectCategory[]>([])
-  const [loading, setLoading] = useState(true)
-  const [editingCategory, setEditingCategory] = useState<ProjectCategory | null>(null)
-  const [showAddDialog, setShowAddDialog] = useState(false)
+  const [categories, setCategories] = useState<ProjectCategory[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [editingCategory, setEditingCategory] =
+    useState<ProjectCategory | null>(null);
+  const [showAddDialog, setShowAddDialog] = useState(false);
   const [formData, setFormData] = useState({
     id: "",
     name: "",
     description: "",
-    sort_order: 1
-  })
+    sort_order: 1,
+  });
 
   // Load project categories
   useEffect(() => {
-    loadCategories()
-  }, [])
+    loadCategories();
+  }, []);
 
   const loadCategories = async () => {
     try {
-      const response = await fetch('/api/admin/project-categories')
-      const result = await response.json()
+      const response = await fetch("/api/admin/project-categories");
+      const result = await response.json();
       if (result.success) {
-        setCategories(result.data || [])
+        setCategories(result.data || []);
       }
     } catch (error) {
-      console.error('Failed to load project categories:', error)
+      console.error("Failed to load project categories:", error);
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    setLoading(true)
-    
+    e.preventDefault();
+    setLoading(true);
+
     try {
-      const url = editingCategory 
-        ? `/api/admin/project-categories/${editingCategory.id}` 
-        : '/api/admin/project-categories'
-      const method = editingCategory ? 'PUT' : 'POST'
+      const url = editingCategory
+        ? `/api/admin/project-categories/${editingCategory.id}`
+        : "/api/admin/project-categories";
+      const method = editingCategory ? "PUT" : "POST";
 
       const response = await fetch(url, {
         method,
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(formData)
-      })
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(formData),
+      });
 
-      const result = await response.json()
-      
+      const result = await response.json();
+
       if (result.success) {
-        await loadCategories()
-        resetForm()
-        setShowAddDialog(false)
-        setEditingCategory(null)
+        await loadCategories();
+        resetForm();
+        setShowAddDialog(false);
+        setEditingCategory(null);
       } else {
-        alert(result.error || 'Failed to save project category')
+        alert(result.error || "Failed to save project category");
       }
     } catch (error) {
-      console.error('Error saving project category:', error)
-      alert('Error saving project category')
+      console.error("Error saving project category:", error);
+      alert("Error saving project category");
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }
+  };
 
   const handleDelete = async (id: string) => {
-    if (!confirm('Are you sure you want to delete this project category?')) return
-    
-    setLoading(true)
+    if (!confirm("Are you sure you want to delete this project category?"))
+      return;
+
+    setLoading(true);
     try {
       const response = await fetch(`/api/admin/project-categories/${id}`, {
-        method: 'DELETE'
-      })
-      
-      const result = await response.json()
+        method: "DELETE",
+      });
+
+      const result = await response.json();
       if (result.success) {
-        await loadCategories()
+        await loadCategories();
       } else {
-        alert(result.error || 'Failed to delete project category')
+        alert(result.error || "Failed to delete project category");
       }
     } catch (error) {
-      console.error('Error deleting project category:', error)
-      alert('Error deleting project category')
+      console.error("Error deleting project category:", error);
+      alert("Error deleting project category");
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }
+  };
 
   const handleToggleActive = async (category: ProjectCategory) => {
-    setLoading(true)
+    setLoading(true);
     try {
-      const response = await fetch(`/api/admin/project-categories/${category.id}`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          ...category,
-          is_active: !category.is_active
-        })
-      })
-      
-      const result = await response.json()
+      const response = await fetch(
+        `/api/admin/project-categories/${category.id}`,
+        {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            name: category.name,
+            description: category.description,
+            sort_order: category.sort_order,
+            is_active: !category.is_active,
+          }),
+        }
+      );
+
+      const result = await response.json();
       if (result.success) {
-        await loadCategories()
+        await loadCategories();
       } else {
-        alert(result.error || 'Failed to update project category')
+        alert(result.error || "Failed to update project category");
       }
     } catch (error) {
-      console.error('Error updating project category:', error)
+      console.error("Error updating project category:", error);
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }
+  };
 
   const startEdit = (category: ProjectCategory) => {
-    setEditingCategory(category)
+    setEditingCategory(category);
     setFormData({
       id: category.id,
       name: category.name,
       description: category.description,
-      sort_order: category.sort_order
-    })
-    setShowAddDialog(true)
-  }
+      sort_order: category.sort_order,
+    });
+    setShowAddDialog(true);
+  };
 
   const resetForm = () => {
     setFormData({
       id: "",
       name: "",
       description: "",
-      sort_order: 1
-    })
-    setEditingCategory(null)
-  }
+      sort_order: 1,
+    });
+    setEditingCategory(null);
+  };
 
   if (loading && categories.length === 0) {
     return (
@@ -166,17 +179,21 @@ export default function ProjectCategoriesPage() {
         <div className="flex items-center justify-between">
           <div>
             <h1 className="text-3xl font-bold">Project Categories</h1>
-            <p className="text-muted-foreground">Manage project categories and their settings</p>
+            <p className="text-muted-foreground">
+              Manage project categories and their settings
+            </p>
           </div>
         </div>
         <div className="flex items-center justify-center py-12">
           <div className="text-center">
             <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
-            <p className="text-muted-foreground">Loading project categories...</p>
+            <p className="text-muted-foreground">
+              Loading project categories...
+            </p>
           </div>
         </div>
       </div>
-    )
+    );
   }
 
   return (
@@ -184,8 +201,12 @@ export default function ProjectCategoriesPage() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">Project Categories</h1>
-          <p className="text-muted-foreground mt-2">Manage project categories and their settings</p>
+          <h1 className="text-3xl font-bold tracking-tight">
+            Project Categories
+          </h1>
+          <p className="text-muted-foreground mt-2">
+            Manage project categories and their settings
+          </p>
         </div>
         <Dialog open={showAddDialog} onOpenChange={setShowAddDialog}>
           <DialogTrigger asChild>
@@ -197,7 +218,9 @@ export default function ProjectCategoriesPage() {
           <DialogContent>
             <DialogHeader>
               <DialogTitle>
-                {editingCategory ? 'Edit Project Category' : 'Add New Project Category'}
+                {editingCategory
+                  ? "Edit Project Category"
+                  : "Add New Project Category"}
               </DialogTitle>
               <DialogDescription>
                 Create or modify project category information
@@ -205,35 +228,50 @@ export default function ProjectCategoriesPage() {
             </DialogHeader>
             <form onSubmit={handleSubmit} className="space-y-6">
               <div className="space-y-2">
-                <Label htmlFor="name" className="text-sm font-medium">Category Name</Label>
+                <Label htmlFor="name" className="text-sm font-medium">
+                  Category Name
+                </Label>
                 <Input
                   id="name"
                   value={formData.name}
-                  onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                  onChange={(e) =>
+                    setFormData({ ...formData, name: e.target.value })
+                  }
                   placeholder="e.g., High Speed Rail"
                   className="mt-1"
                   required
                 />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="description" className="text-sm font-medium">Description</Label>
+                <Label htmlFor="description" className="text-sm font-medium">
+                  Description
+                </Label>
                 <Textarea
                   id="description"
                   value={formData.description}
-                  onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                  onChange={(e) =>
+                    setFormData({ ...formData, description: e.target.value })
+                  }
                   placeholder="Brief description of this project category"
                   rows={3}
                   className="mt-1 resize-none"
                 />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="sort_order" className="text-sm font-medium">Display Order</Label>
+                <Label htmlFor="sort_order" className="text-sm font-medium">
+                  Display Order
+                </Label>
                 <Input
                   id="sort_order"
                   type="number"
                   min="1"
                   value={formData.sort_order}
-                  onChange={(e) => setFormData({ ...formData, sort_order: parseInt(e.target.value) || 1 })}
+                  onChange={(e) =>
+                    setFormData({
+                      ...formData,
+                      sort_order: parseInt(e.target.value) || 1,
+                    })
+                  }
                   className="mt-1"
                 />
               </div>
@@ -242,8 +280,8 @@ export default function ProjectCategoriesPage() {
                   type="button"
                   variant="outline"
                   onClick={() => {
-                    setShowAddDialog(false)
-                    resetForm()
+                    setShowAddDialog(false);
+                    resetForm();
                   }}
                 >
                   <X className="h-4 w-4 mr-2" />
@@ -251,7 +289,7 @@ export default function ProjectCategoriesPage() {
                 </Button>
                 <Button type="submit" disabled={loading}>
                   <Save className="h-4 w-4 mr-2" />
-                  {editingCategory ? 'Update' : 'Create'}
+                  {editingCategory ? "Update" : "Create"}
                 </Button>
               </div>
             </form>
@@ -262,7 +300,10 @@ export default function ProjectCategoriesPage() {
       {/* Categories Grid */}
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
         {categories.map((category) => (
-          <Card key={category.id} className="border-2 shadow-sm hover:shadow-md transition-shadow bg-white">
+          <Card
+            key={category.id}
+            className="border-2 shadow-sm hover:shadow-md transition-shadow bg-white"
+          >
             <CardHeader className="px-8 pt-8 pb-6">
               <CardTitle className="flex items-start justify-between">
                 <div className="flex items-center gap-4">
@@ -271,20 +312,27 @@ export default function ProjectCategoriesPage() {
                   </div>
                   <div>
                     <div className="text-lg font-semibold">{category.name}</div>
-                    <Badge variant={category.is_active ? "default" : "secondary"} className="mt-2 px-3 py-1">
+                    <Badge
+                      variant={category.is_active ? "default" : "secondary"}
+                      className="mt-2 px-3 py-1"
+                    >
                       {category.is_active ? "Active" : "Inactive"}
                     </Badge>
                   </div>
                 </div>
               </CardTitle>
-              <CardDescription className="text-sm leading-relaxed mt-4 ml-1">{category.description}</CardDescription>
+              <CardDescription className="text-sm leading-relaxed mt-4 ml-1">
+                {category.description}
+              </CardDescription>
             </CardHeader>
             <CardContent className="px-8 pb-8">
               <div className="mb-6">
                 <div className="text-sm text-muted-foreground bg-muted/30 px-4 py-3 rounded-lg">
                   Order: {category.sort_order}
                   {category.project_count !== undefined && (
-                    <span className="ml-2">• Projects: {category.project_count}</span>
+                    <span className="ml-2">
+                      • Projects: {category.project_count}
+                    </span>
                   )}
                 </div>
               </div>
@@ -327,8 +375,12 @@ export default function ProjectCategoriesPage() {
         <Card className="border-2 shadow-sm bg-white">
           <CardContent className="py-16 px-8 text-center">
             <Building2 className="h-16 w-16 mx-auto mb-6 text-muted-foreground" />
-            <h3 className="text-xl font-semibold mb-3">No Project Categories</h3>
-            <p className="text-muted-foreground mb-6">Get started by creating your first project category</p>
+            <h3 className="text-xl font-semibold mb-3">
+              No Project Categories
+            </h3>
+            <p className="text-muted-foreground mb-6">
+              Get started by creating your first project category
+            </p>
             <Button onClick={() => setShowAddDialog(true)}>
               <Plus className="h-4 w-4 mr-2" />
               Add Project Category
@@ -337,5 +389,5 @@ export default function ProjectCategoriesPage() {
         </Card>
       )}
     </div>
-  )
+  );
 }

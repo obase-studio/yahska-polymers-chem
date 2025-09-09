@@ -29,6 +29,8 @@ export function Navigation() {
   const handleCategorySelect = (categoryId: string) => {
     setSelectedCategory(categoryId);
     setDropdownOpen(false);
+    // Navigate to products page with category parameter
+    window.location.href = `/products?category=${categoryId}`;
   };
 
   useEffect(() => {
@@ -96,20 +98,17 @@ export function Navigation() {
                     <DropdownMenuItem
                       key={category.id}
                       onClick={() => handleCategorySelect(category.id)}
+                      className="cursor-pointer"
                     >
-                      <Link href="/products" className="w-full">
-                        {category.name}
-                      </Link>
+                      {category.name}
                     </DropdownMenuItem>
                   ))}
                   {categories.length > 0 && <DropdownMenuSeparator />}
-                  <DropdownMenuItem onClick={() => handleCategorySelect("all")}>
-                    <Link
-                      href="/products"
-                      className="w-full font-semibold text-primary hover:text-primary/80"
-                    >
-                      See All
-                    </Link>
+                  <DropdownMenuItem
+                    onClick={() => handleCategorySelect("all")}
+                    className="cursor-pointer font-semibold text-primary hover:text-primary/80"
+                  >
+                    See All
                   </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>

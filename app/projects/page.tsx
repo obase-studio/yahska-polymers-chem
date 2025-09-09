@@ -1,6 +1,7 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, Suspense } from "react";
+import { useSearchParams } from "next/navigation";
 import { Navigation } from "@/components/navigation";
 import {
   Card,
@@ -56,7 +57,7 @@ const projectCategories = [
   { id: "others", name: "Other Projects", icon: Factory },
 ];
 
-export default function ProjectsPage() {
+function ProjectsPageContent() {
   const [projectOverview, setProjectOverview] = useState("");
   const [projects, setProjects] = useState<Project[]>([]);
   const [loading, setLoading] = useState(true);
@@ -64,6 +65,19 @@ export default function ProjectsPage() {
   const [selectedCategory, setSelectedCategory] = useState("all");
   const [error, setError] = useState<string | null>(null);
   const [refreshing, setRefreshing] = useState(false);
+
+  const searchParams = useSearchParams();
+
+  // Handle URL parameters for category filtering
+  useEffect(() => {
+    const categoryParam = searchParams.get("category");
+    if (categoryParam) {
+      setSelectedCategory(categoryParam);
+    } else {
+      // Reset to "all" when no category parameter is present
+      setSelectedCategory("all");
+    }
+  }, [searchParams]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -162,18 +176,25 @@ export default function ProjectsPage() {
   // Get filtered projects
   const filteredProjects = projects
     .filter((project) => project.is_active)
-    .filter(
-      (project) =>
+    .filter((project) => {
+      // If there's a search term, search across all projects regardless of category
+      if (searchTerm !== "") {
+        return (
+          project.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          project.description
+            .toLowerCase()
+            .includes(searchTerm.toLowerCase()) ||
+          project.client_name
+            ?.toLowerCase()
+            .includes(searchTerm.toLowerCase()) ||
+          project.location?.toLowerCase().includes(searchTerm.toLowerCase())
+        );
+      }
+      // If no search term, filter by selected category
+      return (
         selectedCategory === "all" || project.category === selectedCategory
-    )
-    .filter(
-      (project) =>
-        searchTerm === "" ||
-        project.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        project.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        project.client_name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        project.location?.toLowerCase().includes(searchTerm.toLowerCase())
-    );
+      );
+    });
 
   // Get project count by category
   const getCategoryProjectCount = (categoryId: string) => {
@@ -376,14 +397,16 @@ export default function ProjectsPage() {
               <div className="flex items-center justify-between mb-6">
                 <div>
                   <h2 className="text-2xl font-bold text-foreground">
-                    {selectedCategory === "all"
+                    {searchTerm
+                      ? `Search Results for "${searchTerm}"`
+                      : selectedCategory === "all"
                       ? "All Projects"
                       : getCategoryName(selectedCategory)}
                   </h2>
                   <p className="text-muted-foreground mt-1">
                     {filteredProjects.length} project
                     {filteredProjects.length !== 1 ? "s" : ""} found
-                    {searchTerm && ` for "${searchTerm}"`}
+                    {searchTerm && " across all categories"}
                   </p>
                 </div>
               </div>
@@ -448,7 +471,10 @@ export default function ProjectsPage() {
                           </div>
                         )}
                         <div className="absolute top-4 left-4 z-10">
-                          <Badge variant="secondary" className="bg-white/90 backdrop-blur-sm text-foreground border-border">
+                          <Badge
+                            variant="secondary"
+                            className="bg-white/90 backdrop-blur-sm text-foreground border-border"
+                          >
                             {getCategoryName(project.category)}
                           </Badge>
                         </div>
@@ -460,10 +486,12 @@ export default function ProjectsPage() {
                             </Badge>
                           </div>
                         )}
-                        
+
                         {/* Hover overlay with quick info */}
                         <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-primary/80 to-transparent p-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                          <p className="text-white text-sm font-medium">Professional Grade Solutions</p>
+                          <p className="text-white text-sm font-medium">
+                            Professional Grade Solutions
+                          </p>
                         </div>
                       </div>
                       <CardContent className="p-6 flex-1 flex flex-col">
@@ -550,7 +578,7 @@ export default function ProjectsPage() {
                         <Button
                           asChild
                           variant="outline"
-                          className="w-full bg-muted hover:bg-muted/80 text-muted-foreground hover:text-foreground group-hover:bg-primary group-hover:text-white transition-all duration-300 justify-between border-muted group-hover:border-primary mt-6"
+                          className="w-full bg-muted hover:bg-muted/80 text-muted-foreground hover:text-foreground group-hover:bg-primary group-hover:text-white transition-all duration-300 justify-between border-muted group-hover:border-primary mt-auto"
                           size="sm"
                         >
                           <Link
@@ -571,8 +599,24 @@ export default function ProjectsPage() {
         </div>
       </section>
 
-
       <Footer />
     </div>
+  );
+}
+
+export default function ProjectsPage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="min-h-screen flex items-center justify-center">
+          <div className="text-center">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
+            <p className="text-muted-foreground">Loading projects...</p>
+          </div>
+        </div>
+      }
+    >
+      <ProjectsPageContent />
+    </Suspense>
   );
 }

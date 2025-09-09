@@ -1,8 +1,8 @@
-"use client"
+"use client";
 
-import Link from "next/link"
-import { useState, useEffect } from "react"
-import { Separator } from "@/components/ui/separator"
+import Link from "next/link";
+import { useState, useEffect } from "react";
+import { Separator } from "@/components/ui/separator";
 
 export function Footer() {
   const [categories, setCategories] = useState<any[]>([]);
@@ -12,17 +12,17 @@ export function Footer() {
       try {
         const response = await fetch("/api/admin/categories");
         const result = await response.json();
-        
+
         if (result.success && result.data) {
           const activeCategories = result.data
             .filter((cat: any) => cat.is_active)
             .sort((a: any, b: any) => a.sort_order - b.sort_order)
             .slice(0, 6); // Show max 6 categories in footer
-          
+
           setCategories(activeCategories);
         }
       } catch (error) {
-        console.error('Error fetching categories:', error);
+        console.error("Error fetching categories:", error);
       }
     };
 
@@ -31,22 +31,26 @@ export function Footer() {
 
   return (
     <footer className="bg-muted/30 border-t border-border">
-
       {/* Main Footer Content */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
         <div className="grid lg:grid-cols-3 md:grid-cols-2 gap-8">
-
           {/* Quick Links */}
           <div>
             <h4 className="font-semibold text-foreground mb-4">Quick Links</h4>
             <ul className="space-y-3">
               <li>
-                <Link href="/" className="text-muted-foreground hover:text-primary transition-colors duration-200">
+                <Link
+                  href="/"
+                  className="text-muted-foreground hover:text-primary transition-colors duration-200"
+                >
                   Home
                 </Link>
               </li>
               <li>
-                <Link href="/about" className="text-muted-foreground hover:text-primary transition-colors duration-200">
+                <Link
+                  href="/about"
+                  className="text-muted-foreground hover:text-primary transition-colors duration-200"
+                >
                   About Us
                 </Link>
               </li>
@@ -81,7 +85,7 @@ export function Footer() {
                   onClick={(e) => {
                     e.preventDefault();
                     // Placeholder for company profile download
-                    alert('Company profile download will be available soon.');
+                    alert("Company profile download will be available soon.");
                   }}
                 >
                   Download Company Profile
@@ -106,7 +110,7 @@ export function Footer() {
               ))}
               <li>
                 <Link
-                  href="/products"
+                  href="/products?category=all"
                   className="text-muted-foreground hover:text-primary transition-colors duration-200 font-semibold"
                 >
                   View All Products
@@ -161,7 +165,7 @@ export function Footer() {
               </li>
               <li>
                 <Link
-                  href="/projects"
+                  href="/projects?category=all"
                   className="text-muted-foreground hover:text-primary transition-colors duration-200 font-semibold"
                 >
                   View All Projects
@@ -169,11 +173,9 @@ export function Footer() {
               </li>
             </ul>
           </div>
-
         </div>
 
         <Separator className="my-12" />
-
 
         <Separator className="mb-8" />
 
@@ -183,23 +185,31 @@ export function Footer() {
             © 2024 Yahska Polymers Private Limited. All rights reserved.
           </div>
 
-
           {/* Legal Links */}
           <div className="flex items-center space-x-4 text-sm">
-            <Link href="#" className="text-muted-foreground hover:text-primary transition-colors duration-200">
+            <Link
+              href="#"
+              className="text-muted-foreground hover:text-primary transition-colors duration-200"
+            >
               Privacy Policy
             </Link>
             <span className="text-muted-foreground">•</span>
-            <Link href="#" className="text-muted-foreground hover:text-primary transition-colors duration-200">
+            <Link
+              href="#"
+              className="text-muted-foreground hover:text-primary transition-colors duration-200"
+            >
               Terms of Service
             </Link>
             <span className="text-muted-foreground">•</span>
-            <Link href="#" className="text-muted-foreground hover:text-primary transition-colors duration-200">
+            <Link
+              href="#"
+              className="text-muted-foreground hover:text-primary transition-colors duration-200"
+            >
               Sitemap
             </Link>
           </div>
         </div>
       </div>
     </footer>
-  )
+  );
 }
