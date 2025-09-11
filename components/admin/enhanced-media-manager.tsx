@@ -105,7 +105,7 @@ export function EnhancedMediaManager({
 }: EnhancedMediaManagerProps) {
   const [mediaFiles, setMediaFiles] = useState<MediaFile[]>(initialMediaFiles);
   const [searchTerm, setSearchTerm] = useState("");
-  const [selectedCategory, setSelectedCategory] = useState("all");
+  const [selectedCategory, setSelectedCategory] = useState("client-logos");
   const [selectedFile, setSelectedFile] = useState<MediaFile | null>(null);
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
   const [isLoading, setIsLoading] = useState(false);
