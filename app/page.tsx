@@ -494,7 +494,7 @@ export default function HomePage() {
               return (
                 <Card
                   key={category.id}
-                  className="group hover:shadow-xl hover:scale-[1.02] transition-all duration-300 border border-border/50 hover:border-primary/30 overflow-hidden"
+                  className="group hover:shadow-xl hover:scale-[1.02] transition-all duration-300 border border-border/50 hover:border-primary/30 overflow-hidden flex flex-col"
                 >
                   <div className="aspect-video overflow-hidden bg-gradient-to-br from-primary/5 to-accent/5 relative">
                     <CategoryImage
@@ -505,14 +505,14 @@ export default function HomePage() {
                     {/* Overlay */}
                     <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors duration-300" />
                     {/* Hover overlay with quick info */}
-                    <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-primary/80 to-transparent p-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                    {/* <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-primary/80 to-transparent p-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                       <p className="text-white text-sm font-medium">
                         Industrial Grade Quality
                       </p>
-                    </div>
+                    </div> */}
                   </div>
-                  <CardContent className="p-6">
-                    <div className="mb-4">
+                  <CardContent className="p-6 flex flex-col flex-grow">
+                    <div className="mb-4 flex-grow">
                       <CardTitle className="text-lg font-bold text-foreground mb-2 group-hover:text-primary transition-colors duration-300">
                         {category.name}
                       </CardTitle>
@@ -524,7 +524,7 @@ export default function HomePage() {
                     <Button
                       asChild
                       variant="outline"
-                      className="w-full bg-muted hover:bg-muted/80 text-muted-foreground hover:text-foreground group-hover:bg-primary group-hover:text-white transition-all duration-300 justify-between border-muted group-hover:border-primary"
+                      className="w-full bg-muted hover:bg-muted/80 text-muted-foreground hover:text-foreground group-hover:bg-primary group-hover:text-white transition-all duration-300 justify-between border-muted group-hover:border-primary mt-auto"
                     >
                       <Link href={`/products?category=${category.id}`}>
                         <span>View Products</span>
