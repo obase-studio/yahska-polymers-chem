@@ -420,12 +420,20 @@ export const supabaseHelpers = {
 
   // Media files operations
   deleteMediaFile: async (id: number) => {
-    const { data, error } = await supabase
+    console.log("Deleting media file from database with ID:", id);
+
+    // Use admin client for deletion to ensure proper permissions
+    const { data, error } = await supabaseAdmin
       .from("media_files")
       .delete()
-      .eq("id", id);
+      .eq("id", id)
+      .select();
 
-    if (error) throw error;
+    if (error) {
+      console.error("Database deletion error:", error);
+      throw error;
+    }
+    console.log("Database deletion successful, deleted rows:", data);
     return data;
   },
 
