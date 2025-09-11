@@ -22,6 +22,7 @@ import {
   Factory,
   Award,
   Truck,
+  Download,
 } from "lucide-react";
 import Link from "next/link";
 import { Footer } from "@/components/footer";
@@ -48,8 +49,10 @@ interface Product {
   usage: string;
   advantages: string;
   technical_specifications: string;
+  image_url?: string;
   product_code: string;
   is_active: boolean;
+  specification_pdf?: string;
 }
 
 interface Category {
@@ -70,6 +73,27 @@ export default function ProductsPage() {
 
   const { selectedCategory, setSelectedCategory } = useProductContext();
   const searchParams = useSearchParams();
+
+  // Function to handle datasheet download
+  const handleDownloadDatasheet = (product: Product) => {
+    if (!product.specification_pdf) {
+      alert(
+        "Datasheet is not available for this product. Please contact our sales team for more information."
+      );
+      return;
+    }
+
+    // Create a temporary link element to trigger download
+    const link = document.createElement("a");
+    link.href = product.specification_pdf;
+    link.download = `${product.name
+      .replace(/[^a-z0-9]/gi, "_")
+      .toLowerCase()}_datasheet.pdf`;
+    link.target = "_blank";
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
 
   const productOverview =
     contentItems.find(
@@ -450,11 +474,22 @@ export default function ProductsPage() {
                     return (
                       <Card
                         key={product.id}
-                        className="group h-full hover:shadow-xl hover:scale-[1.02] transition-all duration-300 border border-border/50 hover:border-primary/30 overflow-hidden"
+                        className="group h-full hover:shadow-xl hover:scale-[1.02] transition-all duration-300 border border-border/50 hover:border-primary/30 overflow-hidden flex flex-col"
                       >
-                        {/* Header with gradient and icon */}
-                        <div className="aspect-[4/3] bg-gradient-to-br from-primary/5 to-accent/5 relative p-6 flex items-center justify-center">
-                          {/* Category tag on top left */}
+                        <div className="aspect-video relative overflow-hidden bg-gradient-to-br from-primary/5 to-accent/5 rounded-t-lg">
+                          {/* Background overlay */}
+                          <div className="absolute inset-0 bg-gradient-to-br from-primary/10 to-accent/10 group-hover:from-primary/20 group-hover:to-accent/20 transition-colors duration-300" />
+                          {product.image_url ? (
+                            <img
+                              src={product.image_url}
+                              alt={product.name}
+                              className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
+                            />
+                          ) : (
+                            <div className="flex items-center justify-center h-full">
+                              <CategoryIcon className="h-16 w-16 text-muted-foreground/50" />
+                            </div>
+                          )}
                           <div className="absolute top-4 left-4 z-10">
                             <Badge
                               variant="secondary"
@@ -464,37 +499,29 @@ export default function ProductsPage() {
                             </Badge>
                           </div>
 
-                          {/* Background overlay */}
-                          <div className="absolute inset-0 bg-gradient-to-br from-primary/10 to-accent/10 group-hover:from-primary/20 group-hover:to-accent/20 transition-colors duration-300" />
-
-                          {/* Main content */}
-                          <div className="relative text-center">
-                            <div className="bg-white/90 backdrop-blur-sm rounded-full p-4 group-hover:bg-primary group-hover:text-white transition-all duration-300 mb-4 inline-flex">
-                              <CategoryIcon className="h-8 w-8" />
-                            </div>
-                            <h3 className="text-lg font-bold text-foreground group-hover:text-primary transition-colors duration-300 mb-2">
-                              {product.name}
-                            </h3>
-                          </div>
-
                           {/* Hover overlay with quick info */}
-                          <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-primary/80 to-transparent p-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                          {/* <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-primary/80 to-transparent p-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                             <p className="text-white text-sm font-medium">
                               Industrial Grade Quality
                             </p>
-                          </div>
+                          </div> */}
                         </div>
 
-                        <CardContent className="p-6 flex flex-col h-full">
-                          <div className="flex-1">
-                            <CardDescription className="mb-4 line-clamp-3 leading-relaxed">
-                              {product.description}
-                            </CardDescription>
+                        <CardContent className="p-6 flex-1 flex flex-col">
+                          <div className="flex-1 space-y-3 mb-2">
+                            <div>
+                              <h3 className="font-bold text-lg mb-2 line-clamp-2">
+                                {product.name}
+                              </h3>
+                              <p className="text-muted-foreground text-sm line-clamp-3 mb-3">
+                                {product.description}
+                              </p>
+                            </div>
 
                             {product.features &&
                               product.features.length > 0 && (
-                                <div className="mb-4">
-                                  <p className="text-sm font-medium text-foreground mb-2">
+                                <div className="pt-3 border-t">
+                                  <p className="text-sm font-medium mb-2">
                                     Key Features:
                                   </p>
                                   <div className="flex flex-wrap gap-1">
@@ -522,16 +549,22 @@ export default function ProductsPage() {
                               )}
                           </div>
 
-                          <Button
-                            asChild
-                            variant="outline"
-                            className="w-full bg-muted hover:bg-muted/80 text-muted-foreground hover:text-foreground group-hover:bg-primary group-hover:text-white transition-all duration-300 justify-between border-muted group-hover:border-primary mt-auto"
-                          >
-                            <Link href={`/products/${product.id}`}>
-                              <span>View Details</span>
-                              <ArrowRight className="h-4 w-4 group-hover:translate-x-1 transition-transform duration-300" />
-                            </Link>
-                          </Button>
+                          <div className="flex flex-col gap-2 mt-auto">
+                            <Button
+                              asChild
+                              variant="outline"
+                              className="w-full bg-muted hover:bg-muted/80 text-muted-foreground hover:text-foreground group-hover:bg-primary group-hover:text-white transition-all duration-300 justify-between border-muted group-hover:border-primary"
+                              size="sm"
+                            >
+                              <Link
+                                href={`/products/${product.id}`}
+                                className="flex items-center justify-between w-full"
+                              >
+                                <span>View Details</span>
+                                <ArrowRight className="h-4 w-4 group-hover:translate-x-1 transition-transform duration-300" />
+                              </Link>
+                            </Button>
+                          </div>
                         </CardContent>
                       </Card>
                     );

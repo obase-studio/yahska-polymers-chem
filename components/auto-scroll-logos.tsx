@@ -16,7 +16,12 @@ interface AutoScrollLogosProps {
   className?: string;
 }
 
-export function AutoScrollLogos({ logos, title, description, className = "" }: AutoScrollLogosProps) {
+export function AutoScrollLogos({
+  logos,
+  title,
+  description,
+  className = "",
+}: AutoScrollLogosProps) {
   if (!logos || logos.length === 0) {
     return (
       <section className={`py-12 ${className}`}>
@@ -42,7 +47,7 @@ export function AutoScrollLogos({ logos, title, description, className = "" }: A
 
   // Duplicate logos for seamless infinite scroll
   const duplicatedLogos = [...logos, ...logos];
-  
+
   // Calculate consistent scroll speed: each logo should take ~2.5 seconds to pass
   const logoWidth = 200; // 180px width + 20px gap
   const speedPerLogo = 2.5; // seconds per logo
@@ -62,20 +67,20 @@ export function AutoScrollLogos({ logos, title, description, className = "" }: A
             {description}
           </p>
         </div>
-        
+
         <div className="relative overflow-hidden">
-          <div 
+          <div
             className="flex items-center gap-6 hover:pause-animation"
             style={{
-              width: `${(duplicatedLogos.length * logoWidth)}px`,
-              animation: `scroll ${animationDuration}s linear infinite`
+              width: `${duplicatedLogos.length * logoWidth}px`,
+              animation: `scroll ${animationDuration}s linear infinite`,
             }}
           >
             {duplicatedLogos.map((logo, index) => (
               <Card
                 key={`${logo.id}-${index}`}
                 className="flex-shrink-0 hover:shadow-lg transition-all duration-300 hover:scale-105 bg-background border border-border/50"
-                style={{ width: '180px' }}
+                style={{ width: "180px" }}
               >
                 <CardContent className="p-6 flex items-center justify-center h-24">
                   <div className="relative w-full h-full flex items-center justify-center">
@@ -90,11 +95,7 @@ export function AutoScrollLogos({ logos, title, description, className = "" }: A
                       }
                       className="max-w-full max-h-full object-contain filter grayscale hover:grayscale-0 transition-all duration-300"
                       onError={(e) => {
-                        console.log(
-                          "Image failed to load:",
-                          logo.file_path,
-                          e
-                        );
+                        console.log("Image failed to load:", logo.file_path, e);
                         // Fallback to company name text
                         const target = e.target as HTMLImageElement;
                         target.style.display = "none";
@@ -106,12 +107,12 @@ export function AutoScrollLogos({ logos, title, description, className = "" }: A
                           )}</div>`;
                         }
                       }}
-                      onLoad={() =>
-                        console.log(
-                          "Image loaded successfully:",
-                          logo.original_name
-                        )
-                      }
+                      // onLoad={() =>
+                      //   console.log(
+                      //     "Image loaded successfully:",
+                      //     logo.original_name
+                      //   )
+                      // }
                     />
                   </div>
                 </CardContent>
@@ -120,7 +121,7 @@ export function AutoScrollLogos({ logos, title, description, className = "" }: A
           </div>
         </div>
       </div>
-      
+
       <style jsx>{`
         @keyframes scroll {
           0% {
@@ -130,7 +131,7 @@ export function AutoScrollLogos({ logos, title, description, className = "" }: A
             transform: translateX(-50%);
           }
         }
-        
+
         .hover\\:pause-animation:hover {
           animation-play-state: paused;
         }

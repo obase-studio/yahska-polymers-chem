@@ -23,13 +23,14 @@ export default function ClientsPage() {
     const fetchContent = async () => {
       try {
         setLoading(true);
-        
+
         // Fetch content for clients page
-        const [contentResponse, clientLogosResponse, approvalLogosResponse] = await Promise.all([
-          fetch("/api/content?page=clients"),
-          fetch("/api/client-logos"),
-          fetch("/api/approval-logos")
-        ]);
+        const [contentResponse, clientLogosResponse, approvalLogosResponse] =
+          await Promise.all([
+            fetch("/api/content?page=clients"),
+            fetch("/api/client-logos"),
+            fetch("/api/approval-logos"),
+          ]);
 
         if (contentResponse.ok) {
           const contentResult = await contentResponse.json();
@@ -37,18 +38,33 @@ export default function ClientsPage() {
             setContentItems(contentResult.data.content);
           }
         }
-        
+
         // Fetch client logos
         if (clientLogosResponse.ok) {
           const clientLogosData = await clientLogosResponse.json();
-          console.log('Client logos loaded successfully:', clientLogosData.length, 'logos');
-          setClientLogos(clientLogosData); // Show all client logos on dedicated page
+          console.log(
+            "Client logos loaded successfully:",
+            clientLogosData.length,
+            "logos",
+            clientLogosData
+          );
+          // Filter out the specific file
+          const filteredLogos = clientLogosData.filter(
+            (logo: any) =>
+              logo.filename !== "17.Raj Infrastructure – Pkg 13.jpg"
+          );
+          setClientLogos(filteredLogos); // Show filtered client logos on dedicated page
         }
 
         // Fetch approval logos
         if (approvalLogosResponse.ok) {
           const approvalLogosData = await approvalLogosResponse.json();
-          console.log('Approval logos loaded successfully:', approvalLogosData.length, 'logos');
+          console.log(
+            "Approval logos loaded successfully:",
+            approvalLogosData.length,
+            "logos",
+            approvalLogosData
+          );
           setApprovalLogos(approvalLogosData); // Show all approval logos on dedicated page
         }
       } catch (error) {
@@ -62,34 +78,48 @@ export default function ClientsPage() {
   }, []);
 
   // Get content values
-  const heroHeadline = contentItems.find(
-    (item) => item.section === "hero" && item.content_key === "headline"
-  )?.content_value || "Our Clients & Approvals";
+  const heroHeadline =
+    contentItems.find(
+      (item) => item.section === "hero" && item.content_key === "headline"
+    )?.content_value || "Our Clients & Approvals";
 
-  const heroDescription = contentItems.find(
-    (item) => item.section === "hero" && item.content_key === "description"
-  )?.content_value || "Trusted by industry leaders and recognized by prestigious authorities, we take pride in our extensive network of satisfied clients and official certifications.";
+  const heroDescription =
+    contentItems.find(
+      (item) => item.section === "hero" && item.content_key === "description"
+    )?.content_value ||
+    "Trusted by industry leaders and recognized by prestigious authorities, we take pride in our extensive network of satisfied clients and official certifications.";
 
-  const clientSectionTitle = contentItems.find(
-    (item) => item.section === "client_section" && item.content_key === "title"
-  )?.content_value || "Key Customers";
+  const clientSectionTitle =
+    contentItems.find(
+      (item) =>
+        item.section === "client_section" && item.content_key === "title"
+    )?.content_value || "Key Customers";
 
-  const clientSectionDescription = contentItems.find(
-    (item) => item.section === "client_section" && item.content_key === "description"
-  )?.content_value || "Leading companies that trust us for their chemical solutions";
+  const clientSectionDescription =
+    contentItems.find(
+      (item) =>
+        item.section === "client_section" && item.content_key === "description"
+    )?.content_value ||
+    "Leading companies that trust us for their chemical solutions";
 
-  const approvalSectionTitle = contentItems.find(
-    (item) => item.section === "approval_section" && item.content_key === "title"
-  )?.content_value || "Key Approvals & Certifications";
+  const approvalSectionTitle =
+    contentItems.find(
+      (item) =>
+        item.section === "approval_section" && item.content_key === "title"
+    )?.content_value || "Key Approvals & Certifications";
 
-  const approvalSectionDescription = contentItems.find(
-    (item) => item.section === "approval_section" && item.content_key === "description"
-  )?.content_value || "Recognized and approved by leading authorities across India";
+  const approvalSectionDescription =
+    contentItems.find(
+      (item) =>
+        item.section === "approval_section" &&
+        item.content_key === "description"
+    )?.content_value ||
+    "Recognized and approved by leading authorities across India";
 
   return (
     <div className="min-h-screen bg-background">
       <Navigation />
-      
+
       {/* Page Header */}
       <section className="py-20 bg-gradient-to-br from-primary/10 to-accent/5">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -122,7 +152,6 @@ export default function ClientsPage() {
         description={approvalSectionDescription}
         className="bg-background"
       />
-
 
       <Footer />
     </div>

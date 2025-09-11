@@ -119,13 +119,13 @@ function CategoryImage({
 
 export default function HomePage() {
   const [contentItems, setContentItems] = useState<ContentItem[]>([]);
-  const [heroImage, setHeroImage] = useState<string | null>(null);
   const [categoryImages, setCategoryImages] = useState<Record<string, string>>(
     {}
   );
   const [categories, setCategories] = useState<any[]>([]);
   const [clientLogos, setClientLogos] = useState<any[]>([]);
   const [approvalLogos, setApprovalLogos] = useState<any[]>([]);
+  const [videoData, setVideoData] = useState<any>(null);
   const [loading, setLoading] = useState(true);
 
   // Fetch content and images from API
@@ -152,15 +152,6 @@ export default function HomePage() {
             .sort((a: any, b: any) => a.sort_order - b.sort_order)
             .slice(0, 4); // Show max 4 categories on homepage
           setCategories(activeCategories);
-
-          // Preload hero image first
-          const heroImageUrl =
-            "https://jlbwwbnatmmkcizqprdx.supabase.co/storage/v1/object/public/yahska-media/uploads/home.webp";
-          const img = new Image();
-          img.onload = () => {
-            setHeroImage(heroImageUrl);
-          };
-          img.src = heroImageUrl;
 
           // Load category images
           const categoryImagePromises = [
@@ -200,9 +191,12 @@ export default function HomePage() {
                 clientLogosData.length,
                 "logos"
               );
-
+              const filteredLogos = clientLogosData.filter(
+                (logo: any) =>
+                  logo.filename !== "17.Raj Infrastructure – Pkg 13.jpg"
+              );
               // Use URLs directly from API as they're already properly encoded
-              setClientLogos(clientLogosData.slice(0, 12)); // Show max 12 client logos
+              setClientLogos(filteredLogos.slice(0, 12)); // Show max 12 client logos
             }
           } catch (error) {
             console.error("Error fetching client logos:", error);
@@ -247,6 +241,11 @@ export default function HomePage() {
       (item) => item.section === "hero" && item.content_key === "description"
     )?.content_value ||
     "Yahska Polymers Pvt Ltd is a leading construction chemicals manufacturer based in Ahmedabad, proudly serving the Indian construction industry with innovative and reliable solutions for over two decades.";
+
+  // Get hero image from API content
+  const heroImageFromAPI = contentItems.find(
+    (item) => item.section === "hero" && item.content_key === "hero_image"
+  )?.content_value;
 
   const productCategoriesTitle =
     contentItems.find(
@@ -300,6 +299,31 @@ export default function HomePage() {
     )?.content_value ||
     "Recognized and approved by leading authorities across India";
 
+  // Video data
+  const videoTitle =
+    contentItems.find(
+      (item) => item.section === "video_section" && item.content_key === "title"
+    )?.content_value || "";
+
+  const videoDescription =
+    contentItems.find(
+      (item) =>
+        item.section === "video_section" && item.content_key === "description"
+    )?.content_value || "";
+
+  const videoUrl =
+    contentItems.find(
+      (item) =>
+        item.section === "video_section" && item.content_key === "video_url"
+    )?.content_value || "";
+
+  const videoThumbnail =
+    contentItems.find(
+      (item) =>
+        item.section === "video_section" &&
+        item.content_key === "video_thumbnail"
+    )?.content_value || "";
+
   return (
     <div className="min-h-screen bg-background">
       <Navigation />
@@ -337,7 +361,7 @@ export default function HomePage() {
             <div className="relative">
               <img
                 src={
-                  heroImage ||
+                  heroImageFromAPI ||
                   "https://jlbwwbnatmmkcizqprdx.supabase.co/storage/v1/object/public/yahska-media/uploads/home.webp"
                 }
                 alt="Yahska Polymers Manufacturing Facility"
@@ -347,6 +371,67 @@ export default function HomePage() {
           </div>
         </div>
       </section>
+
+      {/* Video Section */}
+      {videoUrl && (
+        <section className="py-20 bg-background">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="text-center mb-12">
+              {videoTitle && (
+                <h2 className="text-3xl lg:text-4xl font-bold text-foreground mb-4">
+                  {videoTitle}
+                </h2>
+              )}
+              {videoDescription && (
+                <p className="text-lg text-muted-foreground max-w-3xl mx-auto">
+                  {videoDescription}
+                </p>
+              )}
+            </div>
+            <div className="relative max-w-4xl mx-auto">
+              <div className="aspect-video rounded-lg overflow-hidden shadow-2xl">
+                {videoUrl.includes("youtube.com") ||
+                videoUrl.includes("youtu.be") ? (
+                  <iframe
+                    src={
+                      videoUrl.includes("youtube.com")
+                        ? `https://www.youtube.com/embed/${
+                            videoUrl.split("v=")[1]?.split("&")[0]
+                          }`
+                        : `https://www.youtube.com/embed/${
+                            videoUrl.split("youtu.be/")[1]?.split("?")[0]
+                          }`
+                    }
+                    title={videoTitle || "Company Video"}
+                    className="w-full h-full"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                    allowFullScreen
+                  />
+                ) : videoUrl.includes("vimeo.com") ? (
+                  <iframe
+                    src={`https://player.vimeo.com/video/${
+                      videoUrl.split("vimeo.com/")[1]?.split("?")[0]
+                    }`}
+                    title={videoTitle || "Company Video"}
+                    className="w-full h-full"
+                    allow="autoplay; fullscreen; picture-in-picture"
+                    allowFullScreen
+                  />
+                ) : (
+                  <video
+                    controls
+                    className="w-full h-full object-cover"
+                    poster={videoThumbnail || undefined}
+                  >
+                    <source src={videoUrl} type="video/mp4" />
+                    Your browser does not support the video tag.
+                  </video>
+                )}
+              </div>
+            </div>
+          </div>
+        </section>
+      )}
 
       {/* Stats Section */}
       <section className="py-16 bg-muted/50">
@@ -409,9 +494,9 @@ export default function HomePage() {
               return (
                 <Card
                   key={category.id}
-                  className="group hover:shadow-xl hover:scale-[1.02] transition-all duration-300 border border-border/50 hover:border-primary/30 overflow-hidden"
+                  className="group hover:shadow-xl hover:scale-[1.02] transition-all duration-300 border border-border/50 hover:border-primary/30 overflow-hidden flex flex-col"
                 >
-                  <div className="aspect-[4/3] overflow-hidden bg-gradient-to-br from-primary/5 to-accent/5 relative">
+                  <div className="aspect-video overflow-hidden bg-gradient-to-br from-primary/5 to-accent/5 relative">
                     <CategoryImage
                       categoryId={category.id}
                       categoryName={category.name}
@@ -420,14 +505,14 @@ export default function HomePage() {
                     {/* Overlay */}
                     <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors duration-300" />
                     {/* Hover overlay with quick info */}
-                    <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-primary/80 to-transparent p-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                    {/* <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-primary/80 to-transparent p-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                       <p className="text-white text-sm font-medium">
                         Industrial Grade Quality
                       </p>
-                    </div>
+                    </div> */}
                   </div>
-                  <CardContent className="p-6">
-                    <div className="mb-4">
+                  <CardContent className="p-6 flex flex-col flex-grow">
+                    <div className="mb-4 flex-grow">
                       <CardTitle className="text-lg font-bold text-foreground mb-2 group-hover:text-primary transition-colors duration-300">
                         {category.name}
                       </CardTitle>
@@ -439,7 +524,7 @@ export default function HomePage() {
                     <Button
                       asChild
                       variant="outline"
-                      className="w-full bg-muted hover:bg-muted/80 text-muted-foreground hover:text-foreground group-hover:bg-primary group-hover:text-white transition-all duration-300 justify-between border-muted group-hover:border-primary"
+                      className="w-full bg-muted hover:bg-muted/80 text-muted-foreground hover:text-foreground group-hover:bg-primary group-hover:text-white transition-all duration-300 justify-between border-muted group-hover:border-primary mt-auto"
                     >
                       <Link href={`/products?category=${category.id}`}>
                         <span>View Products</span>

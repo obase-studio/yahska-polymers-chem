@@ -1,235 +1,421 @@
-"use client"
+"use client";
 
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { ContentEditorWithMedia } from "@/components/admin/content-editor-with-media"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { useState } from "react"
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { ContentEditorWithMedia } from "@/components/admin/content-editor-with-media";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { useState } from "react";
 
 export default function ContentPage() {
-  const [selectedPage, setSelectedPage] = useState("home")
+  const [selectedPage, setSelectedPage] = useState("home");
 
   const getSectionsForPage = (page: string) => {
-    if (page === 'home') {
+    if (page === "home") {
       return [
         {
-          id: 'hero',
-          title: 'Hero Section',
-          description: 'Hero image, main headline, and description',
+          id: "hero",
+          title: "Hero Section",
+          description: "Hero image, main headline, and description",
           fields: [
-            { key: 'hero_image', label: 'Hero Background Image', type: 'image' as const },
-            { key: 'headline', label: 'Main Headline', type: 'text' as const },
-            { key: 'description', label: 'Hero Description', type: 'textarea' as const }
-          ]
+            {
+              key: "hero_image",
+              label: "Hero Background Image",
+              type: "image" as const,
+            },
+            { key: "headline", label: "Main Headline", type: "text" as const },
+            {
+              key: "description",
+              label: "Hero Description",
+              type: "textarea" as const,
+            },
+          ],
         },
         {
-          id: 'product_categories',
-          title: 'Our Product Categories',
-          description: 'Section title and description for product categories',
+          id: "video_section",
+          title: "Video Section",
+          description: "Company video with title and description",
           fields: [
-            { key: 'title', label: 'Section Title', type: 'text' as const },
-            { key: 'description', label: 'Section Description', type: 'textarea' as const }
-          ]
+            {
+              key: "title",
+              label: "Video Section Title",
+              type: "text" as const,
+            },
+            {
+              key: "description",
+              label: "Video Description",
+              type: "textarea" as const,
+            },
+            {
+              key: "video_url",
+              label: "Video URL (YouTube, Vimeo, or direct video link)",
+              type: "text" as const,
+            },
+            // {
+            //   key: "video_thumbnail",
+            //   label: "Video Thumbnail Image",
+            //   type: "image" as const,
+            // },
+          ],
         },
         {
-          id: 'project_categories',
-          title: 'Our Project Categories',
-          description: 'Section title and description for project categories',
+          id: "product_categories",
+          title: "Our Product Categories",
+          description: "Section title and description for product categories",
           fields: [
-            { key: 'title', label: 'Section Title', type: 'text' as const },
-            { key: 'description', label: 'Section Description', type: 'textarea' as const }
-          ]
+            { key: "title", label: "Section Title", type: "text" as const },
+            {
+              key: "description",
+              label: "Section Description",
+              type: "textarea" as const,
+            },
+          ],
         },
         {
-          id: 'key_customers',
-          title: 'Key Customers',
-          description: 'Section title and description for client logos',
+          id: "project_categories",
+          title: "Our Project Categories",
+          description: "Section title and description for project categories",
           fields: [
-            { key: 'title', label: 'Section Title', type: 'text' as const },
-            { key: 'description', label: 'Section Description', type: 'textarea' as const }
-          ]
+            { key: "title", label: "Section Title", type: "text" as const },
+            {
+              key: "description",
+              label: "Section Description",
+              type: "textarea" as const,
+            },
+          ],
         },
         {
-          id: 'key_approvals',
-          title: 'Key Approvals & Certifications',
-          description: 'Section title and description for approval/certification logos',
+          id: "key_customers",
+          title: "Key Customers",
+          description: "Section title and description for client logos",
           fields: [
-            { key: 'title', label: 'Section Title', type: 'text' as const },
-            { key: 'description', label: 'Section Description', type: 'textarea' as const }
-          ]
-        }
-      ]
+            { key: "title", label: "Section Title", type: "text" as const },
+            {
+              key: "description",
+              label: "Section Description",
+              type: "textarea" as const,
+            },
+          ],
+        },
+        {
+          id: "key_approvals",
+          title: "Key Approvals & Certifications",
+          description:
+            "Section title and description for approval/certification logos",
+          fields: [
+            { key: "title", label: "Section Title", type: "text" as const },
+            {
+              key: "description",
+              label: "Section Description",
+              type: "textarea" as const,
+            },
+          ],
+        },
+      ];
     }
 
-    if (page === 'about') {
+    if (page === "about") {
       return [
         {
-          id: 'hero',
-          title: 'About Hero Section',
-          description: 'Hero image and intro text for about page',
+          id: "hero",
+          title: "About Hero Section",
+          description: "Hero image and intro text for about page",
           fields: [
-            { key: 'hero_image', label: 'About Hero Image', type: 'image' as const }
-          ]
+            {
+              key: "hero_image",
+              label: "About Hero Image",
+              type: "image" as const,
+            },
+          ],
         },
         {
-          id: 'company_overview',
-          title: 'Company Overview',
-          description: 'Main about text (first paragraph shows in hero)',
+          id: "video_section",
+          title: "About Video Section",
+          description: "Company video showcasing our story and values",
           fields: [
-            { key: 'content', label: 'Overview Content', type: 'textarea' as const }
-          ]
+            {
+              key: "title",
+              label: "Video Section Title",
+              type: "text" as const,
+            },
+            {
+              key: "description",
+              label: "Video Description",
+              type: "textarea" as const,
+            },
+            {
+              key: "video_url",
+              label: "Video URL (YouTube, Vimeo, or direct video link)",
+              type: "text" as const,
+            },
+            // {
+            //   key: "video_thumbnail",
+            //   label: "Video Thumbnail Image",
+            //   type: "image" as const,
+            // },
+          ],
         },
         {
-          id: 'our_story',
-          title: 'Our Story',
-          description: 'Company history and background story',
+          id: "company_overview",
+          title: "Company Overview",
+          description: "Main about text (first paragraph shows in hero)",
           fields: [
-            { key: 'content', label: 'Our Story Content', type: 'textarea' as const }
-          ]
+            {
+              key: "content",
+              label: "Overview Content",
+              type: "textarea" as const,
+            },
+          ],
         },
         {
-          id: 'quality_commitment',
-          title: 'Quality Commitment',
-          description: 'Commitment paragraphs',
+          id: "our_story",
+          title: "Our Story",
+          description: "Company history and background story",
           fields: [
-            { key: 'content', label: 'Quality Content', type: 'textarea' as const }
-          ]
+            {
+              key: "content",
+              label: "Our Story Content",
+              type: "textarea" as const,
+            },
+          ],
         },
-      ]
+        {
+          id: "quality_commitment",
+          title: "Quality Commitment",
+          description: "Commitment paragraphs",
+          fields: [
+            {
+              key: "content",
+              label: "Quality Content",
+              type: "textarea" as const,
+            },
+          ],
+        },
+      ];
     }
 
-    if (page === 'products') {
+    if (page === "products") {
       return [
         {
-          id: 'hero',
-          title: 'Products Hero Section',
-          description: 'Hero image for products page',
+          id: "hero",
+          title: "Products Hero Section",
+          description: "Hero image for products page",
           fields: [
-            { key: 'hero_image', label: 'Products Hero Image', type: 'image' as const }
-          ]
+            {
+              key: "hero_image",
+              label: "Products Hero Image",
+              type: "image" as const,
+            },
+          ],
         },
         {
-          id: 'product_overview',
-          title: 'Products Overview',
-          description: 'Intro paragraph for products hero',
+          id: "product_overview",
+          title: "Products Overview",
+          description: "Intro paragraph for products hero",
           fields: [
-            { key: 'content', label: 'Overview Content', type: 'textarea' as const }
-          ]
+            {
+              key: "content",
+              label: "Overview Content",
+              type: "textarea" as const,
+            },
+          ],
         },
-      ]
+      ];
     }
 
-    if (page === 'projects') {
+    if (page === "projects") {
       return [
         {
-          id: 'hero',
-          title: 'Projects Hero Section',
-          description: 'Hero image for projects page',
+          id: "hero",
+          title: "Projects Hero Section",
+          description: "Hero image for projects page",
           fields: [
-            { key: 'hero_image', label: 'Projects Hero Image', type: 'image' as const }
-          ]
+            {
+              key: "hero_image",
+              label: "Projects Hero Image",
+              type: "image" as const,
+            },
+          ],
         },
         {
-          id: 'project_overview',
-          title: 'Projects Overview',
-          description: 'Intro paragraph for projects hero',
+          id: "project_overview",
+          title: "Projects Overview",
+          description: "Intro paragraph for projects hero",
           fields: [
-            { key: 'content', label: 'Overview Content', type: 'textarea' as const }
-          ]
+            {
+              key: "content",
+              label: "Overview Content",
+              type: "textarea" as const,
+            },
+          ],
         },
-      ]
+      ];
     }
 
-    if (page === 'clients') {
+    if (page === "clients") {
       return [
         {
-          id: 'hero',
-          title: 'Clients Hero Section',
-          description: 'Main headline and description for clients page',
+          id: "hero",
+          title: "Clients Hero Section",
+          description: "Main headline and description for clients page",
           fields: [
-            { key: 'headline', label: 'Page Headline', type: 'text' as const },
-            { key: 'description', label: 'Hero Description', type: 'textarea' as const }
-          ]
+            { key: "headline", label: "Page Headline", type: "text" as const },
+            {
+              key: "description",
+              label: "Hero Description",
+              type: "textarea" as const,
+            },
+          ],
         },
         {
-          id: 'client_section',
-          title: 'Client Section',
-          description: 'Description above client logos',
+          id: "client_section",
+          title: "Client Section",
+          description: "Description above client logos",
           fields: [
-            { key: 'title', label: 'Section Title', type: 'text' as const },
-            { key: 'description', label: 'Section Description', type: 'textarea' as const }
-          ]
+            { key: "title", label: "Section Title", type: "text" as const },
+            {
+              key: "description",
+              label: "Section Description",
+              type: "textarea" as const,
+            },
+          ],
         },
         {
-          id: 'approval_section',
-          title: 'Approvals Section',
-          description: 'Description above approval/certification logos',
+          id: "approval_section",
+          title: "Approvals Section",
+          description: "Description above approval/certification logos",
           fields: [
-            { key: 'title', label: 'Section Title', type: 'text' as const },
-            { key: 'description', label: 'Section Description', type: 'textarea' as const }
-          ]
-        }
-      ]
+            { key: "title", label: "Section Title", type: "text" as const },
+            {
+              key: "description",
+              label: "Section Description",
+              type: "textarea" as const,
+            },
+          ],
+        },
+      ];
     }
 
-    // contact
-    return [
-      {
-        id: 'hero',
-        title: 'Contact Hero Section',
-        description: 'Contact page headline and description',
-        fields: [
-          { key: 'headline', label: 'Page Headline', type: 'text' as const },
-          { key: 'description', label: 'Hero Description', type: 'textarea' as const }
-        ]
-      },
-      {
-        id: 'form_section',
-        title: 'Contact Form Section',
-        description: 'Form heading and description',
-        fields: [
-          { key: 'title', label: 'Form Section Title', type: 'text' as const },
-          { key: 'description', label: 'Form Description', type: 'textarea' as const }
-        ]
-      },
-      {
-        id: 'contact_info_section',
-        title: 'Contact Info Section',
-        description: 'Right side contact information section',
-        fields: [
-          { key: 'title', label: 'Section Title', type: 'text' as const }
-        ]
-      },
-      {
-        id: 'locations',
-        title: 'Office Locations',
-        description: 'Company office addresses',
-        fields: [
-          { key: 'unit1_title', label: 'Unit 1 Title', type: 'text' as const },
-          { key: 'unit1_address', label: 'Unit 1 Address', type: 'textarea' as const },
-          { key: 'unit2_title', label: 'Unit 2 Title', type: 'text' as const },
-          { key: 'unit2_address', label: 'Unit 2 Address', type: 'textarea' as const }
-        ]
-      },
-      {
-        id: 'contact_details',
-        title: 'Contact Details',
-        description: 'Phone and email information',
-        fields: [
-          { key: 'phone', label: 'Phone Number', type: 'text' as const },
-          { key: 'email', label: 'Email Address', type: 'text' as const }
-        ]
-      }
-    ]
-  }
+    if (page === "footer") {
+      return [
+        {
+          id: "company_profile",
+          title: "Company Profile Download",
+          description: "Configure the download link for company profile PDF",
+          fields: [
+            {
+              key: "download_url",
+              label: "Company Profile PDF URL",
+              type: "text" as const,
+            },
+          ],
+        },
+      ];
+    }
 
-  const contentSections = getSectionsForPage(selectedPage)
+    if (page === "contact") {
+      return [
+        {
+          id: "hero",
+          title: "Contact Hero Section",
+          description: "Contact page headline and description",
+          fields: [
+            { key: "headline", label: "Page Headline", type: "text" as const },
+            {
+              key: "description",
+              label: "Hero Description",
+              type: "textarea" as const,
+            },
+          ],
+        },
+        {
+          id: "form_section",
+          title: "Contact Form Section",
+          description: "Form heading and description",
+          fields: [
+            {
+              key: "title",
+              label: "Form Section Title",
+              type: "text" as const,
+            },
+            {
+              key: "description",
+              label: "Form Description",
+              type: "textarea" as const,
+            },
+          ],
+        },
+        {
+          id: "contact_info_section",
+          title: "Contact Info Section",
+          description: "Right side contact information section",
+          fields: [
+            { key: "title", label: "Section Title", type: "text" as const },
+          ],
+        },
+        {
+          id: "locations",
+          title: "Office Locations",
+          description: "Company office addresses",
+          fields: [
+            {
+              key: "unit1_title",
+              label: "Unit 1 Title",
+              type: "text" as const,
+            },
+            {
+              key: "unit1_address",
+              label: "Unit 1 Address",
+              type: "textarea" as const,
+            },
+            {
+              key: "unit2_title",
+              label: "Unit 2 Title",
+              type: "text" as const,
+            },
+            {
+              key: "unit2_address",
+              label: "Unit 2 Address",
+              type: "textarea" as const,
+            },
+          ],
+        },
+        {
+          id: "contact_details",
+          title: "Contact Details",
+          description: "Phone and email information",
+          fields: [
+            { key: "phone", label: "Phone Number", type: "text" as const },
+            { key: "email", label: "Email Address", type: "text" as const },
+          ],
+        },
+      ];
+    }
+
+    // Default return for unknown pages
+    return [];
+  };
+
+  const contentSections = getSectionsForPage(selectedPage);
 
   return (
     <div className="space-y-8">
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">Content Management</h1>
+          <h1 className="text-3xl font-bold tracking-tight">
+            Content Management
+          </h1>
           <p className="text-muted-foreground mt-2">
             Edit website content and messaging
           </p>
@@ -239,8 +425,12 @@ export default function ContentPage() {
       {/* Page Selector */}
       <Card className="border-2 shadow-sm bg-white">
         <CardHeader className="px-8 pt-8 pb-6">
-          <CardTitle className="text-lg font-semibold">Select Page to Edit</CardTitle>
-          <CardDescription>Choose which page content you want to modify</CardDescription>
+          <CardTitle className="text-lg font-semibold">
+            Select Page to Edit
+          </CardTitle>
+          <CardDescription>
+            Choose which page content you want to modify
+          </CardDescription>
         </CardHeader>
         <CardContent className="px-8 pb-8">
           <Select value={selectedPage} onValueChange={setSelectedPage}>
@@ -254,6 +444,7 @@ export default function ContentPage() {
               <SelectItem value="projects">Projects</SelectItem>
               <SelectItem value="contact">Contact</SelectItem>
               <SelectItem value="clients">Clients</SelectItem>
+              <SelectItem value="footer">Footer</SelectItem>
             </SelectContent>
           </Select>
         </CardContent>
@@ -264,8 +455,12 @@ export default function ContentPage() {
         {contentSections.map((section) => (
           <Card key={section.id} className="border-2 shadow-sm bg-white">
             <CardHeader className="px-8 pt-8 pb-6">
-              <CardTitle className="text-lg font-semibold">{section.title}</CardTitle>
-              <CardDescription className="text-sm leading-relaxed">{section.description}</CardDescription>
+              <CardTitle className="text-lg font-semibold">
+                {section.title}
+              </CardTitle>
+              <CardDescription className="text-sm leading-relaxed">
+                {section.description}
+              </CardDescription>
             </CardHeader>
             <CardContent className="px-8 pb-8">
               <ContentEditorWithMedia section={section} page={selectedPage} />
@@ -274,5 +469,5 @@ export default function ContentPage() {
         ))}
       </div>
     </div>
-  )
+  );
 }

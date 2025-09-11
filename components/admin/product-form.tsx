@@ -27,7 +27,6 @@ import {
   Upload,
   FileText,
   Package,
-  DollarSign,
   FileImage,
   List,
   Star,
@@ -48,7 +47,6 @@ export function ProductForm({
   const [formData, setFormData] = useState({
     name: product?.name || "",
     description: product?.description || "",
-    price: product?.price || "",
     category_id: product?.category_id || "",
     image_url: product?.image_url || "",
     specification_pdf: product?.specification_pdf || "",
@@ -259,48 +257,28 @@ export function ProductForm({
           </CardContent>
         </Card>
 
-        {/* Pricing & Media */}
+        {/* Media */}
         <Card className="py-6">
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
-              <DollarSign className="h-5 w-5 text-primary" />
-              Pricing & Media
+              <FileImage className="h-5 w-5 text-primary" />
+              Media
             </CardTitle>
             <CardDescription>
-              Set the price and add visual content
+              Add visual content for the product
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-6">
-            <div className="grid gap-6 md:grid-cols-2">
-              <div className="space-y-2">
-                <Label htmlFor="price" className="text-sm font-medium">
-                  Price *
-                </Label>
-                <Input
-                  id="price"
-                  value={formData.price}
-                  onChange={(e) =>
-                    setFormData((prev) => ({ ...prev, price: e.target.value }))
-                  }
-                  placeholder="e.g., ₹90/Kg"
-                  className="h-10"
-                  required
-                />
-                <p className="text-xs text-muted-foreground">
-                  Include currency symbol and unit (e.g., ₹90/Kg, $15/lb)
-                </p>
-              </div>
-              <div className="space-y-2 mt-3">
-                <ImagePicker
-                  label="Product Image"
-                  value={formData.image_url}
-                  onChange={(url) =>
-                    setFormData((prev) => ({ ...prev, image_url: url }))
-                  }
-                  placeholder="Select product image"
-                  folder="uploads"
-                />
-              </div>
+            <div className="space-y-2">
+              <ImagePicker
+                label="Product Image"
+                value={formData.image_url}
+                onChange={(url) =>
+                  setFormData((prev) => ({ ...prev, image_url: url }))
+                }
+                placeholder="Select product image"
+                folder="uploads"
+              />
             </div>
           </CardContent>
         </Card>
