@@ -72,12 +72,12 @@ interface EnhancedMediaManagerProps {
 }
 
 const MEDIA_CATEGORIES = [
-  { value: "all", label: "All Media", icon: FolderOpen },
-  { value: "project-photos", label: "Project Photos", icon: ImageIcon },
+  // { value: "all", label: "All Media", icon: FolderOpen },
+  // { value: "project-photos", label: "Project Photos", icon: ImageIcon },
   { value: "client-logos", label: "Client Logos", icon: ImageIcon },
   { value: "approval-logos", label: "Approval Logos", icon: ImageIcon },
-  { value: "homepage", label: "Homepage Images", icon: ImageIcon },
-  { value: "product-images", label: "Product Images", icon: ImageIcon },
+  // { value: "homepage", label: "Homepage Images", icon: ImageIcon },
+  // { value: "product-images", label: "Product Images", icon: ImageIcon },
 ];
 
 const PROJECT_SUBCATEGORIES = [
@@ -327,16 +327,16 @@ export function EnhancedMediaManager({
   // Get category from path
   const getCategoryFromPath = (filePath: string) => {
     if (filePath?.includes("client-logos")) return "Client Logos";
-    if (filePath?.includes("approval-logos")) return "Approval Logos";
-    if (filePath?.includes("project-photos/metro-rail")) return "Metro Rail";
+    if (filePath.includes("approval-logos")) return "Approval Logos";
+    if (filePath.includes("project-photos/metro-rail")) return "Metro Rail";
     if (filePath?.includes("project-photos/road-projects"))
       return "Road Projects";
     if (filePath?.includes("project-photos/buildings-factories"))
       return "Buildings & Factories";
-    if (filePath?.includes("project-photos/bullet")) return "Bullet Train";
-    if (filePath?.includes("project-photos/others")) return "Other Projects";
-    if (filePath?.includes("homepage")) return "Homepage";
-    if (filePath?.includes("product-images")) return "Product Images";
+    if (filePath.includes("project-photos/bullet")) return "Bullet Train";
+    if (filePath.includes("project-photos/others")) return "Other Projects";
+    if (filePath.includes("homepage")) return "Homepage";
+    if (filePath.includes("product-images")) return "Product Images";
     return "Other";
   };
 
@@ -539,7 +539,7 @@ export function EnhancedMediaManager({
 
       {/* Search and Filter */}
       <div className="flex flex-col gap-4">
-        <div className="flex flex-col sm:flex-row gap-4">
+        {/* <div className="flex flex-col sm:flex-row gap-4">
           <div className="relative flex-1">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
             <Input
@@ -561,10 +561,10 @@ export function EnhancedMediaManager({
               ))}
             </SelectContent>
           </Select>
-        </div>
+        </div> */}
 
         {/* Advanced Controls */}
-        <div className="flex items-center justify-between">
+        {/* <div className="flex items-center justify-between">
           <div className="flex items-center gap-4">
             <div className="flex items-center gap-2">
               <Label className="text-sm">Sort by:</Label>
@@ -607,11 +607,11 @@ export function EnhancedMediaManager({
               </Button>
             </div>
           </div>
-        </div>
+        </div> */}
       </div>
 
       {/* Stats */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+      {/* <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
         <Card>
           <CardContent className="pt-3 pb-3">
             <div className="flex items-center">
@@ -636,7 +636,7 @@ export function EnhancedMediaManager({
                 </p>
                 <p className="text-2xl font-bold">
                   {
-                    mediaFiles.filter((f) => f?.mime_type?.startsWith("image/"))
+                    mediaFiles.filter((f) => f.mime_type.startsWith("image/"))
                       .length
                   }
                 </p>
@@ -672,10 +672,10 @@ export function EnhancedMediaManager({
             </div>
           </CardContent>
         </Card>
-      </div>
+      </div> */}
 
       {/* Results Summary */}
-      <div className="flex items-center justify-between">
+      {/* <div className="flex items-center justify-between">
         <p className="text-sm text-muted-foreground">
           Showing {sortedFiles.length} of {mediaFiles.length} media files
           {selectedFiles.size > 0 && ` • ${selectedFiles.size} selected`}
@@ -689,10 +689,10 @@ export function EnhancedMediaManager({
                   ?.label}
           </span>
         </div>
-      </div>
+      </div> */}
 
       {/* Media Grid/List */}
-      {sortedFiles.length === 0 ? (
+      {/* {sortedFiles.length === 0 ? (
         <Card>
           <CardContent className="py-12 text-center">
             <ImageIcon className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
@@ -784,7 +784,7 @@ export function EnhancedMediaManager({
                 </CardHeader>
 
                 <CardContent className="p-4 pt-0">
-                  {/* Media Preview */}
+                
                   <div className="aspect-square bg-muted rounded-lg overflow-hidden mb-3 flex items-center justify-center">
                     {isImage ? (
                       <Image
@@ -806,7 +806,7 @@ export function EnhancedMediaManager({
                     )}
                   </div>
 
-                  {/* File Info */}
+                
                   <div className="space-y-2">
                     <h4
                       className="font-medium text-sm truncate"
@@ -829,7 +829,7 @@ export function EnhancedMediaManager({
             );
           })}
         </div>
-      )}
+      )} */}
 
       {/* File Preview Modal */}
       {selectedFile && (

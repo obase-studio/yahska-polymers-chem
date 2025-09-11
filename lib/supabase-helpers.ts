@@ -124,7 +124,6 @@ export const supabaseHelpers = {
       .update({
         name: product.name,
         description: product.description,
-        price: product.price,
         category_id: product.category_id,
         applications: product.applications || [],
         features: product.features || [],
@@ -161,7 +160,6 @@ export const supabaseHelpers = {
     const insertData = {
       name: product.name,
       description: product.description,
-      price: product.price,
       category_id: product.category_id,
       applications: product.applications || [],
       features: product.features || [],

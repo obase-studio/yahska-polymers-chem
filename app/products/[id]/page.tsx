@@ -12,7 +12,13 @@ import {
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { ArrowLeft, Loader2, AlertCircle, Package } from "lucide-react";
+import {
+  ArrowLeft,
+  Loader2,
+  AlertCircle,
+  Package,
+  Download,
+} from "lucide-react";
 import Link from "next/link";
 import { Footer } from "@/components/footer";
 
@@ -29,6 +35,7 @@ interface Product {
   technical_specifications: string;
   product_code: string;
   is_active: boolean;
+  specification_pdf?: string;
 }
 
 export default function ProductDetailPage() {
@@ -37,6 +44,27 @@ export default function ProductDetailPage() {
   const [product, setProduct] = useState<Product | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+
+  // Function to handle datasheet download
+  const handleDownloadDatasheet = () => {
+    if (!product?.specification_pdf) {
+      alert(
+        "Datasheet is not available for this product. Please contact our sales team for more information."
+      );
+      return;
+    }
+
+    // Create a temporary link element to trigger download
+    const link = document.createElement("a");
+    link.href = product.specification_pdf;
+    link.download = `${product.name
+      .replace(/[^a-z0-9]/gi, "_")
+      .toLowerCase()}_datasheet.pdf`;
+    link.target = "_blank";
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
 
   useEffect(() => {
     const fetchProduct = async () => {
@@ -168,17 +196,20 @@ export default function ProductDetailPage() {
               )}
 
               <div className="flex flex-col sm:flex-row gap-4">
-                <Button 
-                  size="lg" 
+                <Button
+                  size="lg"
                   className="bg-primary hover:bg-primary/90"
-                  onClick={() => {
-                    // Placeholder for datasheet download
-                    alert('Product datasheet will be available soon.');
-                  }}
+                  onClick={handleDownloadDatasheet}
                 >
-                  <Package className="mr-2 h-5 w-5" />
+                  <Download className="mr-2 h-5 w-5" />
                   Download Datasheet
                 </Button>
+                {/* {!product.specification_pdf && (
+                  <div className="text-sm text-muted-foreground mt-2">
+                    <AlertCircle className="inline h-4 w-4 mr-1" />
+                    Datasheet not available - Contact sales team
+                  </div>
+                )} */}
               </div>
             </div>
 
@@ -188,7 +219,9 @@ export default function ProductDetailPage() {
                   <Package className="w-16 h-16 text-muted-foreground" />
                 </div>
                 <p className="text-sm text-muted-foreground">Product Image</p>
-                <p className="text-xs text-muted-foreground/70 mt-1">Coming Soon</p>
+                <p className="text-xs text-muted-foreground/70 mt-1">
+                  Coming Soon
+                </p>
               </div>
             </div>
           </div>
@@ -300,7 +333,6 @@ export default function ProductDetailPage() {
           </div>
         </div>
       </section>
-
 
       <Footer />
     </div>

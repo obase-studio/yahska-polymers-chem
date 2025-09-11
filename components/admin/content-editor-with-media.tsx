@@ -1,100 +1,146 @@
-"use client"
+"use client";
 
-import { useState, useEffect } from "react"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Textarea } from "@/components/ui/textarea"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Save, Image as ImageIcon, X } from "lucide-react"
-import Image from "next/image"
-import { MediaPickerModal } from "./media-picker-modal"
-import { getImageUrl } from "@/lib/image-utils"
+import { useState, useEffect } from "react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Save, Image as ImageIcon, X } from "lucide-react";
+import Image from "next/image";
+import { MediaPickerModal } from "./media-picker-modal";
+import { getImageUrl } from "@/lib/image-utils";
 
 interface MediaFile {
-  id: number
-  filename: string
-  original_name: string
-  file_path: string
-  file_size: number
-  mime_type: string
-  alt_text: string
-  uploaded_at: string
+  id: number;
+  filename: string;
+  original_name: string;
+  file_path: string;
+  file_size: number;
+  mime_type: string;
+  alt_text: string;
+  uploaded_at: string;
 }
 
 interface ContentEditorWithMediaProps {
-  page: string
+  page: string;
   section: {
-    id: string
-    title: string
-    description: string
+    id: string;
+    title: string;
+    description: string;
     fields: Array<{
-      key: string
-      label: string
-      type: 'text' | 'textarea' | 'image'
-    }>
-  }
+      key: string;
+      label: string;
+      type: "text" | "textarea" | "image";
+    }>;
+  };
 }
 
-export function ContentEditorWithMedia({ section, page }: ContentEditorWithMediaProps) {
-  const [formData, setFormData] = useState<Record<string, string>>({})
-  const [pageImages, setPageImages] = useState<Record<string, MediaFile | null>>({})
-  const [isLoading, setIsLoading] = useState(false)
-  const [isSaved, setIsSaved] = useState(false)
-  const [lastSaved, setLastSaved] = useState<string>('')
-  const [showMediaPicker, setShowMediaPicker] = useState(false)
-  const [currentImageField, setCurrentImageField] = useState<string | null>(null)
+export function ContentEditorWithMedia({
+  section,
+  page,
+}: ContentEditorWithMediaProps) {
+  const [formData, setFormData] = useState<Record<string, string>>({});
+  const [pageImages, setPageImages] = useState<
+    Record<string, MediaFile | null>
+  >({});
+  const [isLoading, setIsLoading] = useState(false);
+  const [isSaved, setIsSaved] = useState(false);
+  const [lastSaved, setLastSaved] = useState<string>("");
+  const [showMediaPicker, setShowMediaPicker] = useState(false);
+  const [currentImageField, setCurrentImageField] = useState<string | null>(
+    null
+  );
 
   useEffect(() => {
-    loadContent()
-    loadPageImages()
-  }, [section.id, page])
+    loadContent();
+    loadPageImages();
+  }, [section.id, page]);
 
   const loadContent = async () => {
     try {
-      const response = await fetch(`/api/admin/content?page=${page}&section=${section.id}`)
+      const response = await fetch(
+        `/api/admin/content?page=${page}&section=${section.id}`
+      );
       if (response.ok) {
-        const content = await response.json()
-        const contentMap: Record<string, string> = {}
+        const content = await response.json();
+        const contentMap: Record<string, string> = {};
         content.forEach((item: any) => {
-          contentMap[item.content_key] = item.content_value || ""
-        })
-        setFormData(contentMap)
+          contentMap[item.content_key] = item.content_value || "";
+        });
+        setFormData(contentMap);
       }
     } catch (error) {
-      console.error("Error loading content:", error)
+      console.error("Error loading content:", error);
     }
-  }
+  };
 
   const loadPageImages = async () => {
-    // Load images for image fields
-    const imageFields = section.fields.filter(field => field.type === 'image')
-    if (imageFields.length === 0) return
+    // Load images for image fields from content system
+    const imageFields = section.fields.filter(
+      (field) => field.type === "image"
+    );
+    if (imageFields.length === 0) return;
 
     try {
-      const promises = imageFields.map(async (field) => {
-        const response = await fetch(`/api/admin/page-images?page=${page}&section=${field.key}`)
-        if (response.ok) {
-          const imageData = await response.json()
-          return { key: field.key, image: imageData?.media_files || null }
-        }
-        return { key: field.key, image: null }
-      })
+      const response = await fetch(
+        `/api/admin/content?page=${page}&section=${section.id}`
+      );
+      if (response.ok) {
+        const contentData = await response.json();
+        const imageMap: Record<string, MediaFile | null> = {};
 
-      const results = await Promise.all(promises)
-      const imageMap: Record<string, MediaFile | null> = {}
-      results.forEach(({ key, image }) => {
-        imageMap[key] = image
-      })
-      setPageImages(imageMap)
+        imageFields.forEach((field) => {
+          // Look for the correct format: section matches section.id and content_key matches field.key
+          const contentItem = contentData.find(
+            (item: any) =>
+              item.section === section.id &&
+              item.content_key === field.key &&
+              item.content_value // Make sure it has a value
+          );
+
+          if (contentItem?.content_value) {
+            // Create a MediaFile object from the stored file path
+            imageMap[field.key] = {
+              id: 0, // We don't have the actual ID, but it's not needed for display
+              filename: contentItem.content_value.split("/").pop() || "",
+              original_name: contentItem.content_value.split("/").pop() || "",
+              file_path: contentItem.content_value,
+              file_size: 0,
+              mime_type: "image/jpeg", // Default, could be improved
+              alt_text: "",
+              uploaded_at: contentItem.updated_at || new Date().toISOString(),
+            };
+          } else {
+            imageMap[field.key] = null;
+          }
+        });
+
+        // Only update if we have new data, don't overwrite current state
+        setPageImages((prevImages) => {
+          const newImageMap = { ...prevImages };
+          imageFields.forEach((field) => {
+            if (imageMap[field.key]) {
+              newImageMap[field.key] = imageMap[field.key];
+            }
+          });
+          return newImageMap;
+        });
+      }
     } catch (error) {
-      console.error("Error loading page images:", error)
+      console.error("Error loading page images:", error);
     }
-  }
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    setIsLoading(true)
+    e.preventDefault();
+    setIsLoading(true);
 
     try {
       // Save text content
@@ -103,93 +149,120 @@ export function ContentEditorWithMedia({ section, page }: ContentEditorWithMedia
           page,
           section: section.id,
           content_key: key,
-          content_value: value
-        }
+          content_value: value,
+        };
         return fetch("/api/admin/content", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(payload),
-        })
-      })
+        });
+      });
 
-      const responses = await Promise.all(textPromises)
-      const allSuccessful = responses.every(response => response.ok)
-      
+      const responses = await Promise.all(textPromises);
+      const allSuccessful = responses.every((response) => response.ok);
+
       if (allSuccessful) {
-        const timestamp = new Date().toLocaleTimeString()
-        setLastSaved(timestamp)
-        setIsSaved(true)
-        setTimeout(() => setIsSaved(false), 3000)
-        
+        const timestamp = new Date().toLocaleTimeString();
+        setLastSaved(timestamp);
+        setIsSaved(true);
+        setTimeout(() => setIsSaved(false), 3000);
+
         // Notify sync system
         try {
-          await fetch('/api/sync/content', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
+          await fetch("/api/sync/content", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ page }),
-            cache: 'no-store'
-          })
+            cache: "no-store",
+          });
         } catch (e) {
-          console.log('Sync notification attempt completed')
+          console.log("Sync notification attempt completed");
         }
       } else {
-        alert('Some content failed to save. Please try again.')
+        alert("Some content failed to save. Please try again.");
       }
     } catch (error) {
-      console.error("Error saving content:", error)
-      alert('Error saving content: ' + (error instanceof Error ? error.message : String(error)))
+      console.error("Error saving content:", error);
+      alert(
+        "Error saving content: " +
+          (error instanceof Error ? error.message : String(error))
+      );
     } finally {
-      setIsLoading(false)
+      setIsLoading(false);
     }
-  }
+  };
 
   const handleFieldChange = (key: string, value: string) => {
-    setFormData(prev => ({ ...prev, [key]: value }))
-  }
+    setFormData((prev) => ({ ...prev, [key]: value }));
+  };
 
   const handleImageSelect = async (file: MediaFile) => {
-    if (!currentImageField) return
+    if (!currentImageField) return;
 
     try {
-      const response = await fetch('/api/admin/page-images', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+      // Store the image URL directly in the content system
+      const response = await fetch("/api/admin/content", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           page,
-          section: currentImageField,
-          media_file_id: file.id
-        })
-      })
+          section: section.id, // Use the section ID (e.g., "hero")
+          content_key: currentImageField, // Use the field key (e.g., "hero_image")
+          content_value: file.file_path, // Store the direct file path/URL
+        }),
+      });
 
       if (response.ok) {
-        setPageImages(prev => ({
+        // Update the local state immediately
+        setPageImages((prev) => ({
           ...prev,
-          [currentImageField]: file
-        }))
-        setCurrentImageField(null)
-        setShowMediaPicker(false)
+          [currentImageField]: file,
+        }));
+
+        // Also update the form data to keep it in sync
+        setFormData((prev) => ({
+          ...prev,
+          [currentImageField]: file.file_path,
+        }));
+
+        setCurrentImageField(null);
+        setShowMediaPicker(false);
       }
     } catch (error) {
-      console.error('Error setting page image:', error)
+      console.error("Error setting page image:", error);
     }
-  }
+  };
 
   const handleRemoveImage = async (fieldKey: string) => {
     try {
-      const response = await fetch(`/api/admin/page-images?page=${page}&section=${fieldKey}`, {
-        method: 'DELETE'
-      })
+      // Remove the image from the content system
+      const response = await fetch("/api/admin/content", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          page,
+          section: section.id, // Use the section ID (e.g., "hero")
+          content_key: fieldKey, // Use the field key (e.g., "hero_image")
+          content_value: "", // Clear the content value
+        }),
+      });
 
       if (response.ok) {
-        setPageImages(prev => ({
+        // Update both page images and form data
+        setPageImages((prev) => ({
           ...prev,
-          [fieldKey]: null
-        }))
+          [fieldKey]: null,
+        }));
+
+        setFormData((prev) => ({
+          ...prev,
+          [fieldKey]: "",
+        }));
       }
     } catch (error) {
-      console.error('Error removing page image:', error)
+      console.error("Error removing page image:", error);
     }
-  }
+  };
 
   return (
     <>
@@ -197,8 +270,8 @@ export function ContentEditorWithMedia({ section, page }: ContentEditorWithMedia
         {section.fields.map((field) => (
           <div key={field.key} className="space-y-2">
             <Label htmlFor={`${section.id}-${field.key}`}>{field.label}</Label>
-            
-            {field.type === 'text' && (
+
+            {field.type === "text" && (
               <Input
                 id={`${section.id}-${field.key}`}
                 value={formData[field.key] || ""}
@@ -206,8 +279,8 @@ export function ContentEditorWithMedia({ section, page }: ContentEditorWithMedia
                 placeholder={field.label}
               />
             )}
-            
-            {field.type === 'textarea' && (
+
+            {field.type === "textarea" && (
               <Textarea
                 id={`${section.id}-${field.key}`}
                 value={formData[field.key] || ""}
@@ -217,7 +290,7 @@ export function ContentEditorWithMedia({ section, page }: ContentEditorWithMedia
               />
             )}
 
-            {field.type === 'image' && (
+            {field.type === "image" && (
               <div className="space-y-3">
                 {pageImages[field.key] ? (
                   <Card>
@@ -226,7 +299,10 @@ export function ContentEditorWithMedia({ section, page }: ContentEditorWithMedia
                         <div className="relative">
                           <Image
                             src={getImageUrl(pageImages[field.key]!.file_path)}
-                            alt={pageImages[field.key]!.alt_text || pageImages[field.key]!.original_name}
+                            alt={
+                              pageImages[field.key]!.alt_text ||
+                              pageImages[field.key]!.original_name
+                            }
                             width={100}
                             height={100}
                             className="rounded-lg object-cover"
@@ -242,7 +318,9 @@ export function ContentEditorWithMedia({ section, page }: ContentEditorWithMedia
                           </Button>
                         </div>
                         <div className="flex-1">
-                          <h4 className="font-medium">{pageImages[field.key]!.original_name}</h4>
+                          <h4 className="font-medium">
+                            {pageImages[field.key]!.original_name}
+                          </h4>
                           <p className="text-sm text-muted-foreground">
                             {pageImages[field.key]!.alt_text}
                           </p>
@@ -252,8 +330,8 @@ export function ContentEditorWithMedia({ section, page }: ContentEditorWithMedia
                             variant="outline"
                             className="mt-2"
                             onClick={() => {
-                              setCurrentImageField(field.key)
-                              setShowMediaPicker(true)
+                              setCurrentImageField(field.key);
+                              setShowMediaPicker(true);
                             }}
                           >
                             Change Image
@@ -266,14 +344,16 @@ export function ContentEditorWithMedia({ section, page }: ContentEditorWithMedia
                   <Card className="border-dashed">
                     <CardContent className="p-6 text-center">
                       <ImageIcon className="h-12 w-12 text-muted-foreground mx-auto mb-2" />
-                      <p className="text-sm text-muted-foreground mb-3">No image selected</p>
+                      <p className="text-sm text-muted-foreground mb-3">
+                        No image selected
+                      </p>
                       <Button
                         type="button"
                         size="sm"
                         variant="outline"
                         onClick={() => {
-                          setCurrentImageField(field.key)
-                          setShowMediaPicker(true)
+                          setCurrentImageField(field.key);
+                          setShowMediaPicker(true);
                         }}
                       >
                         <ImageIcon className="h-4 w-4 mr-2" />
@@ -288,11 +368,15 @@ export function ContentEditorWithMedia({ section, page }: ContentEditorWithMedia
         ))}
 
         <div className="flex items-center justify-between">
-          <Button type="submit" disabled={isLoading} className={isSaved ? "bg-green-600" : ""}>
+          <Button
+            type="submit"
+            disabled={isLoading}
+            className={isSaved ? "bg-green-600" : ""}
+          >
             <Save className="h-4 w-4 mr-2" />
             {isLoading ? "Saving..." : isSaved ? "Saved!" : "Save Content"}
           </Button>
-          
+
           {lastSaved && (
             <div className="text-sm text-muted-foreground">
               Last saved: {lastSaved}
@@ -301,7 +385,7 @@ export function ContentEditorWithMedia({ section, page }: ContentEditorWithMedia
                 variant="outline"
                 size="sm"
                 className="ml-2"
-                onClick={() => window.open(`/${page}`, '_blank')}
+                onClick={() => window.open(`/${page}`, "_blank")}
               >
                 View Page
               </Button>
@@ -313,13 +397,13 @@ export function ContentEditorWithMedia({ section, page }: ContentEditorWithMedia
       <MediaPickerModal
         isOpen={showMediaPicker}
         onClose={() => {
-          setShowMediaPicker(false)
-          setCurrentImageField(null)
+          setShowMediaPicker(false);
+          setCurrentImageField(null);
         }}
         onSelect={handleImageSelect}
         title="Select Image"
         imagesOnly={true}
       />
     </>
-  )
+  );
 }

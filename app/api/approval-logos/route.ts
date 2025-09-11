@@ -7,7 +7,11 @@ export async function GET() {
 
     // Filter for approval logos only and fix URL encoding
     const approvalLogos = mediaFiles
-      .filter((file: any) => file.file_path.includes("approval-logos"))
+      .filter(
+        (file: any) =>
+          file.file_path.includes("approval-logos") ||
+          file.file_path.includes("approvals")
+      )
       .map((file: any) => ({
         ...file,
         // Fix file_path: replace approval-logos with approvals and encode properly

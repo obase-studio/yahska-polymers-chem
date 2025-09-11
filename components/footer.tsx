@@ -6,6 +6,16 @@ import { Separator } from "@/components/ui/separator";
 
 export function Footer() {
   const [categories, setCategories] = useState<any[]>([]);
+  const [companyProfileUrl, setCompanyProfileUrl] = useState<string>("");
+
+  // Function to format URL properly
+  const formatUrl = (url: string) => {
+    if (!url) return "";
+    if (url.startsWith("http://") || url.startsWith("https://")) {
+      return url;
+    }
+    return `https://${url}`;
+  };
 
   useEffect(() => {
     const fetchCategories = async () => {
@@ -26,7 +36,29 @@ export function Footer() {
       }
     };
 
+    const fetchCompanyProfileUrl = async () => {
+      try {
+        const response = await fetch("/api/content?page=footer");
+        const result = await response.json();
+
+        if (result.success && result.data.content) {
+          const items = result.data.content as Array<any>;
+          const profileItem = items.find(
+            (item) =>
+              item.section === "company_profile" &&
+              item.content_key === "download_url"
+          );
+          if (profileItem?.content_value) {
+            setCompanyProfileUrl(profileItem.content_value);
+          }
+        }
+      } catch (error) {
+        console.error("Error fetching company profile URL:", error);
+      }
+    };
+
     fetchCategories();
+    fetchCompanyProfileUrl();
   }, []);
 
   return (
@@ -79,17 +111,20 @@ export function Footer() {
                 </Link>
               </li>
               <li>
-                <Link
-                  href="#"
-                  className="text-muted-foreground hover:text-primary transition-colors duration-200"
-                  onClick={(e) => {
-                    e.preventDefault();
-                    // Placeholder for company profile download
-                    alert("Company profile download will be available soon.");
-                  }}
-                >
-                  Download Company Profile
-                </Link>
+                {companyProfileUrl ? (
+                  <Link
+                    href={formatUrl(companyProfileUrl)}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-muted-foreground hover:text-primary transition-colors duration-200"
+                  >
+                    Download Company Profile
+                  </Link>
+                ) : (
+                  <span className="text-muted-foreground">
+                    Download Company Profile
+                  </span>
+                )}
               </li>
             </ul>
           </div>

@@ -1,116 +1,142 @@
-import { NextRequest, NextResponse } from "next/server"
-import { supabaseAdmin } from "@/lib/supabase"
+import { NextRequest, NextResponse } from "next/server";
+import { supabaseAdmin } from "@/lib/supabase";
 
 export async function POST(request: NextRequest) {
   try {
-    const formData = await request.formData()
-    const file = formData.get("file") as File
-    const category = formData.get("category") as string || "uploads"
-    const url = formData.get("url") as string // For URL uploads
+    const formData = await request.formData();
+    const file = formData.get("file") as File;
+    const category = (formData.get("category") as string) || "uploads";
+    const url = formData.get("url") as string; // For URL uploads
 
-    let uploadedFile
-    let filePath: string
-    let fileName: string
-    let mimeType: string
-    let fileSize: number
+    let uploadedFile;
+    let filePath: string;
+    let fileName: string;
+    let mimeType: string;
+    let fileSize: number;
 
     if (file) {
       // Handle file upload
-      fileName = file.name
-      mimeType = file.type
-      fileSize = file.size
+      fileName = file.name;
+      mimeType = file.type;
+      fileSize = file.size;
 
       // Create unique filename
-      const timestamp = Date.now()
-      const cleanFileName = fileName.replace(/[^a-zA-Z0-9.-]/g, "_")
-      const uniqueFileName = `${timestamp}_${cleanFileName}`
-      
-      // Determine storage path based on category
-      const storagePath = `${category}/${uniqueFileName}`
-      
+      const timestamp = Date.now();
+      const cleanFileName = fileName.replace(/[^a-zA-Z0-9.-]/g, "_");
+      const uniqueFileName = `${timestamp}_${cleanFileName}`;
+
+      // Map category to correct folder name
+      const categoryMapping: { [key: string]: string } = {
+        "client-logos": "Client Logos",
+        "approval-logos": "approvals",
+        "project-photos": "project-photos",
+        homepage: "homepage",
+        "product-images": "product-images",
+        uploads: "uploads",
+      };
+
+      const folderName = categoryMapping[category] || category;
+      const storagePath = `${folderName}/${uniqueFileName}`;
+
       // Upload to Supabase Storage
-      const { data: uploadData, error: uploadError } = await supabaseAdmin.storage
-        .from("yahska-media")
-        .upload(storagePath, file, {
-          contentType: mimeType,
-          upsert: false
-        })
+      console.log("Uploading file to Supabase Storage:", storagePath);
+      const { data: uploadData, error: uploadError } =
+        await supabaseAdmin.storage
+          .from("yahska-media")
+          .upload(storagePath, file, {
+            contentType: mimeType,
+            upsert: false,
+          });
 
       if (uploadError) {
-        console.error("Storage upload error:", uploadError)
+        console.error("Storage upload error:", uploadError);
         return NextResponse.json(
           { error: `Failed to upload file: ${uploadError.message}` },
           { status: 500 }
-        )
+        );
       }
 
       // Get public URL
       const { data: publicUrlData } = supabaseAdmin.storage
         .from("yahska-media")
-        .getPublicUrl(storagePath)
+        .getPublicUrl(storagePath);
 
-      filePath = publicUrlData.publicUrl
-      uploadedFile = uploadData
-
+      filePath = publicUrlData.publicUrl;
+      console.log("File path:", filePath);
+      uploadedFile = uploadData;
     } else if (url) {
       // Handle URL upload
       try {
-        const response = await fetch(url)
+        const response = await fetch(url);
         if (!response.ok) {
           return NextResponse.json(
             { error: "Failed to fetch image from URL" },
             { status: 400 }
-          )
+          );
         }
 
-        const blob = await response.blob()
-        fileName = url.split("/").pop()?.split("?")[0] || "image"
-        mimeType = blob.type || "image/jpeg"
-        fileSize = blob.size
+        const blob = await response.blob();
+        fileName = url.split("/").pop()?.split("?")[0] || "image";
+        mimeType = blob.type || "image/jpeg";
+        fileSize = blob.size;
 
         // Create unique filename
-        const timestamp = Date.now()
-        const extension = fileName.split(".").pop() || "jpg"
-        const uniqueFileName = `${timestamp}_url_${fileName.replace(/[^a-zA-Z0-9.-]/g, "_")}`
-        
-        const storagePath = `${category}/${uniqueFileName}`
-        
+        const timestamp = Date.now();
+        const extension = fileName.split(".").pop() || "jpg";
+        const uniqueFileName = `${timestamp}_url_${fileName.replace(
+          /[^a-zA-Z0-9.-]/g,
+          "_"
+        )}`;
+
+        // Map category to correct folder name
+        const categoryMapping: { [key: string]: string } = {
+          "client-logos": "Client Logos",
+          "approval-logos": "approvals",
+          "project-photos": "project-photos",
+          homepage: "homepage",
+          "product-images": "product-images",
+          uploads: "uploads",
+        };
+
+        const folderName = categoryMapping[category] || category;
+        const storagePath = `${folderName}/${uniqueFileName}`;
+
         // Upload to Supabase Storage
-        const { data: uploadData, error: uploadError } = await supabaseAdmin.storage
-          .from("yahska-media")
-          .upload(storagePath, blob, {
-            contentType: mimeType,
-            upsert: false
-          })
+        const { data: uploadData, error: uploadError } =
+          await supabaseAdmin.storage
+            .from("yahska-media")
+            .upload(storagePath, blob, {
+              contentType: mimeType,
+              upsert: false,
+            });
 
         if (uploadError) {
-          console.error("Storage upload error:", uploadError)
+          console.error("Storage upload error:", uploadError);
           return NextResponse.json(
             { error: `Failed to upload file: ${uploadError.message}` },
             { status: 500 }
-          )
+          );
         }
 
         // Get public URL
         const { data: publicUrlData } = supabaseAdmin.storage
           .from("yahska-media")
-          .getPublicUrl(storagePath)
+          .getPublicUrl(storagePath);
 
-        filePath = publicUrlData.publicUrl
-        uploadedFile = uploadData
-
+        filePath = publicUrlData.publicUrl;
+        uploadedFile = uploadData;
       } catch (error) {
-        console.error("URL fetch error:", error)
+        console.error("URL fetch error:", error);
         return NextResponse.json(
           { error: "Failed to fetch image from URL" },
           { status: 400 }
-        )
+        );
       }
     } else {
       return NextResponse.json(
         { error: "No file or URL provided" },
         { status: 400 }
-      )
+      );
     }
 
     // Save media file record to database
@@ -123,29 +149,28 @@ export async function POST(request: NextRequest) {
         file_size: fileSize,
         mime_type: mimeType,
         alt_text: fileName.replace(/\.[^/.]+$/, ""), // Remove extension for alt text
-        uploaded_at: new Date().toISOString()
+        uploaded_at: new Date().toISOString(),
       })
       .select()
-      .single()
+      .single();
 
     if (dbError) {
-      console.error("Database insert error:", dbError)
+      console.error("Database insert error:", dbError);
       return NextResponse.json(
         { error: `Failed to save media file record: ${dbError.message}` },
         { status: 500 }
-      )
+      );
     }
 
     return NextResponse.json({
       message: "File uploaded successfully",
-      file: mediaFile
-    })
-
+      file: mediaFile,
+    });
   } catch (error) {
-    console.error("Upload error:", error)
+    console.error("Upload error:", error);
     return NextResponse.json(
       { error: "Failed to process upload" },
       { status: 500 }
-    )
+    );
   }
 }
