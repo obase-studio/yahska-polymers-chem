@@ -36,19 +36,55 @@ import { ContentItem } from "@/lib/database-client";
 interface CategoryImageProps {
   categoryId: string;
   categoryName: string;
+  categoryImageUrl?: string;
   categoryImages: Record<string, string>;
+}
+
+// Project Category Image Component
+interface ProjectCategoryImageProps {
+  categoryId: string;
+  categoryName: string;
+  categoryImageUrl?: string;
 }
 
 function CategoryImage({
   categoryId,
   categoryName,
+  categoryImageUrl,
   categoryImages,
 }: CategoryImageProps) {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
   const [retryCount, setRetryCount] = useState(0);
+  const [productImage, setProductImage] = useState<string | null>(null);
 
   const imageUrl = categoryImages[categoryId];
+
+  // Try to fetch a product image for this category if no category image
+  useEffect(() => {
+    const fetchProductImage = async () => {
+      try {
+        const response = await fetch(
+          `/api/products?category=${categoryId}&limit=1`
+        );
+        if (response.ok) {
+          const data = await response.json();
+          if (data.success && data.data.products.length > 0) {
+            const product = data.data.products[0];
+            if (product.image_url) {
+              setProductImage(product.image_url);
+            }
+          }
+        }
+      } catch (error) {
+        console.log("No product image found for category:", categoryName);
+      }
+    };
+
+    if (!imageUrl && !categoryImageUrl) {
+      fetchProductImage();
+    }
+  }, [categoryId, categoryName, imageUrl, categoryImageUrl]);
 
   const handleLoad = () => {
     setLoading(false);
@@ -68,12 +104,42 @@ function CategoryImage({
     }
   };
 
-  if (!imageUrl) {
+  // Get the appropriate icon for the category
+  const getCategoryIcon = (name: string) => {
+    if (name.toLowerCase().includes("construction")) return Building2;
+    if (name.toLowerCase().includes("concrete")) return Factory;
+    if (name.toLowerCase().includes("textile")) return Palette;
+    if (name.toLowerCase().includes("dyestuff")) return Award;
+    if (name.toLowerCase().includes("admixture")) return Zap;
+    if (name.toLowerCase().includes("accelerator")) return Zap;
+    if (name.toLowerCase().includes("waterproofing")) return Building2;
+    if (name.toLowerCase().includes("grout")) return Wrench;
+    if (name.toLowerCase().includes("curing")) return CheckCircle;
+    if (name.toLowerCase().includes("micro silica")) return Factory;
+    if (name.toLowerCase().includes("floor")) return Building2;
+    if (name.toLowerCase().includes("structural")) return Building2;
+    if (name.toLowerCase().includes("corrosion")) return Award;
+    if (name.toLowerCase().includes("release")) return Truck;
+    return Package;
+  };
+
+  const CategoryIcon = getCategoryIcon(categoryName);
+  // Priority: categoryImageUrl (from database) > imageUrl (from old system) > productImage (fallback)
+  const finalImageUrl = categoryImageUrl || imageUrl || productImage;
+
+  if (!finalImageUrl) {
     return (
-      <div className="w-full h-full flex items-center justify-center">
-        <div className="text-center">
-          <Package className="h-8 w-8 mx-auto mb-2 text-muted-foreground" />
-          <p className="text-muted-foreground text-sm">{categoryName}</p>
+      <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-primary/5 to-accent/5">
+        <div className="text-center p-4">
+          <div className="w-16 h-16 mx-auto mb-3 rounded-full bg-primary/10 flex items-center justify-center">
+            <CategoryIcon className="h-8 w-8 text-primary" />
+          </div>
+          <p className="text-foreground font-medium text-sm mb-1">
+            {categoryName}
+          </p>
+          <p className="text-muted-foreground text-xs">
+            Professional Solutions
+          </p>
         </div>
       </div>
     );
@@ -81,13 +147,20 @@ function CategoryImage({
 
   if (error && retryCount >= 2) {
     return (
-      <div className="w-full h-full flex items-center justify-center">
-        <div className="text-center">
-          <Package className="h-8 w-8 mx-auto mb-2 text-muted-foreground" />
-          <p className="text-muted-foreground text-xs mb-2">{categoryName}</p>
+      <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-primary/5 to-accent/5">
+        <div className="text-center p-4">
+          <div className="w-16 h-16 mx-auto mb-3 rounded-full bg-primary/10 flex items-center justify-center">
+            <CategoryIcon className="h-8 w-8 text-primary" />
+          </div>
+          <p className="text-foreground font-medium text-sm mb-1">
+            {categoryName}
+          </p>
+          <p className="text-muted-foreground text-xs mb-2">
+            Professional Solutions
+          </p>
           <button
             onClick={handleRetry}
-            className="text-xs text-primary hover:underline"
+            className="text-xs text-primary hover:underline bg-primary/10 hover:bg-primary/20 px-2 py-1 rounded transition-colors"
           >
             Retry Loading
           </button>
@@ -97,22 +170,146 @@ function CategoryImage({
   }
 
   return (
-    <div className="relative w-full h-full">
+    <div className="relative w-full h-full group">
       {loading && (
-        <div className="absolute inset-0 flex items-center justify-center bg-muted">
-          <Loader2 className="h-6 w-6 animate-spin" />
+        <div className="absolute inset-0 flex items-center justify-center bg-gradient-to-br from-primary/5 to-accent/5 z-10">
+          <div className="text-center">
+            <Loader2 className="h-6 w-6 animate-spin mx-auto mb-2 text-primary" />
+            <p className="text-xs text-muted-foreground">Loading...</p>
+          </div>
         </div>
       )}
       <img
-        src={`${imageUrl}?retry=${retryCount}`}
+        src={`${finalImageUrl}?retry=${retryCount}`}
         alt={categoryName}
-        className={`w-full h-full object-cover hover:scale-105 transition-transform duration-300 ${
+        className={`w-full h-full object-cover group-hover:scale-105 transition-transform duration-300 ${
           loading ? "opacity-0" : "opacity-100"
         }`}
         onLoad={handleLoad}
         onError={handleError}
         loading="lazy"
       />
+      {/* Overlay for better text readability */}
+      <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+    </div>
+  );
+}
+
+function ProjectCategoryImage({
+  categoryId,
+  categoryName,
+  categoryImageUrl,
+}: ProjectCategoryImageProps) {
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(false);
+  const [retryCount, setRetryCount] = useState(0);
+
+  const handleLoad = () => {
+    setLoading(false);
+    setError(false);
+  };
+
+  const handleError = () => {
+    setLoading(false);
+    setError(true);
+  };
+
+  const handleRetry = () => {
+    if (retryCount < 2) {
+      setError(false);
+      setLoading(true);
+      setRetryCount((prev) => prev + 1);
+    }
+  };
+
+  // Get the appropriate icon for the project category
+  const getProjectCategoryIcon = (name: string) => {
+    if (
+      name.toLowerCase().includes("rail") ||
+      name.toLowerCase().includes("metro")
+    )
+      return Train;
+    if (
+      name.toLowerCase().includes("road") ||
+      name.toLowerCase().includes("highway")
+    )
+      return MapPin;
+    if (
+      name.toLowerCase().includes("building") ||
+      name.toLowerCase().includes("factory")
+    )
+      return Building2;
+    if (name.toLowerCase().includes("bridge")) return Building2;
+    if (name.toLowerCase().includes("tunnel")) return Building2;
+    return Factory;
+  };
+
+  const ProjectCategoryIcon = getProjectCategoryIcon(categoryName);
+
+  if (!categoryImageUrl) {
+    return (
+      <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-primary/5 to-accent/5">
+        <div className="text-center p-4">
+          <div className="w-16 h-16 mx-auto mb-3 rounded-full bg-primary/10 flex items-center justify-center">
+            <ProjectCategoryIcon className="h-8 w-8 text-primary" />
+          </div>
+          <p className="text-foreground font-medium text-sm mb-1">
+            {categoryName}
+          </p>
+          <p className="text-muted-foreground text-xs">
+            Infrastructure Projects
+          </p>
+        </div>
+      </div>
+    );
+  }
+
+  if (error && retryCount >= 2) {
+    return (
+      <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-primary/5 to-accent/5">
+        <div className="text-center p-4">
+          <div className="w-16 h-16 mx-auto mb-3 rounded-full bg-primary/10 flex items-center justify-center">
+            <ProjectCategoryIcon className="h-8 w-8 text-primary" />
+          </div>
+          <p className="text-foreground font-medium text-sm mb-1">
+            {categoryName}
+          </p>
+          <p className="text-muted-foreground text-xs mb-2">
+            Infrastructure Projects
+          </p>
+          <button
+            onClick={handleRetry}
+            className="text-xs text-primary hover:underline bg-primary/10 hover:bg-primary/20 px-2 py-1 rounded transition-colors"
+          >
+            Retry Loading
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="relative w-full h-full group">
+      {loading && (
+        <div className="absolute inset-0 flex items-center justify-center bg-gradient-to-br from-primary/5 to-accent/5 z-10">
+          <div className="text-center">
+            <Loader2 className="h-6 w-6 animate-spin mx-auto mb-2 text-primary" />
+            <p className="text-xs text-muted-foreground">Loading...</p>
+          </div>
+        </div>
+      )}
+      <img
+        src={`${categoryImageUrl}?retry=${retryCount}`}
+        alt={categoryName}
+        className={`w-full h-full object-cover group-hover:scale-105 transition-transform duration-300 ${
+          loading ? "opacity-0" : "opacity-100"
+        }`}
+        onLoad={handleLoad}
+        onError={handleError}
+        loading="lazy"
+      />
+      {/* Overlay for better text readability */}
+      <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
     </div>
   );
 }
@@ -123,6 +320,7 @@ export default function HomePage() {
     {}
   );
   const [categories, setCategories] = useState<any[]>([]);
+  const [projectCategories, setProjectCategories] = useState<any[]>([]);
   const [clientLogos, setClientLogos] = useState<any[]>([]);
   const [approvalLogos, setApprovalLogos] = useState<any[]>([]);
   const [videoData, setVideoData] = useState<any>(null);
@@ -133,13 +331,16 @@ export default function HomePage() {
     const fetchContent = async () => {
       try {
         setLoading(true);
-        const [homeResponse, categoriesResponse] = await Promise.all([
-          fetch("/api/content?page=home"),
-          fetch("/api/admin/categories"),
-        ]);
+        const [homeResponse, categoriesResponse, projectCategoriesResponse] =
+          await Promise.all([
+            fetch("/api/content?page=home"),
+            fetch("/api/admin/categories"),
+            fetch("/api/admin/project-categories"),
+          ]);
 
         const homeResult = await homeResponse.json();
         const categoriesResult = await categoriesResponse.json();
+        const projectCategoriesResult = await projectCategoriesResponse.json();
 
         if (homeResult.success) {
           setContentItems(homeResult.data.content);
@@ -152,73 +353,82 @@ export default function HomePage() {
             .sort((a: any, b: any) => a.sort_order - b.sort_order)
             .slice(0, 4); // Show max 4 categories on homepage
           setCategories(activeCategories);
+        }
 
-          // Load category images
-          const categoryImagePromises = [
-            { category: "construction", section: "construction_image" },
-            { category: "concrete", section: "concrete_image" },
-            { category: "textile", section: "textile_image" },
-            { category: "dyestuff", section: "dyestuff_image" },
-          ].map(async ({ category, section }) => {
-            const response = await fetch(
-              `/api/admin/page-images?page=home&section=${section}`
+        // Set project categories
+        if (projectCategoriesResult.success && projectCategoriesResult.data) {
+          const activeProjectCategories = projectCategoriesResult.data
+            .filter((cat: any) => cat.is_active)
+            .sort((a: any, b: any) => a.sort_order - b.sort_order)
+            .slice(0, 4); // Show max 4 project categories on homepage
+          setProjectCategories(activeProjectCategories);
+        }
+
+        // Load category images
+        const categoryImagePromises = [
+          { category: "construction", section: "construction_image" },
+          { category: "concrete", section: "concrete_image" },
+          { category: "textile", section: "textile_image" },
+          { category: "dyestuff", section: "dyestuff_image" },
+        ].map(async ({ category, section }) => {
+          const response = await fetch(
+            `/api/admin/page-images?page=home&section=${section}`
+          );
+          if (response.ok) {
+            const data = await response.json();
+            if (data?.media_files?.file_path) {
+              return { category, url: data.media_files.file_path };
+            }
+          }
+          return null;
+        });
+
+        const categoryResults = await Promise.all(categoryImagePromises);
+        const categoryImageMap: Record<string, string> = {};
+        categoryResults.forEach((result) => {
+          if (result) {
+            categoryImageMap[result.category] = result.url;
+          }
+        });
+        setCategoryImages(categoryImageMap);
+
+        // Fetch client logos
+        try {
+          const clientLogosResponse = await fetch("/api/client-logos");
+          if (clientLogosResponse.ok) {
+            const clientLogosData = await clientLogosResponse.json();
+            console.log(
+              "Client logos loaded successfully:",
+              clientLogosData.length,
+              "logos"
             );
-            if (response.ok) {
-              const data = await response.json();
-              if (data?.media_files?.file_path) {
-                return { category, url: data.media_files.file_path };
-              }
-            }
-            return null;
-          });
-
-          const categoryResults = await Promise.all(categoryImagePromises);
-          const categoryImageMap: Record<string, string> = {};
-          categoryResults.forEach((result) => {
-            if (result) {
-              categoryImageMap[result.category] = result.url;
-            }
-          });
-          setCategoryImages(categoryImageMap);
-
-          // Fetch client logos
-          try {
-            const clientLogosResponse = await fetch("/api/client-logos");
-            if (clientLogosResponse.ok) {
-              const clientLogosData = await clientLogosResponse.json();
-              console.log(
-                "Client logos loaded successfully:",
-                clientLogosData.length,
-                "logos"
-              );
-              const filteredLogos = clientLogosData.filter(
-                (logo: any) =>
-                  logo.filename !== "17.Raj Infrastructure – Pkg 13.jpg"
-              );
-              // Use URLs directly from API as they're already properly encoded
-              setClientLogos(filteredLogos.slice(0, 12)); // Show max 12 client logos
-            }
-          } catch (error) {
-            console.error("Error fetching client logos:", error);
+            const filteredLogos = clientLogosData.filter(
+              (logo: any) =>
+                logo.filename !== "17.Raj Infrastructure – Pkg 13.jpg"
+            );
+            // Use URLs directly from API as they're already properly encoded
+            setClientLogos(filteredLogos.slice(0, 12)); // Show max 12 client logos
           }
+        } catch (error) {
+          console.error("Error fetching client logos:", error);
+        }
 
-          // Fetch approval logos
-          try {
-            const approvalLogosResponse = await fetch("/api/approval-logos");
-            if (approvalLogosResponse.ok) {
-              const approvalLogosData = await approvalLogosResponse.json();
-              console.log(
-                "Approval logos loaded successfully:",
-                approvalLogosData.length,
-                "logos"
-              );
+        // Fetch approval logos
+        try {
+          const approvalLogosResponse = await fetch("/api/approval-logos");
+          if (approvalLogosResponse.ok) {
+            const approvalLogosData = await approvalLogosResponse.json();
+            console.log(
+              "Approval logos loaded successfully:",
+              approvalLogosData.length,
+              "logos"
+            );
 
-              // Use URLs directly from API as they should be properly encoded
-              setApprovalLogos(approvalLogosData.slice(0, 8)); // Show max 8 approval logos
-            }
-          } catch (error) {
-            console.error("Error fetching approval logos:", error);
+            // Use URLs directly from API as they should be properly encoded
+            setApprovalLogos(approvalLogosData.slice(0, 8)); // Show max 8 approval logos
           }
+        } catch (error) {
+          console.error("Error fetching approval logos:", error);
         }
       } catch (err) {
         console.error("Error fetching home content:", err);
@@ -434,7 +644,7 @@ export default function HomePage() {
       )}
 
       {/* Stats Section */}
-      <section className="py-16 bg-muted/50">
+      {/* <section className="py-16 bg-muted/50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-8">
             <div className="text-center">
@@ -455,7 +665,7 @@ export default function HomePage() {
             </div>
           </div>
         </div>
-      </section>
+      </section> */}
 
       {/* Products Overview */}
       <section className="py-20">
@@ -500,6 +710,7 @@ export default function HomePage() {
                     <CategoryImage
                       categoryId={category.id}
                       categoryName={category.name}
+                      categoryImageUrl={category.image_url}
                       categoryImages={categoryImages}
                     />
                     {/* Overlay */}
@@ -569,56 +780,46 @@ export default function HomePage() {
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-            <Card className="hover:shadow-lg transition-all duration-300 hover:-translate-y-1 cursor-pointer group">
-              <CardContent className="text-center p-8">
-                <div className="bg-primary/10 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4 group-hover:bg-primary/20 transition-colors">
-                  <Train className="w-8 h-8 text-primary" />
-                </div>
-                <h3 className="font-semibold text-lg mb-2">High Speed Rail</h3>
-                <p className="text-muted-foreground text-sm">
-                  Bullet train and rapid transit infrastructure projects
-                </p>
-              </CardContent>
-            </Card>
-
-            <Card className="hover:shadow-lg transition-all duration-300 hover:-translate-y-1 cursor-pointer group">
-              <CardContent className="text-center p-8">
-                <div className="bg-primary/10 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4 group-hover:bg-primary/20 transition-colors">
-                  <Train className="w-8 h-8 text-primary" />
-                </div>
-                <h3 className="font-semibold text-lg mb-2">Metro & Rail</h3>
-                <p className="text-muted-foreground text-sm">
-                  Urban metro systems and railway infrastructure
-                </p>
-              </CardContent>
-            </Card>
-
-            <Card className="hover:shadow-lg transition-all duration-300 hover:-translate-y-1 cursor-pointer group">
-              <CardContent className="text-center p-8">
-                <div className="bg-primary/10 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4 group-hover:bg-primary/20 transition-colors">
-                  <MapPin className="w-8 h-8 text-primary" />
-                </div>
-                <h3 className="font-semibold text-lg mb-2">Roads & Highways</h3>
-                <p className="text-muted-foreground text-sm">
-                  Expressways, highways and road infrastructure
-                </p>
-              </CardContent>
-            </Card>
-
-            <Card className="hover:shadow-lg transition-all duration-300 hover:-translate-y-1 cursor-pointer group">
-              <CardContent className="text-center p-8">
-                <div className="bg-primary/10 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4 group-hover:bg-primary/20 transition-colors">
-                  <Building2 className="w-8 h-8 text-primary" />
-                </div>
-                <h3 className="font-semibold text-lg mb-2">
-                  Buildings & Factories
-                </h3>
-                <p className="text-muted-foreground text-sm">
-                  Commercial buildings and industrial facilities
-                </p>
-              </CardContent>
-            </Card>
+          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+            {projectCategories.map((category) => {
+              return (
+                <Card
+                  key={category.id}
+                  className="group hover:shadow-xl hover:scale-[1.02] transition-all duration-300 border border-border/50 hover:border-primary/30 overflow-hidden flex flex-col"
+                >
+                  <div className="aspect-video overflow-hidden bg-gradient-to-br from-primary/5 to-accent/5 relative">
+                    <ProjectCategoryImage
+                      categoryId={category.id}
+                      categoryName={category.name}
+                      categoryImageUrl={category.icon_url}
+                    />
+                    {/* Overlay */}
+                    <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors duration-300" />
+                  </div>
+                  <CardContent className="p-6 flex flex-col flex-grow">
+                    <div className="mb-4 flex-grow">
+                      <CardTitle className="text-lg font-bold text-foreground mb-2 group-hover:text-primary transition-colors duration-300">
+                        {category.name}
+                      </CardTitle>
+                      <CardDescription className="text-sm text-muted-foreground leading-relaxed line-clamp-3">
+                        {category.description ||
+                          `Professional ${category.name.toLowerCase()} solutions for infrastructure projects and construction applications.`}
+                      </CardDescription>
+                    </div>
+                    <Button
+                      asChild
+                      variant="outline"
+                      className="w-full bg-muted hover:bg-muted/80 text-muted-foreground hover:text-foreground group-hover:bg-primary group-hover:text-white transition-all duration-300 justify-between border-muted group-hover:border-primary mt-auto"
+                    >
+                      <Link href={`/projects?category=${category.id}`}>
+                        <span>View Projects</span>
+                        <ArrowRight className="h-4 w-4 group-hover:translate-x-1 transition-transform duration-300" />
+                      </Link>
+                    </Button>
+                  </CardContent>
+                </Card>
+              );
+            })}
           </div>
 
           <div className="text-center mt-12">

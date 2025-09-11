@@ -11,12 +11,14 @@ export async function PUT(request: NextRequest, context: Context) {
     const resolvedParams = await params;
     const categoryId = resolvedParams.id;
 
-    const { name, description, sort_order, is_active } = await request.json();
+    const { name, description, icon_url, sort_order, is_active } =
+      await request.json();
 
     console.log("PUT /api/admin/project-categories/[id] - Received data:", {
       categoryId,
       name,
       description,
+      icon_url,
       sort_order,
       is_active,
     });
@@ -40,6 +42,7 @@ export async function PUT(request: NextRequest, context: Context) {
     const updateData = {
       name,
       description,
+      icon_url,
       sort_order: sort_order || existing.sort_order,
       is_active: is_active !== undefined ? is_active : existing.is_active,
     };

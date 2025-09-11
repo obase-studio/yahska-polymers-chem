@@ -247,6 +247,7 @@ export const supabaseHelpers = {
         id: category.id,
         name: category.name,
         description: category.description,
+        image_url: category.image_url,
         sort_order: category.sort_order,
         is_active: true,
       })
@@ -262,6 +263,7 @@ export const supabaseHelpers = {
       .update({
         name: category.name,
         description: category.description,
+        image_url: category.image_url,
         sort_order: category.sort_order,
       })
       .eq("id", id)
@@ -595,6 +597,7 @@ export const supabaseHelpers = {
         id: category.id,
         name: category.name,
         description: category.description,
+        icon_url: category.icon_url,
         sort_order: category.sort_order,
         is_active: true,
       })
@@ -613,6 +616,7 @@ export const supabaseHelpers = {
     const updatePayload = {
       name: category.name,
       description: category.description,
+      icon_url: category.icon_url,
       sort_order: category.sort_order,
       is_active: category.is_active !== undefined ? category.is_active : true,
     };

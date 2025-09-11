@@ -1,13 +1,27 @@
-"use client"
+"use client";
 
-import { useState, useEffect } from "react"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Textarea } from "@/components/ui/textarea"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
-import { Plus, Edit, Trash2, Save, X } from "lucide-react"
+import { useState, useEffect } from "react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import {
+  Plus,
+  Edit,
+  Trash2,
+  Save,
+  X,
+  Upload,
+  Image as ImageIcon,
+} from "lucide-react";
 import {
   Dialog,
   DialogContent,
@@ -15,125 +29,182 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from "@/components/ui/dialog"
+} from "@/components/ui/dialog";
 
 interface Category {
-  id: string
-  name: string
-  description: string
-  sort_order: number
-  is_active: boolean
-  product_count?: number
+  id: string;
+  name: string;
+  description: string;
+  image_url?: string;
+  sort_order: number;
+  is_active: boolean;
+  product_count?: number;
 }
 
 export default function CategoriesPage() {
-  const [categories, setCategories] = useState<Category[]>([])
-  const [loading, setLoading] = useState(true)
-  const [editingCategory, setEditingCategory] = useState<Category | null>(null)
-  const [showAddDialog, setShowAddDialog] = useState(false)
+  const [categories, setCategories] = useState<Category[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [editingCategory, setEditingCategory] = useState<Category | null>(null);
+  const [showAddDialog, setShowAddDialog] = useState(false);
+  const [uploadingImage, setUploadingImage] = useState(false);
   const [formData, setFormData] = useState({
     id: "",
     name: "",
     description: "",
-    sort_order: 1
-  })
+    image_url: "",
+    sort_order: 1,
+  });
 
   // Load categories
   useEffect(() => {
-    loadCategories()
-  }, [])
+    loadCategories();
+  }, []);
 
   const loadCategories = async () => {
     try {
-      const response = await fetch('/api/admin/categories')
-      const result = await response.json()
+      const response = await fetch("/api/admin/categories");
+      const result = await response.json();
       if (result.success) {
-        setCategories(result.data)
+        setCategories(result.data);
       }
     } catch (error) {
-      console.error('Error loading categories:', error)
+      console.error("Error loading categories:", error);
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    setLoading(true)
+    e.preventDefault();
+    setLoading(true);
 
     try {
-      const url = editingCategory ? `/api/admin/categories/${editingCategory.id}` : '/api/admin/categories'
-      const method = editingCategory ? 'PUT' : 'POST'
+      const url = editingCategory
+        ? `/api/admin/categories/${editingCategory.id}`
+        : "/api/admin/categories";
+      const method = editingCategory ? "PUT" : "POST";
 
       const response = await fetch(url, {
         method,
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify(formData),
-      })
+      });
 
       if (response.ok) {
-        await loadCategories()
-        resetForm()
-        setShowAddDialog(false)
+        await loadCategories();
+        resetForm();
+        setShowAddDialog(false);
       } else {
-        alert('Failed to save category')
+        alert("Failed to save category");
       }
     } catch (error) {
-      console.error('Error saving category:', error)
-      alert('Error saving category')
+      console.error("Error saving category:", error);
+      alert("Error saving category");
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }
+  };
 
   const handleDelete = async (categoryId: string) => {
-    if (!confirm('Are you sure? This will affect all products in this category.')) {
-      return
+    if (
+      !confirm("Are you sure? This will affect all products in this category.")
+    ) {
+      return;
     }
 
     try {
       const response = await fetch(`/api/admin/categories/${categoryId}`, {
-        method: 'DELETE',
-      })
+        method: "DELETE",
+      });
 
       if (response.ok) {
-        await loadCategories()
+        await loadCategories();
       } else {
-        alert('Failed to delete category')
+        alert("Failed to delete category");
       }
     } catch (error) {
-      console.error('Error deleting category:', error)
-      alert('Error deleting category')
+      console.error("Error deleting category:", error);
+      alert("Error deleting category");
     }
-  }
+  };
 
   const resetForm = () => {
     setFormData({
       id: "",
       name: "",
       description: "",
-      sort_order: categories.length + 1
-    })
-    setEditingCategory(null)
-  }
+      image_url: "",
+      sort_order: categories.length + 1,
+    });
+    setEditingCategory(null);
+  };
 
   const startEdit = (category: Category) => {
     setFormData({
       id: category.id,
       name: category.name,
       description: category.description,
-      sort_order: category.sort_order
-    })
-    setEditingCategory(category)
-    setShowAddDialog(true)
-  }
+      image_url: category.image_url || "",
+      sort_order: category.sort_order,
+    });
+    setEditingCategory(category);
+    setShowAddDialog(true);
+  };
 
   const startAdd = () => {
-    resetForm()
-    setShowAddDialog(true)
-  }
+    resetForm();
+    setShowAddDialog(true);
+  };
+
+  const handleImageUpload = async (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    // Validate file type
+    if (!file.type.startsWith("image/")) {
+      alert("Please select an image file");
+      return;
+    }
+
+    // Validate file size (5MB limit)
+    const maxSize = 5 * 1024 * 1024; // 5MB
+    if (file.size > maxSize) {
+      alert("File size must be less than 5MB");
+      return;
+    }
+
+    setUploadingImage(true);
+
+    try {
+      const formData = new FormData();
+      formData.append("file", file);
+
+      const response = await fetch("/api/admin/upload-image", {
+        method: "POST",
+        body: formData,
+      });
+
+      const result = await response.json();
+
+      if (result.success) {
+        setFormData((prev) => ({
+          ...prev,
+          image_url: result.data.url,
+        }));
+      } else {
+        alert(result.error || "Failed to upload image");
+      }
+    } catch (error) {
+      console.error("Error uploading image:", error);
+      alert("Error uploading image");
+    } finally {
+      setUploadingImage(false);
+    }
+  };
 
   if (loading && categories.length === 0) {
     return (
@@ -143,7 +214,7 @@ export default function CategoriesPage() {
           <p className="text-muted-foreground">Loading categories...</p>
         </div>
       </div>
-    )
+    );
   }
 
   return (
@@ -151,7 +222,9 @@ export default function CategoriesPage() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">Product Categories</h1>
+          <h1 className="text-3xl font-bold tracking-tight">
+            Product Categories
+          </h1>
           <p className="text-muted-foreground mt-2">
             Manage product categories and organization
           </p>
@@ -166,19 +239,31 @@ export default function CategoriesPage() {
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
         {categories.map((category) => {
           const getCategoryIcon = () => {
-            if (category.name.toLowerCase().includes('admixture')) return '🔧'
-            if (category.name.toLowerCase().includes('accelerator')) return '⚡'
-            return '📦'
-          }
-          
+            if (category.name.toLowerCase().includes("admixture")) return "🔧";
+            if (category.name.toLowerCase().includes("accelerator"))
+              return "⚡";
+            return "📦";
+          };
+
           return (
-            <Card key={category.id} className="border-2 shadow-sm hover:shadow-md transition-shadow bg-white">
+            <Card
+              key={category.id}
+              className="border-2 shadow-sm hover:shadow-md transition-shadow bg-white"
+            >
               <CardHeader className="pb-6 px-8 pt-8">
                 <div className="flex items-start justify-between">
                   <div className="space-y-3 flex-1">
                     <CardTitle className="text-lg flex items-center gap-4 font-semibold">
                       <div className="p-3 bg-primary/10 rounded-lg">
-                        <span className="text-xl">{getCategoryIcon()}</span>
+                        {category.image_url ? (
+                          <img
+                            src={category.image_url}
+                            alt={category.name}
+                            className="w-8 h-8 object-cover rounded"
+                          />
+                        ) : (
+                          <span className="text-xl">{getCategoryIcon()}</span>
+                        )}
                       </div>
                       {category.name}
                     </CardTitle>
@@ -191,9 +276,11 @@ export default function CategoriesPage() {
               <CardContent className="px-8 pb-8">
                 <div className="flex items-center justify-between">
                   <div className="flex items-baseline gap-3">
-                    <span className="text-2xl font-bold text-primary">{category.product_count || 0}</span>
+                    <span className="text-2xl font-bold text-primary">
+                      {category.product_count || 0}
+                    </span>
                     <span className="text-sm text-muted-foreground font-medium">
-                      product{(category.product_count || 0) !== 1 ? 's' : ''}
+                      product{(category.product_count || 0) !== 1 ? "s" : ""}
                     </span>
                   </div>
                   <div className="flex gap-3 flex-shrink-0">
@@ -221,7 +308,7 @@ export default function CategoriesPage() {
                 </div>
               </CardContent>
             </Card>
-          )
+          );
         })}
       </div>
 
@@ -230,24 +317,27 @@ export default function CategoriesPage() {
         <DialogContent>
           <DialogHeader>
             <DialogTitle>
-              {editingCategory ? 'Edit Category' : 'Add New Category'}
+              {editingCategory ? "Edit Category" : "Add New Category"}
             </DialogTitle>
             <DialogDescription>
-              {editingCategory 
-                ? 'Update the category information below.'
-                : 'Create a new product category.'
-              }
+              {editingCategory
+                ? "Update the category information below."
+                : "Create a new product category."}
             </DialogDescription>
           </DialogHeader>
 
           <form onSubmit={handleSubmit} className="space-y-6">
             <div className="grid gap-6 md:grid-cols-2">
               <div className="space-y-2">
-                <Label htmlFor="category-id" className="text-sm font-medium">Category ID</Label>
+                <Label htmlFor="category-id" className="text-sm font-medium">
+                  Category ID
+                </Label>
                 <Input
                   id="category-id"
                   value={formData.id}
-                  onChange={(e) => setFormData(prev => ({ ...prev, id: e.target.value }))}
+                  onChange={(e) =>
+                    setFormData((prev) => ({ ...prev, id: e.target.value }))
+                  }
                   placeholder="e.g., grouts"
                   className="mt-1"
                   required
@@ -258,12 +348,19 @@ export default function CategoriesPage() {
                 </p>
               </div>
               <div className="space-y-2">
-                <Label htmlFor="sort-order" className="text-sm font-medium">Sort Order</Label>
+                <Label htmlFor="sort-order" className="text-sm font-medium">
+                  Sort Order
+                </Label>
                 <Input
                   id="sort-order"
                   type="number"
                   value={formData.sort_order}
-                  onChange={(e) => setFormData(prev => ({ ...prev, sort_order: parseInt(e.target.value) || 1 }))}
+                  onChange={(e) =>
+                    setFormData((prev) => ({
+                      ...prev,
+                      sort_order: parseInt(e.target.value) || 1,
+                    }))
+                  }
                   className="mt-1"
                   required
                 />
@@ -271,11 +368,15 @@ export default function CategoriesPage() {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="category-name" className="text-sm font-medium">Category Name</Label>
+              <Label htmlFor="category-name" className="text-sm font-medium">
+                Category Name
+              </Label>
               <Input
                 id="category-name"
                 value={formData.name}
-                onChange={(e) => setFormData(prev => ({ ...prev, name: e.target.value }))}
+                onChange={(e) =>
+                  setFormData((prev) => ({ ...prev, name: e.target.value }))
+                }
                 placeholder="e.g., Grouts"
                 className="mt-1"
                 required
@@ -283,16 +384,72 @@ export default function CategoriesPage() {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="category-description" className="text-sm font-medium">Description</Label>
+              <Label
+                htmlFor="category-description"
+                className="text-sm font-medium"
+              >
+                Description
+              </Label>
               <Textarea
                 id="category-description"
                 value={formData.description}
-                onChange={(e) => setFormData(prev => ({ ...prev, description: e.target.value }))}
+                onChange={(e) =>
+                  setFormData((prev) => ({
+                    ...prev,
+                    description: e.target.value,
+                  }))
+                }
                 placeholder="Describe this category..."
                 rows={3}
                 className="mt-1 resize-none"
                 required
               />
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="category-image" className="text-sm font-medium">
+                Category Image
+              </Label>
+              <div className="border-2 border-dashed border-muted-foreground/25 rounded-lg p-6">
+                <div className="text-center">
+                  {formData.image_url ? (
+                    <div className="space-y-4">
+                      <img
+                        src={formData.image_url}
+                        alt="Category preview"
+                        className="w-24 h-24 object-cover rounded-lg mx-auto"
+                      />
+                      <div className="flex justify-center">
+                        <Input
+                          type="file"
+                          accept="image/*"
+                          onChange={handleImageUpload}
+                          disabled={uploadingImage}
+                          className="file:mr-4 file:py-1 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-primary file:text-primary-foreground hover:file:bg-primary/90"
+                        />
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="space-y-4">
+                      <ImageIcon className="h-8 w-8 text-muted-foreground mx-auto" />
+                      <div className="flex justify-center">
+                        <Input
+                          type="file"
+                          accept="image/*"
+                          onChange={handleImageUpload}
+                          disabled={uploadingImage}
+                          className="file:mr-4 file:py-1 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-primary file:text-primary-foreground hover:file:bg-primary/90"
+                        />
+                      </div>
+                    </div>
+                  )}
+                  {uploadingImage && (
+                    <div className="text-sm text-muted-foreground text-center mt-2">
+                      Uploading image...
+                    </div>
+                  )}
+                </div>
+              </div>
             </div>
 
             <div className="flex justify-end gap-3 pt-6 border-t">
@@ -306,12 +463,12 @@ export default function CategoriesPage() {
               </Button>
               <Button type="submit" disabled={loading}>
                 <Save className="h-4 w-4 mr-2" />
-                {loading ? 'Saving...' : editingCategory ? 'Update' : 'Create'}
+                {loading ? "Saving..." : editingCategory ? "Update" : "Create"}
               </Button>
             </div>
           </form>
         </DialogContent>
       </Dialog>
     </div>
-  )
+  );
 }

@@ -28,6 +28,7 @@ CREATE TABLE product_categories (
     id VARCHAR(255) PRIMARY KEY,
     name VARCHAR(255) NOT NULL,
     description TEXT,
+    image_url TEXT,
     sort_order INTEGER DEFAULT 0,
     is_active BOOLEAN DEFAULT true
 );

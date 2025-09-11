@@ -36,6 +36,79 @@ interface Product {
   product_code: string;
   is_active: boolean;
   specification_pdf?: string;
+  image_url?: string;
+}
+
+// Product Image Component
+interface ProductImageProps {
+  product: Product;
+  imageLoading: boolean;
+  imageError: boolean;
+  onImageLoad: () => void;
+  onImageError: () => void;
+}
+
+function ProductImage({
+  product,
+  imageLoading,
+  imageError,
+  onImageLoad,
+  onImageError,
+}: ProductImageProps) {
+  // Get appropriate icon based on category
+  const getCategoryIcon = (categoryName: string) => {
+    const name = categoryName.toLowerCase();
+    if (name.includes("construction")) return "🏗️";
+    if (name.includes("concrete")) return "🏭";
+    if (name.includes("textile")) return "🎨";
+    if (name.includes("dyestuff")) return "🏆";
+    if (name.includes("admixture")) return "⚡";
+    if (name.includes("accelerator")) return "⚡";
+    if (name.includes("waterproofing")) return "🏗️";
+    if (name.includes("grout")) return "🔧";
+    if (name.includes("curing")) return "✅";
+    if (name.includes("micro silica")) return "🏭";
+    if (name.includes("floor")) return "🏗️";
+    if (name.includes("structural")) return "🏗️";
+    if (name.includes("corrosion")) return "🏆";
+    if (name.includes("release")) return "🚛";
+    return "📦";
+  };
+
+  if (!product.image_url || imageError) {
+    return (
+      <div className="text-center">
+        <div className="w-32 h-32 bg-muted rounded-lg flex items-center justify-center mb-4 mx-auto">
+          <Package className="w-16 h-16 text-muted-foreground" />
+        </div>
+        <p className="text-sm text-muted-foreground">Product Image</p>
+        <p className="text-xs text-muted-foreground/70 mt-1">Coming Soon</p>
+      </div>
+    );
+  }
+
+  return (
+    <div className="w-full h-full relative max-h-[400px] rounded-lg overflow-hidden">
+      {imageLoading && (
+        <div className="absolute inset-0 flex items-center justify-center bg-muted/30 z-10">
+          <div className="text-center">
+            <Loader2 className="h-8 w-8 animate-spin mx-auto mb-2 text-primary" />
+            <p className="text-sm text-muted-foreground">Loading image...</p>
+          </div>
+        </div>
+      )}
+      <img
+        src={product.image_url}
+        alt={product.name}
+        className={`w-full h-full object-cover transition-opacity duration-300 max-h-[400px]${
+          imageLoading ? "opacity-0" : "opacity-100"
+        }`}
+        onLoad={onImageLoad}
+        onError={onImageError}
+        loading="lazy"
+      />
+    </div>
+  );
 }
 
 export default function ProductDetailPage() {
@@ -44,6 +117,19 @@ export default function ProductDetailPage() {
   const [product, setProduct] = useState<Product | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [imageLoading, setImageLoading] = useState(true);
+  const [imageError, setImageError] = useState(false);
+
+  // Image handlers
+  const handleImageLoad = () => {
+    setImageLoading(false);
+    setImageError(false);
+  };
+
+  const handleImageError = () => {
+    setImageLoading(false);
+    setImageError(true);
+  };
 
   // Function to handle datasheet download
   const handleDownloadDatasheet = () => {
@@ -213,16 +299,27 @@ export default function ProductDetailPage() {
               </div>
             </div>
 
-            <div className="bg-muted/30 rounded-lg p-8 flex items-center justify-center min-h-[400px]">
-              <div className="text-center">
-                <div className="w-32 h-32 bg-muted rounded-lg flex items-center justify-center mb-4 mx-auto">
-                  <Package className="w-16 h-16 text-muted-foreground" />
+            <div className="bg-muted/30 rounded-lg p-8 flex items-center justify-center max-h-[400px]">
+              {product.image_url ? (
+                <div className="w-full h-full relative max-h-[400px] rounded-lg overflow-hidden">
+                  <img
+                    src={product.image_url}
+                    alt={product.name}
+                    className="w-full h-full object-cover"
+                    onLoad={handleImageLoad}
+                    onError={handleImageError}
+                    loading="lazy"
+                  />
                 </div>
-                <p className="text-sm text-muted-foreground">Product Image</p>
-                <p className="text-xs text-muted-foreground/70 mt-1">
-                  Coming Soon
-                </p>
-              </div>
+              ) : (
+                <ProductImage
+                  product={product}
+                  imageLoading={imageLoading}
+                  imageError={imageError}
+                  onImageLoad={handleImageLoad}
+                  onImageError={handleImageError}
+                />
+              )}
             </div>
           </div>
         </div>
