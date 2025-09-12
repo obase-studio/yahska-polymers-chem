@@ -163,34 +163,18 @@ export default function AboutPage() {
       (item) => item.section === "our_story" && item.content_key === "content"
     )?.content_value || "";
 
-  // Video data
-  const videoTitle =
+  // Get hero media type and content
+  const heroType =
     contentItems.find(
-      (item) => item.section === "video_section" && item.content_key === "title"
-    )?.content_value || "";
+      (item) => item.section === "hero" && item.content_key === "hero_type"
+    )?.content_value || "image";
 
-  const videoDescription =
-    contentItems.find(
-      (item) =>
-        item.section === "video_section" && item.content_key === "description"
-    )?.content_value || "";
-
-  const videoUrl =
-    contentItems.find(
-      (item) =>
-        item.section === "video_section" && item.content_key === "video_url"
-    )?.content_value || "";
-
-  const videoThumbnail =
-    contentItems.find(
-      (item) =>
-        item.section === "video_section" &&
-        item.content_key === "video_thumbnail"
-    )?.content_value || "";
-
-  // Get hero image from API content
   const heroImageFromAPI = contentItems.find(
     (item) => item.section === "hero" && item.content_key === "hero_image"
+  )?.content_value;
+
+  const heroVideoUrl = contentItems.find(
+    (item) => item.section === "hero" && item.content_key === "hero_video_url"
   )?.content_value;
 
   // Helper function to format content with proper paragraphs and lists
@@ -288,80 +272,57 @@ export default function AboutPage() {
                 </div>
               )}
             </div>
-            {/* <div className="relative">
-              <img
-                src={
-                  heroImageFromAPI ||
-                  "https://jlbwwbnatmmkcizqprdx.supabase.co/storage/v1/object/public/yahska-media/uploads/about-hero.webp"
-                }
-                alt="Yahska Polymers Manufacturing Facility"
-                className="rounded-lg shadow-2xl w-full h-auto"
-              />
-            </div> */}
+            <div className="relative">
+              {heroType === "video" && heroVideoUrl ? (
+                <div className="aspect-video rounded-lg overflow-hidden shadow-2xl">
+                  {heroVideoUrl.includes("youtube.com") ||
+                  heroVideoUrl.includes("youtu.be") ? (
+                    <iframe
+                      src={
+                        heroVideoUrl.includes("youtube.com")
+                          ? `https://www.youtube.com/embed/${
+                              heroVideoUrl.split("v=")[1]?.split("&")[0]
+                            }`
+                          : `https://www.youtube.com/embed/${
+                              heroVideoUrl.split("youtu.be/")[1]?.split("?")[0]
+                            }`
+                      }
+                      title="Company Video"
+                      className="w-full h-full"
+                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                      allowFullScreen
+                    />
+                  ) : heroVideoUrl.includes("vimeo.com") ? (
+                    <iframe
+                      src={`https://player.vimeo.com/video/${
+                        heroVideoUrl.split("vimeo.com/")[1]?.split("?")[0]
+                      }`}
+                      title="Company Video"
+                      className="w-full h-full"
+                      allow="autoplay; fullscreen; picture-in-picture"
+                      allowFullScreen
+                    />
+                  ) : (
+                    <video controls className="w-full h-full object-cover">
+                      <source src={heroVideoUrl} type="video/mp4" />
+                      Your browser does not support the video tag.
+                    </video>
+                  )}
+                </div>
+              ) : (
+                <img
+                  src={
+                    heroImageFromAPI ||
+                    "https://jlbwwbnatmmkcizqprdx.supabase.co/storage/v1/object/public/yahska-media/uploads/about-hero.webp"
+                  }
+                  alt="Yahska Polymers Manufacturing Facility"
+                  className="rounded-lg shadow-2xl w-full h-auto"
+                />
+              )}
+            </div>
           </div>
         </div>
       </section>
-
-      {/* Video Section */}
-      {videoUrl && (
-        <section className="py-20 bg-background">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="text-center mb-12">
-              {videoTitle && (
-                <h2 className="text-3xl lg:text-4xl font-bold text-foreground mb-4">
-                  {videoTitle}
-                </h2>
-              )}
-              {videoDescription && (
-                <p className="text-lg text-muted-foreground max-w-3xl mx-auto">
-                  {videoDescription}
-                </p>
-              )}
-            </div>
-            <div className="relative max-w-4xl mx-auto">
-              <div className="aspect-video rounded-lg overflow-hidden shadow-2xl">
-                {videoUrl.includes("youtube.com") ||
-                videoUrl.includes("youtu.be") ? (
-                  <iframe
-                    src={
-                      videoUrl.includes("youtube.com")
-                        ? `https://www.youtube.com/embed/${
-                            videoUrl.split("v=")[1]?.split("&")[0]
-                          }`
-                        : `https://www.youtube.com/embed/${
-                            videoUrl.split("youtu.be/")[1]?.split("?")[0]
-                          }`
-                    }
-                    title={videoTitle || "Company Video"}
-                    className="w-full h-full"
-                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                    allowFullScreen
-                  />
-                ) : videoUrl.includes("vimeo.com") ? (
-                  <iframe
-                    src={`https://player.vimeo.com/video/${
-                      videoUrl.split("vimeo.com/")[1]?.split("?")[0]
-                    }`}
-                    title={videoTitle || "Company Video"}
-                    className="w-full h-full"
-                    allow="autoplay; fullscreen; picture-in-picture"
-                    allowFullScreen
-                  />
-                ) : (
-                  <video
-                    controls
-                    className="w-full h-full object-cover"
-                    poster={videoThumbnail || undefined}
-                  >
-                    <source src={videoUrl} type="video/mp4" />
-                    Your browser does not support the video tag.
-                  </video>
-                )}
-              </div>
-            </div>
-          </div>
-        </section>
-      )}
 
       {/* Company Overview */}
       <section className="py-20">
@@ -414,21 +375,21 @@ export default function AboutPage() {
                 ))}
               </div>
             </div>
-            <div>
+            {/* <div>
               {heroImageFromAPI ? (
                 <img
                   src={heroImageFromAPI}
                   alt="Yahska Polymers Manufacturing Facility"
                   className="rounded-lg shadow-lg"
                 />
-              ):(
+              ) : (
                 <img
                   src="/placeholder.svg?height=400&width=600"
                   alt="Yahska Polymers Manufacturing Facility"
                   className="rounded-lg shadow-lg"
                 />
               )}
-            </div>
+            </div> */}
           </div>
         </div>
       </section>
@@ -498,14 +459,14 @@ export default function AboutPage() {
         </section>
       )}
 
-      {(lastUpdated || lastKnownTimestamp > 0) && (
+      {/* {(lastUpdated || lastKnownTimestamp > 0) && (
         <div className="text-center py-2 bg-gray-50 text-xs text-gray-500">
           {lastUpdated
             ? `Content updated: ${lastUpdated}`
             : "Checking for updates..."}
           <span className="ml-4 text-green-600">● Live sync active</span>
         </div>
-      )}
+      )} */}
 
       <Footer />
     </div>

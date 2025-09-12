@@ -6,6 +6,13 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import {
   Card,
   CardContent,
   CardDescription,
@@ -37,7 +44,8 @@ interface ContentEditorWithMediaProps {
     fields: Array<{
       key: string;
       label: string;
-      type: "text" | "textarea" | "image";
+      type: "text" | "textarea" | "image" | "select";
+      options?: Array<{ value: string; label: string }>;
     }>;
   };
 }
@@ -363,6 +371,24 @@ export function ContentEditorWithMedia({
                   </Card>
                 )}
               </div>
+            )}
+
+            {field.type === "select" && (
+              <Select
+                value={formData[field.key] || ""}
+                onValueChange={(value) => handleFieldChange(field.key, value)}
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder={`Select ${field.label}`} />
+                </SelectTrigger>
+                <SelectContent>
+                  {field.options?.map((option) => (
+                    <SelectItem key={option.value} value={option.value}>
+                      {option.label}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
             )}
           </div>
         ))}

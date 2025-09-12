@@ -407,7 +407,7 @@ export default function HomePage() {
                 logo.filename !== "17.Raj Infrastructure – Pkg 13.jpg"
             );
             // Use URLs directly from API as they're already properly encoded
-            setClientLogos(filteredLogos.slice(0, 12)); // Show max 12 client logos
+            setClientLogos(filteredLogos); // Show max 12 client logos
           }
         } catch (error) {
           console.error("Error fetching client logos:", error);
@@ -425,7 +425,7 @@ export default function HomePage() {
             );
 
             // Use URLs directly from API as they should be properly encoded
-            setApprovalLogos(approvalLogosData.slice(0, 8)); // Show max 8 approval logos
+            setApprovalLogos(approvalLogosData); // Show max 8 approval logos
           }
         } catch (error) {
           console.error("Error fetching approval logos:", error);
@@ -452,9 +452,18 @@ export default function HomePage() {
     )?.content_value ||
     "Yahska Polymers Pvt Ltd is a leading construction chemicals manufacturer based in Ahmedabad, proudly serving the Indian construction industry with innovative and reliable solutions for over two decades.";
 
-  // Get hero image from API content
+  // Get hero media type and content
+  const heroType =
+    contentItems.find(
+      (item) => item.section === "hero" && item.content_key === "hero_type"
+    )?.content_value || "image";
+
   const heroImageFromAPI = contentItems.find(
     (item) => item.section === "hero" && item.content_key === "hero_image"
+  )?.content_value;
+
+  const heroVideoUrl = contentItems.find(
+    (item) => item.section === "hero" && item.content_key === "hero_video_url"
   )?.content_value;
 
   const productCategoriesTitle =
@@ -509,31 +518,6 @@ export default function HomePage() {
     )?.content_value ||
     "Recognized and approved by leading authorities across India";
 
-  // Video data
-  const videoTitle =
-    contentItems.find(
-      (item) => item.section === "video_section" && item.content_key === "title"
-    )?.content_value || "";
-
-  const videoDescription =
-    contentItems.find(
-      (item) =>
-        item.section === "video_section" && item.content_key === "description"
-    )?.content_value || "";
-
-  const videoUrl =
-    contentItems.find(
-      (item) =>
-        item.section === "video_section" && item.content_key === "video_url"
-    )?.content_value || "";
-
-  const videoThumbnail =
-    contentItems.find(
-      (item) =>
-        item.section === "video_section" &&
-        item.content_key === "video_thumbnail"
-    )?.content_value || "";
-
   return (
     <div className="min-h-screen bg-background">
       <Navigation />
@@ -569,79 +553,56 @@ export default function HomePage() {
               </div>
             </div>
             <div className="relative">
-              <img
-                src={
-                  heroImageFromAPI ||
-                  "https://jlbwwbnatmmkcizqprdx.supabase.co/storage/v1/object/public/yahska-media/uploads/home.webp"
-                }
-                alt="Yahska Polymers Manufacturing Facility"
-                className="rounded-lg shadow-2xl"
-              />
+              {heroType === "video" && heroVideoUrl ? (
+                <div className="aspect-video rounded-lg overflow-hidden shadow-2xl">
+                  {heroVideoUrl.includes("youtube.com") ||
+                  heroVideoUrl.includes("youtu.be") ? (
+                    <iframe
+                      src={
+                        heroVideoUrl.includes("youtube.com")
+                          ? `https://www.youtube.com/embed/${
+                              heroVideoUrl.split("v=")[1]?.split("&")[0]
+                            }`
+                          : `https://www.youtube.com/embed/${
+                              heroVideoUrl.split("youtu.be/")[1]?.split("?")[0]
+                            }`
+                      }
+                      title="Company Video"
+                      className="w-full h-full"
+                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                      allowFullScreen
+                    />
+                  ) : heroVideoUrl.includes("vimeo.com") ? (
+                    <iframe
+                      src={`https://player.vimeo.com/video/${
+                        heroVideoUrl.split("vimeo.com/")[1]?.split("?")[0]
+                      }`}
+                      title="Company Video"
+                      className="w-full h-full"
+                      allow="autoplay; fullscreen; picture-in-picture"
+                      allowFullScreen
+                    />
+                  ) : (
+                    <video controls className="w-full h-full object-cover">
+                      <source src={heroVideoUrl} type="video/mp4" />
+                      Your browser does not support the video tag.
+                    </video>
+                  )}
+                </div>
+              ) : (
+                <img
+                  src={
+                    heroImageFromAPI ||
+                    "https://jlbwwbnatmmkcizqprdx.supabase.co/storage/v1/object/public/yahska-media/uploads/home.webp"
+                  }
+                  alt="Yahska Polymers Manufacturing Facility"
+                  className="rounded-lg shadow-2xl"
+                />
+              )}
             </div>
           </div>
         </div>
       </section>
-
-      {/* Video Section */}
-      {videoUrl && (
-        <section className="py-20 bg-background">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="text-center mb-12">
-              {videoTitle && (
-                <h2 className="text-3xl lg:text-4xl font-bold text-foreground mb-4">
-                  {videoTitle}
-                </h2>
-              )}
-              {videoDescription && (
-                <p className="text-lg text-muted-foreground max-w-3xl mx-auto">
-                  {videoDescription}
-                </p>
-              )}
-            </div>
-            <div className="relative max-w-4xl mx-auto">
-              <div className="aspect-video rounded-lg overflow-hidden shadow-2xl">
-                {videoUrl.includes("youtube.com") ||
-                videoUrl.includes("youtu.be") ? (
-                  <iframe
-                    src={
-                      videoUrl.includes("youtube.com")
-                        ? `https://www.youtube.com/embed/${
-                            videoUrl.split("v=")[1]?.split("&")[0]
-                          }`
-                        : `https://www.youtube.com/embed/${
-                            videoUrl.split("youtu.be/")[1]?.split("?")[0]
-                          }`
-                    }
-                    title={videoTitle || "Company Video"}
-                    className="w-full h-full"
-                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                    allowFullScreen
-                  />
-                ) : videoUrl.includes("vimeo.com") ? (
-                  <iframe
-                    src={`https://player.vimeo.com/video/${
-                      videoUrl.split("vimeo.com/")[1]?.split("?")[0]
-                    }`}
-                    title={videoTitle || "Company Video"}
-                    className="w-full h-full"
-                    allow="autoplay; fullscreen; picture-in-picture"
-                    allowFullScreen
-                  />
-                ) : (
-                  <video
-                    controls
-                    className="w-full h-full object-cover"
-                    poster={videoThumbnail || undefined}
-                  >
-                    <source src={videoUrl} type="video/mp4" />
-                    Your browser does not support the video tag.
-                  </video>
-                )}
-              </div>
-            </div>
-          </div>
-        </section>
-      )}
 
       {/* Stats Section */}
       {/* <section className="py-16 bg-muted/50">
