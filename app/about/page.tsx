@@ -327,7 +327,7 @@ export default function AboutPage() {
       {/* Company Overview */}
       <section className="py-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid lg:grid-cols-2 gap-12 items-center">
+          <div className="gap-12 items-center">
             <div>
               <h2
                 className="text-3xl font-bold text-foreground mb-6"
@@ -406,7 +406,7 @@ export default function AboutPage() {
                 Our Quality Commitment
               </h2>
             </div>
-            <div className="max-w-4xl mx-auto">
+            <div className="mx-auto">
               <div className="space-y-6 text-muted-foreground leading-relaxed">
                 {formattedCommitment.map((item, index) => (
                   <div key={index}>

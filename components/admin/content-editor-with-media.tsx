@@ -65,11 +65,17 @@ export function ContentEditorWithMedia({
   const [currentImageField, setCurrentImageField] = useState<string | null>(
     null
   );
+  const [forceUpdate, setForceUpdate] = useState(0);
 
   useEffect(() => {
     loadContent();
     loadPageImages();
   }, [section.id, page]);
+
+  // Force re-render when hero_type changes to show/hide fields
+  useEffect(() => {
+    setForceUpdate((prev) => prev + 1);
+  }, [formData.hero_type]);
 
   const loadContent = async () => {
     try {
@@ -274,124 +280,145 @@ export function ContentEditorWithMedia({
 
   return (
     <>
-      <form onSubmit={handleSubmit} className="space-y-4">
-        {section.fields.map((field) => (
-          <div key={field.key} className="space-y-2">
-            <Label htmlFor={`${section.id}-${field.key}`}>{field.label}</Label>
+      <form key={forceUpdate} onSubmit={handleSubmit} className="space-y-4">
+        {section.fields.map((field) => {
+          // Check if field should be visible based on hero_type selection
+          const shouldShowField = () => {
+            if (field.key === "hero_image") {
+              return formData["hero_type"] !== "video";
+            }
+            if (field.key === "hero_video_url") {
+              return formData["hero_type"] === "video";
+            }
+            return true; // Show all other fields
+          };
 
-            {field.type === "text" && (
-              <Input
-                id={`${section.id}-${field.key}`}
-                value={formData[field.key] || ""}
-                onChange={(e) => handleFieldChange(field.key, e.target.value)}
-                placeholder={field.label}
-              />
-            )}
+          if (!shouldShowField()) {
+            return null;
+          }
 
-            {field.type === "textarea" && (
-              <Textarea
-                id={`${section.id}-${field.key}`}
-                value={formData[field.key] || ""}
-                onChange={(e) => handleFieldChange(field.key, e.target.value)}
-                placeholder={field.label}
-                rows={4}
-              />
-            )}
+          return (
+            <div key={field.key} className="space-y-2">
+              <Label htmlFor={`${section.id}-${field.key}`}>
+                {field.label}
+              </Label>
 
-            {field.type === "image" && (
-              <div className="space-y-3">
-                {pageImages[field.key] ? (
-                  <Card>
-                    <CardContent className="p-4">
-                      <div className="flex items-start gap-4">
-                        <div className="relative">
-                          <Image
-                            src={getImageUrl(pageImages[field.key]!.file_path)}
-                            alt={
-                              pageImages[field.key]!.alt_text ||
-                              pageImages[field.key]!.original_name
-                            }
-                            width={100}
-                            height={100}
-                            className="rounded-lg object-cover"
-                          />
-                          <Button
-                            type="button"
-                            size="sm"
-                            variant="destructive"
-                            className="absolute -top-2 -right-2 h-6 w-6 p-0"
-                            onClick={() => handleRemoveImage(field.key)}
-                          >
-                            <X className="h-3 w-3" />
-                          </Button>
+              {field.type === "text" && (
+                <Input
+                  id={`${section.id}-${field.key}`}
+                  value={formData[field.key] || ""}
+                  onChange={(e) => handleFieldChange(field.key, e.target.value)}
+                  placeholder={field.label}
+                />
+              )}
+
+              {field.type === "textarea" && (
+                <Textarea
+                  id={`${section.id}-${field.key}`}
+                  value={formData[field.key] || ""}
+                  onChange={(e) => handleFieldChange(field.key, e.target.value)}
+                  placeholder={field.label}
+                  rows={4}
+                />
+              )}
+
+              {field.type === "image" && (
+                <div className="space-y-3">
+                  {pageImages[field.key] ? (
+                    <Card>
+                      <CardContent className="p-4">
+                        <div className="flex items-start gap-4">
+                          <div className="relative">
+                            <Image
+                              src={getImageUrl(
+                                pageImages[field.key]!.file_path
+                              )}
+                              alt={
+                                pageImages[field.key]!.alt_text ||
+                                pageImages[field.key]!.original_name
+                              }
+                              width={100}
+                              height={100}
+                              className="rounded-lg object-cover"
+                            />
+                            <Button
+                              type="button"
+                              size="sm"
+                              variant="destructive"
+                              className="absolute -top-2 -right-2 h-6 w-6 p-0"
+                              onClick={() => handleRemoveImage(field.key)}
+                            >
+                              <X className="h-3 w-3" />
+                            </Button>
+                          </div>
+                          <div className="flex-1">
+                            <h4 className="font-medium">
+                              {pageImages[field.key]!.original_name}
+                            </h4>
+                            <p className="text-sm text-muted-foreground">
+                              {pageImages[field.key]!.alt_text}
+                            </p>
+                            <Button
+                              type="button"
+                              size="sm"
+                              variant="outline"
+                              className="mt-2"
+                              onClick={() => {
+                                setCurrentImageField(field.key);
+                                setShowMediaPicker(true);
+                              }}
+                            >
+                              Change Image
+                            </Button>
+                          </div>
                         </div>
-                        <div className="flex-1">
-                          <h4 className="font-medium">
-                            {pageImages[field.key]!.original_name}
-                          </h4>
-                          <p className="text-sm text-muted-foreground">
-                            {pageImages[field.key]!.alt_text}
-                          </p>
-                          <Button
-                            type="button"
-                            size="sm"
-                            variant="outline"
-                            className="mt-2"
-                            onClick={() => {
-                              setCurrentImageField(field.key);
-                              setShowMediaPicker(true);
-                            }}
-                          >
-                            Change Image
-                          </Button>
-                        </div>
-                      </div>
-                    </CardContent>
-                  </Card>
-                ) : (
-                  <Card className="border-dashed">
-                    <CardContent className="p-6 text-center">
-                      <ImageIcon className="h-12 w-12 text-muted-foreground mx-auto mb-2" />
-                      <p className="text-sm text-muted-foreground mb-3">
-                        No image selected
-                      </p>
-                      <Button
-                        type="button"
-                        size="sm"
-                        variant="outline"
-                        onClick={() => {
-                          setCurrentImageField(field.key);
-                          setShowMediaPicker(true);
-                        }}
-                      >
-                        <ImageIcon className="h-4 w-4 mr-2" />
-                        Browse Media
-                      </Button>
-                    </CardContent>
-                  </Card>
-                )}
-              </div>
-            )}
+                      </CardContent>
+                    </Card>
+                  ) : (
+                    <Card className="border-dashed">
+                      <CardContent className="p-6 text-center">
+                        <ImageIcon className="h-12 w-12 text-muted-foreground mx-auto mb-2" />
+                        <p className="text-sm text-muted-foreground mb-3">
+                          No image selected
+                        </p>
+                        <Button
+                          type="button"
+                          size="sm"
+                          variant="outline"
+                          onClick={() => {
+                            setCurrentImageField(field.key);
+                            setShowMediaPicker(true);
+                          }}
+                        >
+                          <ImageIcon className="h-4 w-4 mr-2" />
+                          Browse Media
+                        </Button>
+                      </CardContent>
+                    </Card>
+                  )}
+                </div>
+              )}
 
-            {field.type === "select" && (
-              <Select
-                value={formData[field.key] || ""}
-                onValueChange={(value) => handleFieldChange(field.key, value)}
-              >
-                <SelectTrigger>
-                  <SelectValue placeholder={`Select ${field.label}`} />
-                </SelectTrigger>
-                <SelectContent>
-                  {field.options?.map((option) => (
-                    <SelectItem key={option.value} value={option.value}>
-                      {option.label}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            )}
-          </div>
-        ))}
+              {field.type === "select" && (
+                <Select
+                  value={formData[field.key] || ""}
+                  onValueChange={(value) => handleFieldChange(field.key, value)}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder={`Select ${field.label}`} />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {field.options?.map((option) => (
+                      <SelectItem key={option.value} value={option.value}>
+                        {option.label}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              )}
+            </div>
+          );
+        })}
 
         <div className="flex items-center justify-between">
           <Button
