@@ -13,7 +13,16 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Plus, Edit, Trash2, Save, X, Building2 } from "lucide-react";
+import {
+  Plus,
+  Edit,
+  Trash2,
+  Save,
+  X,
+  Building2,
+  Upload,
+  Image as ImageIcon,
+} from "lucide-react";
 import {
   Dialog,
   DialogContent,
@@ -27,6 +36,7 @@ interface ProjectCategory {
   id: string;
   name: string;
   description: string;
+  icon_url?: string;
   sort_order: number;
   is_active: boolean;
   project_count?: number;
@@ -38,10 +48,12 @@ export default function ProjectCategoriesPage() {
   const [editingCategory, setEditingCategory] =
     useState<ProjectCategory | null>(null);
   const [showAddDialog, setShowAddDialog] = useState(false);
+  const [uploadingImage, setUploadingImage] = useState(false);
   const [formData, setFormData] = useState({
     id: "",
     name: "",
     description: "",
+    icon_url: "",
     sort_order: 1,
   });
 
@@ -158,6 +170,7 @@ export default function ProjectCategoriesPage() {
       id: category.id,
       name: category.name,
       description: category.description,
+      icon_url: category.icon_url || "",
       sort_order: category.sort_order,
     });
     setShowAddDialog(true);
@@ -168,9 +181,58 @@ export default function ProjectCategoriesPage() {
       id: "",
       name: "",
       description: "",
+      icon_url: "",
       sort_order: 1,
     });
     setEditingCategory(null);
+  };
+
+  const handleImageUpload = async (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    // Validate file type
+    if (!file.type.startsWith("image/")) {
+      alert("Please select an image file");
+      return;
+    }
+
+    // Validate file size (5MB limit)
+    const maxSize = 5 * 1024 * 1024; // 5MB
+    if (file.size > maxSize) {
+      alert("File size must be less than 5MB");
+      return;
+    }
+
+    setUploadingImage(true);
+
+    try {
+      const formData = new FormData();
+      formData.append("file", file);
+
+      const response = await fetch("/api/admin/upload-image", {
+        method: "POST",
+        body: formData,
+      });
+
+      const result = await response.json();
+
+      if (result.success) {
+        setFormData((prev) => ({
+          ...prev,
+          icon_url: result.data.url,
+        }));
+      } else {
+        alert(result.error || "Failed to upload image");
+      }
+    } catch (error) {
+      console.error("Error uploading image:", error);
+      alert("Error uploading image");
+    } finally {
+      setUploadingImage(false);
+    }
   };
 
   if (loading && categories.length === 0) {
@@ -257,6 +319,52 @@ export default function ProjectCategoriesPage() {
                   className="mt-1 resize-none"
                 />
               </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="category-icon" className="text-sm font-medium">
+                  Category Icon
+                </Label>
+                <div className="border-2 border-dashed border-muted-foreground/25 rounded-lg p-6">
+                  <div className="text-center">
+                    {formData.icon_url ? (
+                      <div className="space-y-4">
+                        <img
+                          src={formData.icon_url}
+                          alt="Category preview"
+                          className="w-24 h-24 object-cover rounded-lg mx-auto"
+                        />
+                        <div className="flex justify-center">
+                          <Input
+                            type="file"
+                            accept="image/*"
+                            onChange={handleImageUpload}
+                            disabled={uploadingImage}
+                            className="file:mr-4 file:py-1 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-primary file:text-primary-foreground hover:file:bg-primary/90"
+                          />
+                        </div>
+                      </div>
+                    ) : (
+                      <div className="space-y-4">
+                        <ImageIcon className="h-8 w-8 text-muted-foreground mx-auto" />
+                        <div className="flex justify-center">
+                          <Input
+                            type="file"
+                            accept="image/*"
+                            onChange={handleImageUpload}
+                            disabled={uploadingImage}
+                            className="file:mr-4 file:py-1 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-primary file:text-primary-foreground hover:file:bg-primary/90"
+                          />
+                        </div>
+                      </div>
+                    )}
+                    {uploadingImage && (
+                      <div className="text-sm text-muted-foreground text-center mt-2">
+                        Uploading image...
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </div>
               <div className="space-y-2">
                 <Label htmlFor="sort_order" className="text-sm font-medium">
                   Display Order
@@ -308,7 +416,15 @@ export default function ProjectCategoriesPage() {
               <CardTitle className="flex items-start justify-between">
                 <div className="flex items-center gap-4">
                   <div className="p-3 bg-primary/10 rounded-lg">
-                    <Building2 className="h-6 w-6 text-primary" />
+                    {category.icon_url ? (
+                      <img
+                        src={category.icon_url}
+                        alt={category.name}
+                        className="w-6 h-6 object-cover rounded"
+                      />
+                    ) : (
+                      <Building2 className="h-6 w-6 text-primary" />
+                    )}
                   </div>
                   <div>
                     <div className="text-lg font-semibold">{category.name}</div>

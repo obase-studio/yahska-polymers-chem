@@ -11,7 +11,7 @@ export async function PUT(request: NextRequest, context: Context) {
     const resolvedParams = await params;
     const categoryId = resolvedParams.id;
 
-    const { name, description, sort_order } = await request.json();
+    const { name, description, image_url, sort_order } = await request.json();
 
     if (!name || !description) {
       return NextResponse.json(
@@ -32,6 +32,7 @@ export async function PUT(request: NextRequest, context: Context) {
     const result = await supabaseHelpers.updateCategory(categoryId, {
       name,
       description,
+      image_url,
       sort_order: sort_order || existing.sort_order,
     });
 

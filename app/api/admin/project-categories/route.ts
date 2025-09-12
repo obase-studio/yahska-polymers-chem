@@ -23,7 +23,8 @@ export async function GET() {
 
 export async function POST(request: NextRequest) {
   try {
-    const { id, name, description, sort_order } = await request.json();
+    const { id, name, description, icon_url, sort_order } =
+      await request.json();
     let newId = id;
     if (!id) {
       newId = name.toLowerCase().replace(/ /g, "-");
@@ -39,6 +40,7 @@ export async function POST(request: NextRequest) {
       id: newId,
       name,
       description,
+      icon_url,
       sort_order: sort_order || 1,
     });
 
