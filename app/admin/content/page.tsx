@@ -26,12 +26,27 @@ export default function ContentPage() {
         {
           id: "hero",
           title: "Hero Section",
-          description: "Hero image, main headline, and description",
+          description:
+            "Choose between image or video for hero section, main headline, and description",
           fields: [
+            {
+              key: "hero_type",
+              label: "Hero Media Type",
+              type: "select" as const,
+              options: [
+                { value: "image", label: "Image" },
+                { value: "video", label: "Video" },
+              ],
+            },
             {
               key: "hero_image",
               label: "Hero Background Image",
               type: "image" as const,
+            },
+            {
+              key: "hero_video_url",
+              label: "Hero Video URL (YouTube, Vimeo, or direct video link)",
+              type: "text" as const,
             },
             { key: "headline", label: "Main Headline", type: "text" as const },
             {
@@ -39,33 +54,6 @@ export default function ContentPage() {
               label: "Hero Description",
               type: "textarea" as const,
             },
-          ],
-        },
-        {
-          id: "video_section",
-          title: "Video Section",
-          description: "Company video with title and description",
-          fields: [
-            {
-              key: "title",
-              label: "Video Section Title",
-              type: "text" as const,
-            },
-            {
-              key: "description",
-              label: "Video Description",
-              type: "textarea" as const,
-            },
-            {
-              key: "video_url",
-              label: "Video URL (YouTube, Vimeo, or direct video link)",
-              type: "text" as const,
-            },
-            // {
-            //   key: "video_thumbnail",
-            //   label: "Video Thumbnail Image",
-            //   type: "image" as const,
-            // },
           ],
         },
         {
@@ -129,40 +117,28 @@ export default function ContentPage() {
         {
           id: "hero",
           title: "About Hero Section",
-          description: "Hero image and intro text for about page",
+          description:
+            "Choose between image or video for hero section and intro text",
           fields: [
+            {
+              key: "hero_type",
+              label: "Hero Media Type",
+              type: "select" as const,
+              options: [
+                { value: "image", label: "Image" },
+                { value: "video", label: "Video" },
+              ],
+            },
             {
               key: "hero_image",
               label: "About Hero Image",
               type: "image" as const,
             },
-          ],
-        },
-        {
-          id: "video_section",
-          title: "About Video Section",
-          description: "Company video showcasing our story and values",
-          fields: [
             {
-              key: "title",
-              label: "Video Section Title",
+              key: "hero_video_url",
+              label: "Hero Video URL (YouTube, Vimeo, or direct video link)",
               type: "text" as const,
             },
-            {
-              key: "description",
-              label: "Video Description",
-              type: "textarea" as const,
-            },
-            {
-              key: "video_url",
-              label: "Video URL (YouTube, Vimeo, or direct video link)",
-              type: "text" as const,
-            },
-            // {
-            //   key: "video_thumbnail",
-            //   label: "Video Thumbnail Image",
-            //   type: "image" as const,
-            // },
           ],
         },
         {
