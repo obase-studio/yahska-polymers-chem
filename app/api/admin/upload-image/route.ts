@@ -17,10 +17,19 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    // Validate file type
-    if (!file.type.startsWith('image/')) {
+    // Validate file type - allow common image formats
+    const allowedTypes = [
+      'image/jpeg',
+      'image/jpg',
+      'image/png',
+      'image/webp',
+      'image/gif',
+      'image/svg+xml'
+    ]
+
+    if (!file.type.startsWith('image/') || !allowedTypes.includes(file.type)) {
       return NextResponse.json(
-        { success: false, error: "File must be an image" },
+        { success: false, error: `Invalid file type. Allowed: ${allowedTypes.join(', ')}` },
         { status: 400 }
       )
     }
@@ -29,7 +38,15 @@ export async function POST(request: NextRequest) {
     const maxSize = 10 * 1024 * 1024 // 10MB
     if (file.size > maxSize) {
       return NextResponse.json(
-        { success: false, error: "File size must be less than 10MB" },
+        { success: false, error: `File size must be less than ${maxSize / (1024 * 1024)}MB` },
+        { status: 400 }
+      )
+    }
+
+    // Additional validation for empty files
+    if (file.size === 0) {
+      return NextResponse.json(
+        { success: false, error: "File cannot be empty" },
         { status: 400 }
       )
     }

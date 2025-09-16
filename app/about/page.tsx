@@ -225,22 +225,25 @@ export default function AboutPage() {
 
       {/* Company Overview */}
       <section className="py-20">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid lg:grid-cols-2 gap-12 items-center">
-            <div>
-              <h2 className="text-3xl font-bold text-foreground mb-6" style={{ fontFamily: "var(--font-heading)" }}>
-                Our Story
-              </h2>
-              <div className="space-y-4 text-muted-foreground leading-relaxed">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-16">
+            <h2 className="text-3xl font-bold text-foreground mb-6" style={{ fontFamily: "var(--font-heading)" }}>
+              Our Story
+            </h2>
+          </div>
+
+          <div className="grid lg:grid-cols-2 gap-16 items-center">
+            <div className="lg:pr-8">
+              <div className="space-y-6 text-muted-foreground leading-relaxed text-center lg:text-left">
                 {formattedStory.map((item, index) => (
                   <div key={index}>
                     {item.type === 'paragraph' && (
-                      <p>{item.content}</p>
+                      <p className="text-lg">{item.content}</p>
                     )}
                     {item.type === 'bullets' && (
                       <div>
-                        {item.title && <p className="font-semibold mb-2">{item.title}</p>}
-                        <ul className="list-disc list-inside space-y-1 ml-4">
+                        {item.title && <p className="font-semibold mb-3 text-foreground">{item.title}</p>}
+                        <ul className="list-disc list-inside space-y-2 text-left">
                           {item.items?.map((bullet, bulletIndex) => (
                             <li key={bulletIndex}>{bullet}</li>
                           ))}
@@ -249,11 +252,11 @@ export default function AboutPage() {
                     )}
                     {item.type === 'checklist' && (
                       <div>
-                        {item.title && <p className="font-semibold mb-2">{item.title}</p>}
-                        <div className="space-y-2">
+                        {item.title && <p className="font-semibold mb-3 text-foreground">{item.title}</p>}
+                        <div className="space-y-3">
                           {item.items?.map((checkItem, checkIndex) => (
-                            <div key={checkIndex} className="flex items-start gap-2">
-                              <span className="text-green-600 font-bold">✓</span>
+                            <div key={checkIndex} className="flex items-start gap-3 text-left">
+                              <span className="text-green-600 font-bold text-lg">✓</span>
                               <span>{checkItem}</span>
                             </div>
                           ))}
@@ -264,11 +267,11 @@ export default function AboutPage() {
                 ))}
               </div>
             </div>
-            <div>
+            <div className="lg:pl-8">
               <img
                 src="/placeholder.svg?height=400&width=600"
                 alt="Yahska Polymers Manufacturing Facility"
-                className="rounded-lg shadow-lg"
+                className="rounded-lg shadow-lg w-full"
               />
             </div>
           </div>

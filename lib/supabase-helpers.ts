@@ -61,6 +61,7 @@ export const supabaseHelpers = {
         )
       `)
       .eq('is_active', true)
+      .order('sort_order', { ascending: true })
       .order('updated_at', { ascending: false })
     
     if (error) throw error
@@ -131,6 +132,42 @@ export const supabaseHelpers = {
   },
 
   createProduct: async (product: any) => {
+    // Handle sort order conflicts - get the next available sort order if not specified
+    let sortOrder = product.sort_order;
+    if (sortOrder === undefined || sortOrder === null) {
+      // Get the highest sort order in the same category and add 1
+      const { data: maxSortData, error: sortError } = await supabase
+        .from('products')
+        .select('sort_order')
+        .eq('category_id', product.category_id)
+        .order('sort_order', { ascending: false })
+        .limit(1)
+        .single()
+
+      if (!sortError && maxSortData?.sort_order) {
+        sortOrder = maxSortData.sort_order + 1;
+      } else {
+        sortOrder = 1; // Default to 1 if no products in category yet
+      }
+    } else {
+      // Check if the specified sort order already exists in this category
+      const { data: existingProduct } = await supabase
+        .from('products')
+        .select('id')
+        .eq('category_id', product.category_id)
+        .eq('sort_order', sortOrder)
+        .single()
+
+      if (existingProduct) {
+        // Increment sort orders of existing products with the same or higher sort order
+        await supabase
+          .from('products')
+          .update({ sort_order: supabase.sql`sort_order + 1` })
+          .eq('category_id', product.category_id)
+          .gte('sort_order', sortOrder)
+      }
+    }
+
     const { data, error } = await supabase
       .from('products')
       .insert({
@@ -148,6 +185,7 @@ export const supabaseHelpers = {
         safety_information: product.safety_information,
         product_code: product.product_code,
         specification_pdf: product.specification_pdf,
+        sort_order: sortOrder,
         is_active: true // Ensure new products are active by default
       })
       .select()
