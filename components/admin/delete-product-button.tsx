@@ -55,7 +55,8 @@ export function DeleteProductButton({ productId, productName }: DeleteProductBut
         <AlertDialogHeader>
           <AlertDialogTitle>Delete Product</AlertDialogTitle>
           <AlertDialogDescription>
-            Are you sure you want to delete "{productName}"? This action cannot be undone.
+            This action will permanently delete the product "{productName}" and cannot be undone.
+            All associated data including images, specifications, and product details will be removed.
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>

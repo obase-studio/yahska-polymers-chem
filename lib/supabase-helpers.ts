@@ -147,10 +147,11 @@ export const supabaseHelpers = {
         packaging_info: product.packaging_info,
         safety_information: product.safety_information,
         product_code: product.product_code,
-        specification_pdf: product.specification_pdf
+        specification_pdf: product.specification_pdf,
+        is_active: true // Ensure new products are active by default
       })
       .select()
-    
+
     if (error) throw error
     return data
   },
@@ -172,13 +173,14 @@ export const supabaseHelpers = {
       .from('product_categories')
       .select(`
         *,
-        products (count)
+        products!products_category_id_fkey(id)
       `)
       .eq('is_active', true)
+      .eq('products.is_active', true)
       .order('sort_order')
-    
+
     if (error) throw error
-    
+
     return data?.map((category: any) => ({
       ...category,
       product_count: category.products?.length || 0

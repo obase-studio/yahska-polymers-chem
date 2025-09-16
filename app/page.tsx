@@ -239,25 +239,28 @@ export default function HomePage() {
     fetchContent();
   }, []);
 
-  // Get content values
-  const heroHeadline =
-    contentItems.find(
-      (item) => item.section === "hero" && item.content_key === "headline"
-    )?.content_value || "Leading Chemical Solutions for Industrial Excellence";
+  // Get content values - only use fallbacks when loading is complete
+  const heroHeadline = loading
+    ? ""
+    : contentItems.find(
+        (item) => item.section === "hero" && item.content_key === "headline"
+      )?.content_value || "Leading Chemical Solutions for Industrial Excellence";
 
-  const companyDescription =
-    contentItems.find(
-      (item) =>
-        item.section === "company_overview" &&
-        item.content_key === "company_description"
-    )?.content_value || "";
+  const companyDescription = loading
+    ? ""
+    : contentItems.find(
+        (item) =>
+          item.section === "company_overview" &&
+          item.content_key === "company_description"
+      )?.content_value || "";
 
-  const productCategoriesDescription =
-    contentItems.find(
-      (item) =>
-        item.section === "product_categories" &&
-        item.content_key === "description"
-    )?.content_value || "";
+  const productCategoriesDescription = loading
+    ? ""
+    : contentItems.find(
+        (item) =>
+          item.section === "product_categories" &&
+          item.content_key === "description"
+      )?.content_value || "";
 
 
   const ctaHeadline =
@@ -295,44 +298,63 @@ export default function HomePage() {
       {/* Hero Section */}
       <section className="relative bg-gradient-to-br from-primary/10 to-accent/5 py-20 lg:py-32">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid lg:grid-cols-2 gap-12 items-center">
-            <div>
-              <h1
-                className="text-4xl lg:text-6xl font-black text-foreground mb-6"
-                style={{ fontFamily: "var(--font-heading)" }}
-              >
-                {heroHeadline}
-              </h1>
-              <p className="text-xl text-muted-foreground mb-8 leading-relaxed">
-                {getFullStoryDescription()}
-              </p>
-              <div className="flex flex-col sm:flex-row gap-4">
-                <Button
-                  asChild
-                  size="lg"
-                  className="bg-primary hover:bg-primary/90"
-                >
-                  <Link href="/products">
-                    Explore Products
-                    <ArrowRight className="ml-2 h-5 w-5" />
-                  </Link>
-                </Button>
-                {/* <Button asChild variant="outline" size="lg">
-                  <Link href="/contact">Get Quote</Link>
-                </Button> */}
+          {loading ? (
+            <div className="grid lg:grid-cols-2 gap-12 items-center">
+              <div>
+                <div className="h-16 lg:h-24 bg-muted/50 rounded-lg mb-6 animate-pulse"></div>
+                <div className="space-y-3 mb-8">
+                  <div className="h-6 bg-muted/50 rounded animate-pulse"></div>
+                  <div className="h-6 bg-muted/50 rounded animate-pulse w-4/5"></div>
+                  <div className="h-6 bg-muted/50 rounded animate-pulse w-3/5"></div>
+                </div>
+                <div className="flex flex-col sm:flex-row gap-4">
+                  <div className="h-12 w-40 bg-muted/50 rounded animate-pulse"></div>
+                </div>
+              </div>
+              <div className="relative">
+                <div className="aspect-video bg-muted/50 rounded-lg animate-pulse"></div>
               </div>
             </div>
-            <div className="relative">
-              <img
-                src={
-                  heroImage ||
-                  "https://jlbwwbnatmmkcizqprdx.supabase.co/storage/v1/object/public/yahska-media/uploads/home.webp"
-                }
-                alt="Yahska Polymers Manufacturing Facility"
-                className="rounded-lg shadow-2xl"
-              />
+          ) : (
+            <div className="grid lg:grid-cols-2 gap-12 items-center">
+              <div>
+                <h1
+                  className="text-4xl lg:text-6xl font-black text-foreground mb-6"
+                  style={{ fontFamily: "var(--font-heading)" }}
+                >
+                  {heroHeadline}
+                </h1>
+                <p className="text-xl text-muted-foreground mb-8 leading-relaxed">
+                  {getFullStoryDescription()}
+                </p>
+                <div className="flex flex-col sm:flex-row gap-4">
+                  <Button
+                    asChild
+                    size="lg"
+                    className="bg-primary hover:bg-primary/90"
+                  >
+                    <Link href="/products">
+                      Explore Products
+                      <ArrowRight className="ml-2 h-5 w-5" />
+                    </Link>
+                  </Button>
+                  {/* <Button asChild variant="outline" size="lg">
+                    <Link href="/contact">Get Quote</Link>
+                  </Button> */}
+                </div>
+              </div>
+              <div className="relative">
+                <img
+                  src={
+                    heroImage ||
+                    "https://jlbwwbnatmmkcizqprdx.supabase.co/storage/v1/object/public/yahska-media/uploads/home.webp"
+                  }
+                  alt="Yahska Polymers Manufacturing Facility"
+                  className="rounded-lg shadow-2xl"
+                />
+              </div>
             </div>
-          </div>
+          )}
         </div>
       </section>
 

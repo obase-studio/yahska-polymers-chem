@@ -1,0 +1,13 @@
+{
+  "scripts": {
+    "test:cms": "jest __tests__ --testNamePattern=\"CMS\"",
+    "test:cms:unit": "jest __tests__/cms-unit-tests.test.js",
+    "test:cms:integration": "jest __tests__/cms-integration-tests.test.js", 
+    "test:cms:e2e": "jest __tests__/cms-e2e-tests.test.js",
+    "test:cms:watch": "jest __tests__ --watch --testNamePattern=\"CMS\"",
+    "test:cms:coverage": "jest __tests__ --coverage --testNamePattern=\"CMS\"",
+    "diagnose:cms": "node scripts/diagnose-cms.js",
+    "fix:cms": "node scripts/fix-cms-issues.js",
+    "cms:health": "node scripts/cms-health-check.js"
+  }
+}

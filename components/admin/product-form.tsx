@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -18,7 +18,8 @@ interface ProductFormProps {
   isEdit?: boolean
 }
 
-export function ProductForm({ categories, product, isEdit = false }: ProductFormProps) {
+export function ProductForm({ categories: initialCategories, product, isEdit = false }: ProductFormProps) {
+  const [categories, setCategories] = useState(initialCategories || []);
   const [formData, setFormData] = useState({
     name: product?.name || "",
     description: product?.description || "",
@@ -47,6 +48,27 @@ export function ProductForm({ categories, product, isEdit = false }: ProductForm
   const [isLoading, setIsLoading] = useState(false)
   const [uploadingPdf, setUploadingPdf] = useState(false)
   const router = useRouter()
+
+  // Fetch categories dynamically to ensure new categories appear
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const response = await fetch("/api/admin/categories");
+        const result = await response.json();
+        if (result.success && result.data) {
+          const activeCategories = result.data
+            .filter((cat: any) => cat.is_active)
+            .sort((a: any, b: any) => a.sort_order - b.sort_order);
+          setCategories(activeCategories);
+        }
+      } catch (error) {
+        console.error("Error fetching categories:", error);
+        // Keep initial categories if fetch fails
+      }
+    };
+
+    fetchCategories();
+  }, []);
 
   const addApplication = () => {
     if (newApplication.trim()) {
