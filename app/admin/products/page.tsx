@@ -23,7 +23,7 @@ export default async function ProductsPage() {
         <div>
           <h1 className="text-3xl font-bold tracking-tight">Products</h1>
           <p className="text-muted-foreground">
-            Manage your product catalog and pricing
+            Manage your product catalog and detailed specifications
           </p>
         </div>
         <Button asChild>
@@ -82,40 +82,29 @@ export default async function ProductsPage() {
                         <p className="text-muted-foreground mb-6 line-clamp-2 leading-relaxed">
                           {product.description}
                         </p>
-                        <div className="flex items-center gap-8">
-                          <div className="flex items-center gap-3">
-                            <span className="text-sm font-medium text-muted-foreground">
-                              Price:
-                            </span>
-                            <span className="text-lg font-bold text-primary bg-primary/10 px-4 py-2 rounded-lg">
-                              {product.price}
-                            </span>
-                          </div>
-                          {product.applications &&
-                            product.applications.length > 0 && (
-                              <div className="flex flex-wrap gap-2">
-                                {product.applications
-                                  .slice(0, 2)
-                                  .map((app: string, index: number) => (
-                                    <Badge
-                                      key={index}
-                                      variant="outline"
-                                      className="text-xs px-2 py-1"
-                                    >
-                                      {app}
-                                    </Badge>
-                                  ))}
-                                {product.applications.length > 2 && (
-                                  <Badge
-                                    variant="outline"
-                                    className="text-xs px-2 py-1"
-                                  >
-                                    +{product.applications.length - 2} more
-                                  </Badge>
-                                )}
-                              </div>
+                        {product.applications && product.applications.length > 0 && (
+                          <div className="flex flex-wrap gap-2">
+                            {product.applications
+                              .slice(0, 3)
+                              .map((app: string, index: number) => (
+                                <Badge
+                                  key={index}
+                                  variant="outline"
+                                  className="text-xs px-2 py-1"
+                                >
+                                  {app}
+                                </Badge>
+                              ))}
+                            {product.applications.length > 3 && (
+                              <Badge
+                                variant="outline"
+                                className="text-xs px-2 py-1"
+                              >
+                                +{product.applications.length - 3} more
+                              </Badge>
                             )}
-                        </div>
+                          </div>
+                        )}
                       </div>
                       <div className="flex items-center gap-3 ml-6 flex-shrink-0">
                         <Button asChild variant="outline" size="sm">
@@ -151,7 +140,7 @@ export default async function ProductsPage() {
               <h3 className="text-xl font-semibold mb-3">No products yet</h3>
               <p className="text-muted-foreground mb-6 max-w-md mx-auto">
                 Get started by adding your first product to the catalog. You can
-                manage prices, descriptions, and categories.
+            manage descriptions and categories.
               </p>
               <Button asChild size="lg">
                 <Link href="/admin/products/new">

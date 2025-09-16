@@ -21,6 +21,29 @@ export default function ContentPage() {
   const [selectedPage, setSelectedPage] = useState("home");
 
   const getSectionsForPage = (page: string) => {
+    if (page === "header") {
+      return [
+        {
+          id: "branding",
+          title: "Header Branding",
+          description: "Manage logo and company name shown in the site header",
+          fields: [
+            {
+              key: "logo",
+              label: "Company Logo",
+              type: "image" as const,
+            },
+            {
+              key: "company_name",
+              label: "Company Name",
+              type: "text" as const,
+              placeholder: "Yahska Polymers",
+            },
+          ],
+        },
+      ];
+    }
+
     if (page === "home") {
       return [
         {
@@ -161,18 +184,6 @@ export default function ContentPage() {
             {
               key: "content",
               label: "Our Story Content",
-              type: "textarea" as const,
-            },
-          ],
-        },
-        {
-          id: "quality_commitment",
-          title: "Quality Commitment",
-          description: "Commitment paragraphs",
-          fields: [
-            {
-              key: "content",
-              label: "Quality Content",
               type: "textarea" as const,
             },
           ],
@@ -415,6 +426,7 @@ export default function ContentPage() {
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="home">Home</SelectItem>
+              <SelectItem value="header">Header</SelectItem>
               <SelectItem value="about">About</SelectItem>
               <SelectItem value="products">Products</SelectItem>
               <SelectItem value="projects">Projects</SelectItem>

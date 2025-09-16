@@ -405,7 +405,6 @@ export const ValidationSchemas = {
   product: z.object({
     name: z.string().min(1).max(255),
     description: z.string().optional(),
-    price: z.string().optional(),
     category_id: z.string().min(1),
     applications: z.array(z.string()).optional(),
     features: z.array(z.string()).optional(),

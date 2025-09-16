@@ -14,7 +14,7 @@ export async function GET(request: NextRequest) {
       .from('projects')
       .select('*')
       .eq('is_active', true)
-      .order('sort_order', { ascending: true })
+      .order('updated_at', { ascending: false })
     
     // Apply category filter if provided
     if (category && category !== 'all') {
@@ -40,6 +40,10 @@ export async function GET(request: NextRequest) {
       success: true,
       data: projects || [],
       count: projects?.length || 0
+    }, {
+      headers: {
+        'Cache-Control': 'public, s-maxage=300, stale-while-revalidate=600'
+      }
     })
     
   } catch (error) {

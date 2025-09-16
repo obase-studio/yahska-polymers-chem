@@ -6,7 +6,6 @@ export interface Product {
   id: number;
   name: string;
   description: string;
-  price?: string;
   category_id: string;
   category_name?: string;
   applications: string[];
@@ -42,47 +41,26 @@ export interface ContentItem {
 
 // Helper function to parse JSON fields from products
 export function parseProductData(product: any): Product {
-  const safeParseJSON = (jsonData: any): string[] => {
-    if (!jsonData) return [];
-
-    // If it's already an array, return it
-    if (Array.isArray(jsonData)) {
-      return jsonData;
-    }
-
-    // If it's a string, try to parse it as JSON
-    if (typeof jsonData === "string") {
+  const normalizeArray = (input: any): string[] => {
+    if (!input) return [];
+    if (Array.isArray(input)) return input;
+    if (typeof input === "string") {
       try {
-        // Clean up the JSON string by removing carriage returns and fixing formatting
-        const cleanedString = jsonData.replace(/\r/g, "").replace(/\n/g, "");
-        return JSON.parse(cleanedString);
+        const parsed = JSON.parse(input);
+        return Array.isArray(parsed) ? parsed : [];
       } catch (error) {
-        console.warn("Failed to parse JSON field:", error);
-        // If JSON parsing fails, try to extract array-like content manually
-        if (jsonData.includes("[") && jsonData.includes("]")) {
-          try {
-            // Extract content between brackets and split by quotes
-            const content = jsonData.match(/\[(.*)\]/)?.[1];
-            if (content) {
-              return content
-                .split('","')
-                .map((item) => item.replace(/"/g, "").trim());
-            }
-          } catch (e) {
-            console.warn("Failed to manually parse array:", e);
-          }
-        }
         return [];
       }
     }
-
     return [];
   };
 
+  const { price: _price, ...productWithoutPrice } = product;
+
   return {
-    ...product,
-    applications: safeParseJSON(product.applications),
-    features: safeParseJSON(product.features),
+    ...productWithoutPrice,
+    applications: normalizeArray(product.applications),
+    features: normalizeArray(product.features),
   };
 }
 

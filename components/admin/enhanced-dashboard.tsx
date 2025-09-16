@@ -502,9 +502,12 @@ export function EnhancedDashboard({
                       </p>
                     </div>
                     <div className="flex items-center gap-2">
-                      <span className="text-sm font-medium text-muted-foreground">
-                        {product.price}
-                      </span>
+                      {product.applications && product.applications.length > 0 && (
+                        <span className="text-xs text-muted-foreground bg-muted px-2 py-1 rounded">
+                          {product.applications.slice(0, 2).join(", ")}
+                          {product.applications.length > 2 ? "…" : ""}
+                        </span>
+                      )}
                       <Button size="sm" variant="ghost">
                         <Eye className="h-4 w-4" />
                       </Button>

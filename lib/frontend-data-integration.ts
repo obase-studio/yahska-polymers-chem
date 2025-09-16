@@ -497,13 +497,7 @@ export class SEOManager {
           '@type': 'Brand',
           name: 'Yahska Polymers'
         },
-        category: product.category_name,
-        offers: product.price ? {
-          '@type': 'Offer',
-          price: product.price,
-          priceCurrency: 'INR',
-          availability: 'https://schema.org/InStock'
-        } : undefined
+        category: product.category_name
       }
     }
   }

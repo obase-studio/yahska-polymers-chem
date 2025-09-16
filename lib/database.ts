@@ -46,7 +46,6 @@ export function initDatabase() {
       id INTEGER PRIMARY KEY AUTOINCREMENT,
       name TEXT NOT NULL,
       description TEXT,
-      price TEXT,
       category_id TEXT NOT NULL,
       applications TEXT, -- JSON array
       features TEXT, -- JSON array
@@ -153,7 +152,7 @@ export const dbHelpers = {
     const db = getDatabase();
     const stmt = db.prepare(`
       UPDATE products SET 
-        name = ?, description = ?, price = ?, category_id = ?, 
+        name = ?, description = ?, category_id = ?, 
         applications = ?, features = ?, image_url = ?, 
         usage = ?, advantages = ?, technical_specifications = ?, 
         packaging_info = ?, safety_information = ?, product_code = ?,
@@ -163,7 +162,6 @@ export const dbHelpers = {
     return stmt.run(
       product.name,
       product.description,
-      product.price,
       product.category_id,
       JSON.stringify(product.applications || []),
       JSON.stringify(product.features || []),
@@ -189,7 +187,7 @@ export const dbHelpers = {
     const db = getDatabase();
     const stmt = db.prepare(`
       INSERT INTO products (
-        name, description, price, category_id, applications, features, 
+        name, description, category_id, applications, features, 
         image_url, usage, advantages, technical_specifications, 
         packaging_info, safety_information, product_code, specification_pdf
       ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
@@ -197,7 +195,6 @@ export const dbHelpers = {
     return stmt.run(
       product.name,
       product.description,
-      product.price,
       product.category_id,
       JSON.stringify(product.applications || []),
       JSON.stringify(product.features || []),

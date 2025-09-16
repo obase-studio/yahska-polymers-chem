@@ -20,25 +20,34 @@ export function Footer() {
   useEffect(() => {
     const fetchCategories = async () => {
       try {
-        const response = await fetch("/api/admin/categories");
+        const response = await fetch(
+          `/api/admin/categories?t=${Date.now()}`,
+          { cache: "no-store" }
+        );
         const result = await response.json();
 
         if (result.success && result.data) {
           const activeCategories = result.data
             .filter((cat: any) => cat.is_active)
-            .sort((a: any, b: any) => a.sort_order - b.sort_order)
+            .sort((a: any, b: any) => a.name.localeCompare(b.name))
             .slice(0, 6); // Show max 6 categories in footer
 
           setCategories(activeCategories);
+        } else {
+          setCategories([]);
         }
       } catch (error) {
         console.error("Error fetching categories:", error);
+        setCategories([]);
       }
     };
 
     const fetchCompanyProfileUrl = async () => {
       try {
-        const response = await fetch("/api/content?page=footer");
+        const response = await fetch(
+          `/api/content?page=footer&t=${Date.now()}`,
+          { cache: "no-store" }
+        );
         const result = await response.json();
 
         if (result.success && result.data.content) {
@@ -48,12 +57,13 @@ export function Footer() {
               item.section === "company_profile" &&
               item.content_key === "download_url"
           );
-          if (profileItem?.content_value) {
-            setCompanyProfileUrl(profileItem.content_value);
-          }
+          setCompanyProfileUrl(profileItem?.content_value || "");
+        } else {
+          setCompanyProfileUrl("");
         }
       } catch (error) {
         console.error("Error fetching company profile URL:", error);
+        setCompanyProfileUrl("");
       }
     };
 
@@ -103,14 +113,6 @@ export function Footer() {
                 </Link>
               </li>
               <li>
-                <Link
-                  href="/certifications"
-                  className="text-muted-foreground hover:text-primary transition-colors duration-200"
-                >
-                  Certifications
-                </Link>
-              </li>
-              <li>
                 {companyProfileUrl ? (
                   <Link
                     href={formatUrl(companyProfileUrl)}
@@ -121,9 +123,17 @@ export function Footer() {
                     Download Company Profile
                   </Link>
                 ) : (
-                  <span className="text-muted-foreground">
+                  <button
+                    type="button"
+                    onClick={() =>
+                      alert(
+                        "Contact admin@yahskapolymers.com for the latest version of company profile."
+                      )
+                    }
+                    className="text-muted-foreground hover:text-primary transition-colors duration-200 text-left"
+                  >
                     Download Company Profile
-                  </span>
+                  </button>
                 )}
               </li>
             </ul>

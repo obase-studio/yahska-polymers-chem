@@ -20,7 +20,6 @@ import {
 import Image from "next/image"
 import Link from "next/link"
 import { Footer } from "@/components/footer"
-import { Navigation } from "@/components/navigation"
 
 interface Project {
   id: number
@@ -119,7 +118,6 @@ export default function ProjectDetailPage() {
   if (loading) {
     return (
       <div className="min-h-screen bg-background">
-        <Navigation />
         <div className="container mx-auto px-4 py-8">
           <div className="text-center">
             <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-primary mx-auto"></div>
@@ -133,7 +131,6 @@ export default function ProjectDetailPage() {
   if (error || !project) {
     return (
       <div className="min-h-screen bg-background">
-        <Navigation />
         <div className="container mx-auto px-4 py-8">
           <div className="text-center">
             <AlertTriangle className="h-16 w-16 text-muted-foreground mx-auto mb-4" />
@@ -153,7 +150,6 @@ export default function ProjectDetailPage() {
 
   return (
     <div className="min-h-screen bg-background">
-      <Navigation />
       
       {/* Breadcrumb */}
       <section className="py-6 bg-muted/30">

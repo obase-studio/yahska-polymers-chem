@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Navigation } from "@/components/navigation";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Award, Users, Factory, Target, Eye } from "lucide-react";
@@ -141,17 +140,6 @@ export default function AboutPage() {
         item.section === "company_overview" && item.content_key === "content"
     )?.content_value || "";
 
-  const missionVision =
-    contentItems.find(
-      (item) =>
-        item.section === "mission_vision" && item.content_key === "content"
-    )?.content_value || "";
-
-  const qualityCommitment =
-    contentItems.find(
-      (item) =>
-        item.section === "quality_commitment" && item.content_key === "content"
-    )?.content_value || "";
 
   const experience =
     contentItems.find(
@@ -225,26 +213,54 @@ export default function AboutPage() {
 
   // Extract intro paragraph (first paragraph of overview)
   const introParagraph =
-    formattedOverview.find((item) => item.type === "paragraph")?.content ||
-    "Two decades of excellence in chemical manufacturing, serving industries with innovative solutions and unwavering commitment to quality.";
-
-  // Extract mission from mission_vision content or use default
-  const mission =
-    missionVision ||
-    "Our mission is to provide innovative chemical solutions that enhance construction quality and efficiency while maintaining the highest standards of safety and environmental responsibility.";
+    formattedOverview.find((item) => item.type === "paragraph")?.content || "";
 
   // Use dedicated "Our Story" content, fall back to experience if not available
-  const storyContent =
-    ourStory || experience || "Our story content will be available soon.";
+  const storyContent = ourStory || experience || "";
   const formattedStory = formatContent(storyContent);
-
-  // Format quality commitment content
-  const formattedCommitment = formatContent(qualityCommitment);
   // console.log(heroImageFromAPI);
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-background">
+
+        <section className="py-20 bg-gradient-to-br from-primary/10 to-accent/5">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="grid lg:grid-cols-2 gap-12 items-center">
+              <div className="space-y-4">
+                <div className="h-10 w-2/3 bg-muted rounded animate-pulse" />
+                <div className="h-4 w-full bg-muted rounded animate-pulse" />
+                <div className="h-4 w-5/6 bg-muted rounded animate-pulse" />
+                <div className="h-4 w-2/3 bg-muted rounded animate-pulse" />
+                <div className="h-12 w-40 bg-muted rounded animate-pulse" />
+              </div>
+              <div className="aspect-video bg-muted rounded-lg animate-pulse" />
+            </div>
+          </div>
+        </section>
+
+        <section className="py-20">
+          <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="h-8 w-48 mx-auto bg-muted rounded animate-pulse mb-10" />
+            <div className="space-y-3">
+              {Array.from({ length: 6 }).map((_, index) => (
+                <div
+                  key={index}
+                  className="h-4 bg-muted rounded animate-pulse w-full"
+                  style={{ width: `${80 - index * 5}%` }}
+                />
+              ))}
+            </div>
+          </div>
+        </section>
+
+        <Footer />
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-background">
-      <Navigation />
 
       {/* Hero Section */}
       <section className="py-20 bg-gradient-to-br from-primary/10 to-accent/5">
@@ -257,9 +273,17 @@ export default function AboutPage() {
               >
                 About Yahska Polymers
               </h1>
-              <p className="text-xl text-muted-foreground leading-relaxed">
-                {introParagraph}
-              </p>
+              {loading ? (
+                <div className="space-y-3">
+                  <div className="h-6 bg-muted/50 rounded animate-pulse"></div>
+                  <div className="h-6 bg-muted/50 rounded animate-pulse w-4/5"></div>
+                  <div className="h-6 bg-muted/50 rounded animate-pulse w-3/5"></div>
+                </div>
+              ) : introParagraph ? (
+                <p className="text-xl text-muted-foreground leading-relaxed">
+                  {introParagraph}
+                </p>
+              ) : null}
               {fetchError && (
                 <div className="mt-4 p-4 bg-red-100 text-red-800 rounded">
                   <strong>Debug Info:</strong> {fetchError}
@@ -273,7 +297,9 @@ export default function AboutPage() {
               )}
             </div>
             <div className="relative">
-              {heroType === "video" && heroVideoUrl ? (
+              {loading ? (
+                <div className="aspect-video rounded-lg bg-muted/50 animate-pulse shadow-2xl"></div>
+              ) : heroType === "video" && heroVideoUrl ? (
                 <div className="aspect-video rounded-lg overflow-hidden shadow-2xl">
                   {heroVideoUrl.includes("youtube.com") ||
                   heroVideoUrl.includes("youtu.be") ? (
@@ -309,16 +335,13 @@ export default function AboutPage() {
                     </video>
                   )}
                 </div>
-              ) : (
+              ) : heroImageFromAPI ? (
                 <img
-                  src={
-                    heroImageFromAPI ||
-                    "https://jlbwwbnatmmkcizqprdx.supabase.co/storage/v1/object/public/yahska-media/uploads/about-hero.webp"
-                  }
+                  src={heroImageFromAPI}
                   alt="Yahska Polymers Manufacturing Facility"
                   className="rounded-lg shadow-2xl w-full h-auto"
                 />
-              )}
+              ) : null}
             </div>
           </div>
         </div>
@@ -327,15 +350,26 @@ export default function AboutPage() {
       {/* Company Overview */}
       <section className="py-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid lg:grid-cols-2 gap-12 items-center">
-            <div>
-              <h2
-                className="text-3xl font-bold text-foreground mb-6"
-                style={{ fontFamily: "var(--font-heading)" }}
-              >
-                Our Story
-              </h2>
-              <div className="space-y-4 text-muted-foreground leading-relaxed">
+          <div className="text-center mb-12">
+            <h2
+              className="text-3xl font-bold text-foreground mb-6"
+              style={{ fontFamily: "var(--font-heading)" }}
+            >
+              Our Story
+            </h2>
+          </div>
+          <div className="max-w-4xl mx-auto">
+            {loading ? (
+              <div className="space-y-4">
+                <div className="h-4 bg-muted/50 rounded animate-pulse"></div>
+                <div className="h-4 bg-muted/50 rounded animate-pulse w-5/6"></div>
+                <div className="h-4 bg-muted/50 rounded animate-pulse w-4/5"></div>
+                <div className="h-4 bg-muted/50 rounded animate-pulse w-3/4"></div>
+                <div className="h-4 bg-muted/50 rounded animate-pulse w-4/5"></div>
+                <div className="h-4 bg-muted/50 rounded animate-pulse w-2/3"></div>
+              </div>
+            ) : storyContent ? (
+              <div className="space-y-4 text-muted-foreground leading-relaxed text-left">
                 {formattedStory.map((item, index) => (
                   <div key={index}>
                     {item.type === "paragraph" && <p>{item.content}</p>}
@@ -374,90 +408,13 @@ export default function AboutPage() {
                   </div>
                 ))}
               </div>
-            </div>
-            {/* <div>
-              {heroImageFromAPI ? (
-                <img
-                  src={heroImageFromAPI}
-                  alt="Yahska Polymers Manufacturing Facility"
-                  className="rounded-lg shadow-lg"
-                />
-              ) : (
-                <img
-                  src="/placeholder.svg?height=400&width=600"
-                  alt="Yahska Polymers Manufacturing Facility"
-                  className="rounded-lg shadow-lg"
-                />
-              )}
-            </div> */}
+            ) : null}
           </div>
         </div>
       </section>
 
-      {/* Quality Commitment */}
-      {qualityCommitment && (
-        <section className="py-20 bg-muted/50">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="text-center mb-12">
-              <h2
-                className="text-3xl font-bold text-foreground mb-4"
-                style={{ fontFamily: "var(--font-heading)" }}
-              >
-                Our Quality Commitment
-              </h2>
-            </div>
-            <div className="max-w-4xl mx-auto">
-              <div className="space-y-6 text-muted-foreground leading-relaxed">
-                {formattedCommitment.map((item, index) => (
-                  <div key={index}>
-                    {item.type === "paragraph" && (
-                      <p className="text-lg">{item.content}</p>
-                    )}
-                    {item.type === "bullets" && (
-                      <div>
-                        {item.title && (
-                          <h3 className="font-semibold text-foreground text-xl mb-4">
-                            {item.title}
-                          </h3>
-                        )}
-                        <ul className="list-disc list-inside space-y-2 ml-4">
-                          {item.items?.map((bullet, bulletIndex) => (
-                            <li key={bulletIndex} className="text-lg">
-                              {bullet}
-                            </li>
-                          ))}
-                        </ul>
-                      </div>
-                    )}
-                    {item.type === "checklist" && (
-                      <div>
-                        {item.title && (
-                          <h3 className="font-semibold text-foreground text-xl mb-4">
-                            {item.title}
-                          </h3>
-                        )}
-                        <div className="grid md:grid-cols-2 gap-4">
-                          {item.items?.map((checkItem, checkIndex) => (
-                            <div
-                              key={checkIndex}
-                              className="flex items-start gap-3 p-4 bg-background rounded-lg"
-                            >
-                              <span className="text-green-600 font-bold text-xl">
-                                ✓
-                              </span>
-                              <span className="text-lg">{checkItem}</span>
-                            </div>
-                          ))}
-                        </div>
-                      </div>
-                    )}
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
-        </section>
-      )}
+
+
 
       {/* {(lastUpdated || lastKnownTimestamp > 0) && (
         <div className="text-center py-2 bg-gray-50 text-xs text-gray-500">

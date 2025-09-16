@@ -26,7 +26,6 @@ async function testAdminPanel() {
     const productData = {
       name: "Test Superplasticizer",
       description: "High-performance concrete admixture for testing",
-      price: "₹75/Kg",
       category_id: "concrete",
       applications: ["Testing", "Development", "Quality Assurance"],
       features: ["High performance", "Easy to use", "Cost effective"],

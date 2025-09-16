@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from "react";
 import { useParams } from "next/navigation";
-import { Navigation } from "@/components/navigation";
 import {
   Card,
   CardContent,
@@ -185,7 +184,6 @@ export default function ProductDetailPage() {
   if (loading) {
     return (
       <div className="min-h-screen bg-background">
-        <Navigation />
         <div className="text-center py-20">
           <Loader2 className="h-8 w-8 animate-spin mx-auto mb-4 text-primary" />
           <p className="text-muted-foreground">Loading product details...</p>
@@ -198,7 +196,6 @@ export default function ProductDetailPage() {
   if (error || !product) {
     return (
       <div className="min-h-screen bg-background">
-        <Navigation />
         <div className="text-center py-20">
           <AlertCircle className="h-16 w-16 mx-auto mb-4 text-destructive" />
           <h1 className="text-2xl font-bold text-foreground mb-2">
@@ -224,7 +221,6 @@ export default function ProductDetailPage() {
 
   return (
     <div className="min-h-screen bg-background">
-      <Navigation />
 
       {/* Breadcrumb */}
       <section className="py-6 bg-muted/30">

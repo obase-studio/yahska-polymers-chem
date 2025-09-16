@@ -24,7 +24,6 @@ export const SAMPLE_PRODUCTS = [
   {
     name: 'Super Plasticizer SP-400',
     description: 'High-performance superplasticizer for concrete with excellent workability and strength enhancement',
-    price: 'Contact for pricing',
     category_id: 'admixtures',
     product_code: 'YP-SP-400',
     applications: ['High-strength concrete', 'Precast concrete', 'Ready-mix concrete', 'Infrastructure projects'],
@@ -39,7 +38,6 @@ export const SAMPLE_PRODUCTS = [
   {
     name: 'Retarding Admixture RT-300',
     description: 'Concrete retarding admixture for extended working time in hot weather conditions',
-    price: 'Contact for pricing',
     category_id: 'admixtures',
     product_code: 'YP-RT-300',
     applications: ['Hot weather concreting', 'Large pours', 'Transportation of ready-mix', 'Slip-form construction'],
@@ -56,7 +54,6 @@ export const SAMPLE_PRODUCTS = [
   {
     name: 'Crystalline Waterproofing CW-500',
     description: 'Penetrating crystalline waterproofing treatment for concrete structures',
-    price: 'Contact for pricing',
     category_id: 'waterproofing',
     product_code: 'YP-CW-500',
     applications: ['Basements', 'Water tanks', 'Swimming pools', 'Tunnels', 'Bridge decks'],
@@ -73,7 +70,6 @@ export const SAMPLE_PRODUCTS = [
   {
     name: 'Textile Dispersant TD-200',
     description: 'High-efficiency dispersing agent for textile dyeing processes',
-    price: 'Contact for pricing',
     category_id: 'textile',
     product_code: 'YP-TD-200',
     applications: ['Textile dyeing', 'Fabric processing', 'Color dispersion', 'Print paste preparation'],

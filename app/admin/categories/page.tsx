@@ -30,6 +30,17 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 
 interface Category {
   id: string;
@@ -108,12 +119,7 @@ export default function CategoriesPage() {
   };
 
   const handleDelete = async (categoryId: string) => {
-    if (
-      !confirm("Are you sure? This will affect all products in this category.")
-    ) {
-      return;
-    }
-
+    setLoading(true);
     try {
       const response = await fetch(`/api/admin/categories/${categoryId}`, {
         method: "DELETE",
@@ -127,6 +133,8 @@ export default function CategoriesPage() {
     } catch (error) {
       console.error("Error deleting category:", error);
       alert("Error deleting category");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -292,15 +300,10 @@ export default function CategoriesPage() {
                       <Edit className="h-4 w-4 mr-1" />
                       Edit
                     </Button>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => handleDelete(category.id)}
-                      className="text-destructive hover:text-destructive"
-                    >
-                      <Trash2 className="h-4 w-4 mr-1" />
-                      Delete
-                    </Button>
+                    <DeleteConfirmationButton
+                      disabled={loading}
+                      onConfirm={() => handleDelete(category.id)}
+                    />
                   </div>
                 </div>
                 <div className="mt-4 text-xs text-muted-foreground bg-muted/30 px-3 py-2 rounded">
@@ -471,4 +474,57 @@ export default function CategoriesPage() {
       </Dialog>
     </div>
   );
+}
+
+function DeleteConfirmationButton({
+  onConfirm,
+  disabled,
+}: {
+  onConfirm: () => Promise<void>
+  disabled?: boolean
+}) {
+  const [isDeleting, setIsDeleting] = useState(false)
+
+  const handleConfirm = async () => {
+    setIsDeleting(true)
+    try {
+      await onConfirm()
+    } finally {
+      setIsDeleting(false)
+    }
+  }
+
+  return (
+    <AlertDialog>
+      <AlertDialogTrigger asChild>
+        <Button
+          variant="outline"
+          size="sm"
+          disabled={disabled}
+          className="text-destructive hover:text-destructive"
+        >
+          <Trash2 className="h-4 w-4 mr-1" />
+          Delete
+        </Button>
+      </AlertDialogTrigger>
+      <AlertDialogContent>
+        <AlertDialogHeader>
+          <AlertDialogTitle>Delete Category</AlertDialogTitle>
+          <AlertDialogDescription>
+            This action will permanently delete the category and cannot be undone.
+          </AlertDialogDescription>
+        </AlertDialogHeader>
+        <AlertDialogFooter>
+          <AlertDialogCancel>Cancel</AlertDialogCancel>
+          <AlertDialogAction
+            onClick={handleConfirm}
+            disabled={isDeleting}
+            className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+          >
+            {isDeleting ? "Deleting..." : "Delete"}
+          </AlertDialogAction>
+        </AlertDialogFooter>
+      </AlertDialogContent>
+    </AlertDialog>
+  )
 }

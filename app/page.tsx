@@ -1,7 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { Navigation } from "@/components/navigation";
+import { useState, useEffect, useMemo } from "react";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -38,6 +37,7 @@ interface CategoryImageProps {
   categoryName: string;
   categoryImageUrl?: string;
   categoryImages: Record<string, string>;
+  categoryImagesReady: boolean;
 }
 
 // Project Category Image Component
@@ -52,6 +52,7 @@ function CategoryImage({
   categoryName,
   categoryImageUrl,
   categoryImages,
+  categoryImagesReady,
 }: CategoryImageProps) {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
@@ -60,8 +61,29 @@ function CategoryImage({
 
   const imageUrl = categoryImages[categoryId];
 
-  // Try to fetch a product image for this category if no category image
+  const finalImageUrl = useMemo(() => {
+    if (!categoryImagesReady) {
+      // Wait for CMS-provided images before falling back to older assets
+      return imageUrl || null;
+    }
+    return imageUrl || categoryImageUrl || productImage;
+  }, [categoryImageUrl, imageUrl, productImage, categoryImagesReady]);
+
+  // Try to fetch a product image for this category only after CMS images resolve
   useEffect(() => {
+    if (categoryImageUrl || imageUrl) {
+      if (productImage !== null) {
+        setProductImage(null);
+      }
+      return;
+    }
+
+    if (!categoryImagesReady) {
+      return;
+    }
+
+    let isMounted = true;
+
     const fetchProductImage = async () => {
       try {
         const response = await fetch(
@@ -71,7 +93,7 @@ function CategoryImage({
           const data = await response.json();
           if (data.success && data.data.products.length > 0) {
             const product = data.data.products[0];
-            if (product.image_url) {
+            if (product.image_url && isMounted) {
               setProductImage(product.image_url);
             }
           }
@@ -81,10 +103,27 @@ function CategoryImage({
       }
     };
 
-    if (!imageUrl && !categoryImageUrl) {
-      fetchProductImage();
+    fetchProductImage();
+
+    return () => {
+      isMounted = false;
+    };
+  }, [
+    categoryId,
+    categoryName,
+    categoryImageUrl,
+    imageUrl,
+    categoryImagesReady,
+  ]);
+
+  useEffect(() => {
+    if (!finalImageUrl) {
+      return;
     }
-  }, [categoryId, categoryName, imageUrl, categoryImageUrl]);
+    setLoading(true);
+    setError(false);
+    setRetryCount(0);
+  }, [finalImageUrl]);
 
   const handleLoad = () => {
     setLoading(false);
@@ -125,8 +164,6 @@ function CategoryImage({
 
   const CategoryIcon = getCategoryIcon(categoryName);
   // Priority: categoryImageUrl (from database) > imageUrl (from old system) > productImage (fallback)
-  const finalImageUrl = categoryImageUrl || imageUrl || productImage;
-
   if (!finalImageUrl) {
     return (
       <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-primary/5 to-accent/5">
@@ -169,6 +206,9 @@ function CategoryImage({
     );
   }
 
+  const retrySeparator = finalImageUrl.includes("?") ? "&" : "?";
+  const imageSrc = `${finalImageUrl}${retrySeparator}retry=${retryCount}`;
+
   return (
     <div className="relative w-full h-full group">
       {loading && (
@@ -180,7 +220,7 @@ function CategoryImage({
         </div>
       )}
       <img
-        src={`${finalImageUrl}?retry=${retryCount}`}
+        src={imageSrc}
         alt={categoryName}
         className={`w-full h-full object-cover group-hover:scale-105 transition-transform duration-300 ${
           loading ? "opacity-0" : "opacity-100"
@@ -288,6 +328,9 @@ function ProjectCategoryImage({
     );
   }
 
+  const retrySeparator = categoryImageUrl.includes("?") ? "&" : "?";
+  const imageSrc = `${categoryImageUrl}${retrySeparator}retry=${retryCount}`;
+
   return (
     <div className="relative w-full h-full group">
       {loading && (
@@ -299,7 +342,7 @@ function ProjectCategoryImage({
         </div>
       )}
       <img
-        src={`${categoryImageUrl}?retry=${retryCount}`}
+        src={imageSrc}
         alt={categoryName}
         className={`w-full h-full object-cover group-hover:scale-105 transition-transform duration-300 ${
           loading ? "opacity-0" : "opacity-100"
@@ -319,6 +362,7 @@ export default function HomePage() {
   const [categoryImages, setCategoryImages] = useState<Record<string, string>>(
     {}
   );
+  const [categoryImagesReady, setCategoryImagesReady] = useState(false);
   const [categories, setCategories] = useState<any[]>([]);
   const [projectCategories, setProjectCategories] = useState<any[]>([]);
   const [clientLogos, setClientLogos] = useState<any[]>([]);
@@ -329,8 +373,9 @@ export default function HomePage() {
   // Fetch content and images from API
   useEffect(() => {
     const fetchContent = async () => {
+      setLoading(true);
       try {
-        setLoading(true);
+        setCategoryImagesReady(false);
         const [homeResponse, categoriesResponse, projectCategoriesResponse] =
           await Promise.all([
             fetch("/api/content?page=home"),
@@ -364,74 +409,70 @@ export default function HomePage() {
           setProjectCategories(activeProjectCategories);
         }
 
-        // Load category images
-        const categoryImagePromises = [
-          { category: "construction", section: "construction_image" },
-          { category: "concrete", section: "concrete_image" },
-          { category: "textile", section: "textile_image" },
-          { category: "dyestuff", section: "dyestuff_image" },
-        ].map(async ({ category, section }) => {
-          const response = await fetch(
-            `/api/admin/page-images?page=home&section=${section}`
-          );
-          if (response.ok) {
-            const data = await response.json();
-            if (data?.media_files?.file_path) {
-              return { category, url: data.media_files.file_path };
+        const loadCategoryImages = async () => {
+          const categoryImagePromises = [
+            { category: "construction", section: "construction_image" },
+            { category: "concrete", section: "concrete_image" },
+            { category: "textile", section: "textile_image" },
+            { category: "dyestuff", section: "dyestuff_image" },
+          ].map(async ({ category, section }) => {
+            const response = await fetch(
+              `/api/admin/page-images?page=home&section=${section}`
+            );
+            if (response.ok) {
+              const data = await response.json();
+              if (data?.media_files?.file_path) {
+                return { category, url: data.media_files.file_path };
+              }
             }
+            return null;
+          });
+
+          const categoryResults = await Promise.all(categoryImagePromises);
+          const categoryImageMap: Record<string, string> = {};
+          categoryResults.forEach((result) => {
+            if (result) {
+              categoryImageMap[result.category] = result.url;
+            }
+          });
+          setCategoryImages(categoryImageMap);
+          setCategoryImagesReady(true);
+        };
+
+        const loadLogos = async () => {
+          try {
+            const clientLogosResponse = await fetch("/api/client-logos");
+            if (clientLogosResponse.ok) {
+              const clientLogosData = await clientLogosResponse.json();
+              const filteredLogos = clientLogosData.filter(
+                (logo: any) =>
+                  logo.filename !== "17.Raj Infrastructure – Pkg 13.jpg"
+              );
+              setClientLogos(filteredLogos);
+            }
+          } catch (error) {
+            console.error("Error fetching client logos:", error);
           }
-          return null;
+
+          try {
+            const approvalLogosResponse = await fetch("/api/approval-logos");
+            if (approvalLogosResponse.ok) {
+              const approvalLogosData = await approvalLogosResponse.json();
+              setApprovalLogos(approvalLogosData);
+            }
+          } catch (error) {
+            console.error("Error fetching approval logos:", error);
+          }
+        };
+
+        loadCategoryImages().catch((error) => {
+          console.error("Error loading category images:", error);
+          setCategoryImagesReady(true);
         });
-
-        const categoryResults = await Promise.all(categoryImagePromises);
-        const categoryImageMap: Record<string, string> = {};
-        categoryResults.forEach((result) => {
-          if (result) {
-            categoryImageMap[result.category] = result.url;
-          }
-        });
-        setCategoryImages(categoryImageMap);
-
-        // Fetch client logos
-        try {
-          const clientLogosResponse = await fetch("/api/client-logos");
-          if (clientLogosResponse.ok) {
-            const clientLogosData = await clientLogosResponse.json();
-            console.log(
-              "Client logos loaded successfully:",
-              clientLogosData.length,
-              "logos"
-            );
-            const filteredLogos = clientLogosData.filter(
-              (logo: any) =>
-                logo.filename !== "17.Raj Infrastructure – Pkg 13.jpg"
-            );
-            // Use URLs directly from API as they're already properly encoded
-            setClientLogos(filteredLogos); // Show max 12 client logos
-          }
-        } catch (error) {
-          console.error("Error fetching client logos:", error);
-        }
-
-        // Fetch approval logos
-        try {
-          const approvalLogosResponse = await fetch("/api/approval-logos");
-          if (approvalLogosResponse.ok) {
-            const approvalLogosData = await approvalLogosResponse.json();
-            console.log(
-              "Approval logos loaded successfully:",
-              approvalLogosData.length,
-              "logos"
-            );
-
-            // Use URLs directly from API as they should be properly encoded
-            setApprovalLogos(approvalLogosData); // Show max 8 approval logos
-          }
-        } catch (error) {
-          console.error("Error fetching approval logos:", error);
-        }
+        loadLogos();
       } catch (err) {
         console.error("Error fetching home content:", err);
+        setCategoryImagesReady(true);
       } finally {
         setLoading(false);
       }
@@ -444,13 +485,12 @@ export default function HomePage() {
   const heroHeadline =
     contentItems.find(
       (item) => item.section === "hero" && item.content_key === "headline"
-    )?.content_value || "Leading Chemical Solutions for Industrial Excellence!";
+    )?.content_value || "";
 
   const heroDescription =
     contentItems.find(
       (item) => item.section === "hero" && item.content_key === "description"
-    )?.content_value ||
-    "Yahska Polymers Pvt Ltd is a leading construction chemicals manufacturer based in Ahmedabad, proudly serving the Indian construction industry with innovative and reliable solutions for over two decades.";
+    )?.content_value || "";
 
   // Get hero media type and content
   const heroType =
@@ -470,72 +510,71 @@ export default function HomePage() {
     contentItems.find(
       (item) =>
         item.section === "product_categories" && item.content_key === "title"
-    )?.content_value || "Our Product Categories";
+    )?.content_value || "";
 
   const productCategoriesDescription =
     contentItems.find(
       (item) =>
         item.section === "product_categories" &&
         item.content_key === "description"
-    )?.content_value ||
-    "Comprehensive chemical solutions across multiple industries with uncompromising quality standards";
+    )?.content_value || "";
 
   const projectCategoriesTitle =
     contentItems.find(
       (item) =>
         item.section === "project_categories" && item.content_key === "title"
-    )?.content_value || "Our Project Categories";
+    )?.content_value || "";
 
   const projectCategoriesDescription =
     contentItems.find(
       (item) =>
         item.section === "project_categories" &&
         item.content_key === "description"
-    )?.content_value ||
-    "Diverse infrastructure and construction projects showcasing our expertise across major industry sectors";
+    )?.content_value || "";
 
   const keyCustomersTitle =
     contentItems.find(
       (item) => item.section === "key_customers" && item.content_key === "title"
-    )?.content_value || "Key Customers";
+    )?.content_value || "";
 
   const keyCustomersDescription =
     contentItems.find(
       (item) =>
         item.section === "key_customers" && item.content_key === "description"
-    )?.content_value ||
-    "Leading companies that trust us for their chemical solutions";
+    )?.content_value || "";
 
   const keyApprovalsTitle =
     contentItems.find(
       (item) => item.section === "key_approvals" && item.content_key === "title"
-    )?.content_value || "Key Approvals & Certifications";
+    )?.content_value || "";
 
   const keyApprovalsDescription =
     contentItems.find(
       (item) =>
         item.section === "key_approvals" && item.content_key === "description"
-    )?.content_value ||
-    "Recognized and approved by leading authorities across India";
+    )?.content_value || "";
 
   return (
     <div className="min-h-screen bg-background">
-      <Navigation />
 
       {/* Hero Section */}
       <section className="relative bg-gradient-to-br from-primary/10 to-accent/5 py-20 lg:py-32">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid lg:grid-cols-2 gap-12 items-center">
             <div>
-              <h1
-                className="text-4xl lg:text-6xl font-black text-foreground mb-6"
-                style={{ fontFamily: "var(--font-heading)" }}
-              >
-                {heroHeadline}
-              </h1>
-              <p className="text-xl text-muted-foreground mb-8 leading-relaxed">
-                {heroDescription}
-              </p>
+              {heroHeadline && (
+                <h1
+                  className="text-4xl lg:text-6xl font-black text-foreground mb-6"
+                  style={{ fontFamily: "var(--font-heading)" }}
+                >
+                  {heroHeadline}
+                </h1>
+              )}
+              {heroDescription && (
+                <p className="text-xl text-muted-foreground mb-8 leading-relaxed">
+                  {heroDescription}
+                </p>
+              )}
               <div className="flex flex-col sm:flex-row gap-4">
                 <Button
                   asChild
@@ -589,15 +628,14 @@ export default function HomePage() {
                     </video>
                   )}
                 </div>
-              ) : (
+              ) : heroImageFromAPI ? (
                 <img
-                  src={
-                    heroImageFromAPI ||
-                    "https://jlbwwbnatmmkcizqprdx.supabase.co/storage/v1/object/public/yahska-media/uploads/home.webp"
-                  }
+                  src={heroImageFromAPI}
                   alt="Yahska Polymers Manufacturing Facility"
-                  className="rounded-lg shadow-2xl"
+                  className="rounded-lg shadow-2xl object-cover w-full"
                 />
+              ) : (
+                <div className="aspect-video rounded-lg bg-gradient-to-br from-primary/10 to-accent/10 shadow-2xl" />
               )}
             </div>
           </div>
@@ -632,15 +670,19 @@ export default function HomePage() {
       <section className="py-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
-            <h2
-              className="text-3xl lg:text-4xl font-bold text-foreground mb-4"
-              style={{ fontFamily: "var(--font-heading)" }}
-            >
-              {productCategoriesTitle}
-            </h2>
-            <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
-              {productCategoriesDescription}
-            </p>
+            {productCategoriesTitle && (
+              <h2
+                className="text-3xl lg:text-4xl font-bold text-foreground mb-4"
+                style={{ fontFamily: "var(--font-heading)" }}
+              >
+                {productCategoriesTitle}
+              </h2>
+            )}
+            {productCategoriesDescription && (
+              <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
+                {productCategoriesDescription}
+              </p>
+            )}
           </div>
 
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
@@ -673,6 +715,7 @@ export default function HomePage() {
                       categoryName={category.name}
                       categoryImageUrl={category.image_url}
                       categoryImages={categoryImages}
+                      categoryImagesReady={categoryImagesReady}
                     />
                     {/* Overlay */}
                     <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors duration-300" />
@@ -730,15 +773,19 @@ export default function HomePage() {
       <section className="py-20 bg-muted/50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
-            <h2
-              className="text-3xl lg:text-4xl font-bold text-foreground mb-4"
-              style={{ fontFamily: "var(--font-heading)" }}
-            >
-              {projectCategoriesTitle}
-            </h2>
-            <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
-              {projectCategoriesDescription}
-            </p>
+            {projectCategoriesTitle && (
+              <h2
+                className="text-3xl lg:text-4xl font-bold text-foreground mb-4"
+                style={{ fontFamily: "var(--font-heading)" }}
+              >
+                {projectCategoriesTitle}
+              </h2>
+            )}
+            {projectCategoriesDescription && (
+              <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
+                {projectCategoriesDescription}
+              </p>
+            )}
           </div>
 
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">

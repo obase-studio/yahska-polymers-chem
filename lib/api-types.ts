@@ -34,14 +34,11 @@ export interface SearchParams {
 export interface ProductSearchParams extends SearchParams, PaginationParams {
   category?: string
   isActive?: boolean
-  priceMin?: number
-  priceMax?: number
 }
 
 export interface ProductCreateRequest {
   name: string
   description?: string
-  price?: string
   category_id: string
   applications?: string[]
   features?: string[]

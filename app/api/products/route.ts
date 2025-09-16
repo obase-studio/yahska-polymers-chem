@@ -25,19 +25,16 @@ export async function GET(request: NextRequest) {
       );
     }
     
-    return NextResponse.json({ 
-      success: true, 
-      data: { 
-        products, 
-        categories, 
-        total: products.length 
-      } 
+    return NextResponse.json({
+      success: true,
+      data: {
+        products,
+        categories,
+        total: products.length,
+      },
     }, {
       headers: {
-        'Cache-Control': 'no-store, no-cache, must-revalidate, proxy-revalidate',
-        'Pragma': 'no-cache',
-        'Expires': '0',
-        'Surrogate-Control': 'no-store'
+        'Cache-Control': 'public, s-maxage=300, stale-while-revalidate=600',
       }
     });
   } catch (error: any) {

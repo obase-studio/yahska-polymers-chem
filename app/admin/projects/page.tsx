@@ -1,11 +1,22 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, type ReactNode } from "react"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Plus, Edit, Trash2, Building2, Calendar, Users, MapPin } from "lucide-react"
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog"
 
 interface Project {
   id: number
@@ -47,15 +58,13 @@ export default function ProjectsAdmin() {
   }
 
   const deleteProject = async (id: number) => {
-    if (!confirm('Are you sure you want to delete this project?')) return
-    
     try {
       const response = await fetch(`/api/admin/projects/${id}`, {
         method: 'DELETE',
       })
-      
+
       if (response.ok) {
-        await fetchProjects() // Refresh the list
+        await fetchProjects()
       } else {
         alert('Failed to delete project')
       }
@@ -151,15 +160,12 @@ export default function ProjectsAdmin() {
                         Edit
                       </Link>
                     </Button>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => deleteProject(project.id)}
-                      className="text-destructive hover:text-destructive"
-                    >
-                      <Trash2 className="h-4 w-4 mr-1" />
-                      Delete
-                    </Button>
+                    <DeleteDialog
+                      triggerLabel="Delete"
+                      onConfirm={() => deleteProject(project.id)}
+                      icon={<Trash2 className="h-4 w-4 mr-1" />}
+                      description="This action will permanently delete the project and cannot be undone."
+                    />
                   </div>
                 </div>
               </CardHeader>
@@ -207,5 +213,56 @@ export default function ProjectsAdmin() {
         )}
       </div>
     </div>
+  )
+}
+
+interface DeleteDialogProps {
+  triggerLabel: string
+  onConfirm: () => Promise<void>
+  icon?: ReactNode
+  description: string
+}
+
+function DeleteDialog({ triggerLabel, onConfirm, icon, description }: DeleteDialogProps) {
+  const [isDeleting, setIsDeleting] = useState(false)
+
+  const handleConfirm = async () => {
+    setIsDeleting(true)
+    try {
+      await onConfirm()
+    } finally {
+      setIsDeleting(false)
+    }
+  }
+
+  return (
+    <AlertDialog>
+      <AlertDialogTrigger asChild>
+        <Button
+          variant="outline"
+          size="sm"
+          className="text-destructive hover:text-destructive"
+        >
+          {icon}
+          {triggerLabel}
+        </Button>
+      </AlertDialogTrigger>
+      <AlertDialogContent>
+        <AlertDialogHeader>
+          <AlertDialogTitle>Delete Project</AlertDialogTitle>
+          <AlertDialogDescription>{description}</AlertDialogDescription>
+        </AlertDialogHeader>
+        <AlertDialogFooter>
+          <AlertDialogCancel>Cancel</AlertDialogCancel>
+          <AlertDialogAction
+            onClick={handleConfirm}
+            disabled={isDeleting}
+            className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+          >
+            {isDeleting ? 'Deleting...' : 'Delete'}
+          </AlertDialogAction>
+        </AlertDialogFooter>
+      </AlertDialogContent>
+    </AlertDialog>
   )
 }

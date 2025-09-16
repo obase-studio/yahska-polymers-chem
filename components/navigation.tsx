@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Menu, X, ChevronDown } from "lucide-react";
@@ -12,57 +12,61 @@ import {
   DropdownMenuSeparator,
 } from "@/components/ui/dropdown-menu";
 import { useProductContext } from "@/contexts/ProductContext";
+import { useRouter } from "next/navigation";
 
 interface Category {
   id: string;
   name: string;
 }
 
-export function Navigation() {
+interface ProjectCategory {
+  id: string;
+  name: string;
+}
+
+interface NavigationProps {
+  categories: Category[];
+  projectCategories: ProjectCategory[];
+  branding: {
+    logoUrl: string | null;
+    companyName: string;
+  };
+}
+
+export function Navigation({
+  categories,
+  projectCategories,
+  branding,
+}: NavigationProps) {
   const [isOpen, setIsOpen] = useState(false);
-  const [categories, setCategories] = useState<Category[]>([]);
   const [dropdownOpen, setDropdownOpen] = useState(false);
-  const { selectedCategory, setSelectedCategory } = useProductContext();
+  const [projectDropdownOpen, setProjectDropdownOpen] = useState(false);
+  const { setSelectedCategory } = useProductContext();
+  const { logoUrl, companyName } = branding;
+  const router = useRouter();
 
   const toggleMenu = () => setIsOpen(!isOpen);
 
   const handleCategorySelect = (categoryId: string) => {
     setSelectedCategory(categoryId);
     setDropdownOpen(false);
-    // Navigate to products page with category parameter
-    window.location.href = `/products?category=${categoryId}`;
+    if (isOpen) setIsOpen(false);
+    const target =
+      categoryId === "all"
+        ? "/products"
+        : `/products?category=${categoryId}`;
+    router.push(target);
   };
 
-  useEffect(() => {
-    // Fetch categories from API
-    const fetchCategories = async () => {
-      try {
-        const response = await fetch("/api/admin/categories");
-        const result = await response.json();
-
-        if (result.success && result.data) {
-          // Filter active categories and sort by sort_order
-          const activeCategories = result.data
-            .filter((cat: any) => cat.is_active)
-            .sort((a: any, b: any) => a.sort_order - b.sort_order)
-            .slice(0, 8); // Show max 8 categories in dropdown
-
-          setCategories(activeCategories);
-        }
-      } catch (error) {
-        console.error("Error fetching categories:", error);
-        // Fallback to static categories
-        setCategories([
-          { id: "admixtures", name: "Admixtures" },
-          { id: "accelerators", name: "Accelerators" },
-          { id: "waterproofing", name: "Waterproofing" },
-          { id: "grouts", name: "Grouts" },
-        ]);
-      }
-    };
-
-    fetchCategories();
-  }, []);
+  const goToProjectCategory = (categoryId: string | "all") => {
+    setProjectDropdownOpen(false);
+    if (isOpen) setIsOpen(false);
+    const target =
+      categoryId === "all"
+        ? "/projects"
+        : `/projects?category=${categoryId}`;
+    router.push(target);
+  };
 
   return (
     <nav className="sticky top-0 z-50 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 border-b border-border">
@@ -70,9 +74,16 @@ export function Navigation() {
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
           <div className="flex-shrink-0">
-            <Link href="/" className="flex items-center">
+            <Link href="/" className="flex items-center gap-3">
+              {logoUrl && (
+                <img
+                  src={logoUrl}
+                  alt="Yahska Polymers logo"
+                  className="h-9 w-auto"
+                />
+              )}
               <div className="text-2xl font-bold text-primary">
-                Yahska Polymers
+                {companyName}
               </div>
             </Link>
           </div>
@@ -113,12 +124,33 @@ export function Navigation() {
                 </DropdownMenuContent>
               </DropdownMenu>
 
-              <Link
-                href="/projects"
-                className="text-foreground hover:text-primary px-3 py-2 text-sm font-medium transition-colors duration-200"
+              <DropdownMenu
+                open={projectDropdownOpen}
+                onOpenChange={setProjectDropdownOpen}
               >
-                Projects
-              </Link>
+                <DropdownMenuTrigger className="flex items-center text-foreground hover:text-primary px-3 py-2 text-sm font-medium transition-colors duration-200">
+                  Projects
+                  <ChevronDown className="ml-1 h-4 w-4" />
+                </DropdownMenuTrigger>
+                <DropdownMenuContent className="w-56">
+                  {projectCategories.map((category) => (
+                    <DropdownMenuItem
+                      key={category.id}
+                      onClick={() => goToProjectCategory(category.id)}
+                      className="cursor-pointer"
+                    >
+                      {category.name}
+                    </DropdownMenuItem>
+                  ))}
+                  {projectCategories.length > 0 && <DropdownMenuSeparator />}
+                  <DropdownMenuItem
+                    onClick={() => goToProjectCategory("all")}
+                    className="cursor-pointer font-semibold text-primary hover:text-primary/80"
+                  >
+                    See All
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
               <Link
                 href="/clients"
                 className="text-foreground hover:text-primary px-3 py-2 text-sm font-medium transition-colors duration-200"
@@ -178,7 +210,6 @@ export function Navigation() {
                       className="text-muted-foreground hover:text-primary hover:bg-muted block px-3 py-2 rounded-md text-sm transition-all duration-200"
                       onClick={() => {
                         handleCategorySelect(category.id);
-                        toggleMenu();
                       }}
                     >
                       {category.name}
@@ -190,7 +221,6 @@ export function Navigation() {
                       className="text-primary hover:text-primary/80 font-semibold hover:bg-muted block px-3 py-2 rounded-md text-sm transition-all duration-200"
                       onClick={() => {
                         handleCategorySelect("all");
-                        toggleMenu();
                       }}
                     >
                       See All
@@ -199,13 +229,40 @@ export function Navigation() {
                 </div>
               </div>
 
-              <Link
-                href="/projects"
-                className="text-foreground hover:text-primary hover:bg-muted block px-3 py-3 rounded-md text-base font-medium transition-all duration-200"
-                onClick={toggleMenu}
-              >
-                Projects
-              </Link>
+              <div className="space-y-1">
+                <Link
+                  href="/projects"
+                  className="text-foreground hover:text-primary hover:bg-muted block px-3 py-3 rounded-md text-base font-medium transition-all duration-200"
+                  onClick={toggleMenu}
+                >
+                  Projects
+                </Link>
+                <div className="pl-4 space-y-1">
+                  {projectCategories.map((category) => (
+                    <Link
+                      key={category.id}
+                      href="/projects"
+                      className="text-muted-foreground hover:text-primary hover:bg-muted block px-3 py-2 rounded-md text-sm transition-all duration-200"
+                      onClick={() => {
+                        goToProjectCategory(category.id);
+                      }}
+                    >
+                      {category.name}
+                    </Link>
+                  ))}
+                  {projectCategories.length > 0 && (
+                    <Link
+                      href="/projects"
+                      className="text-primary hover:text-primary/80 font-semibold hover:bg-muted block px-3 py-2 rounded-md text-sm transition-all duration-200"
+                      onClick={() => {
+                        goToProjectCategory("all");
+                      }}
+                    >
+                      See All
+                    </Link>
+                  )}
+                </div>
+              </div>
               <Link
                 href="/clients"
                 className="text-foreground hover:text-primary hover:bg-muted block px-3 py-3 rounded-md text-base font-medium transition-all duration-200"

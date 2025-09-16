@@ -2,7 +2,6 @@
 
 import { useState, useEffect, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
-import { Navigation } from "@/components/navigation";
 import {
   Card,
   CardContent,
@@ -206,20 +205,43 @@ function ProjectsPageContent() {
   if (loading) {
     return (
       <div className="min-h-screen bg-background">
-        <Navigation />
-        <div className="flex items-center justify-center min-h-[60vh]">
-          <div className="text-center">
-            <Loader2 className="h-8 w-8 animate-spin mx-auto mb-4" />
-            <p className="text-muted-foreground">Loading projects...</p>
+        <section className="py-20 bg-gradient-to-br from-primary/10 to-accent/5">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="text-center space-y-4">
+              <div className="h-10 w-72 mx-auto bg-muted rounded animate-pulse" />
+              <div className="h-4 w-3/4 mx-auto bg-muted rounded animate-pulse" />
+              <div className="h-4 w-2/3 mx-auto bg-muted rounded animate-pulse" />
+            </div>
           </div>
-        </div>
+        </section>
+
+        <section className="py-12">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {Array.from({ length: 6 }).map((_, index) => (
+                <div
+                  key={index}
+                  className="border border-border rounded-lg overflow-hidden"
+                >
+                  <div className="aspect-video bg-muted animate-pulse" />
+                  <div className="p-6 space-y-3">
+                    <div className="h-5 w-3/5 bg-muted rounded animate-pulse" />
+                    <div className="h-4 w-full bg-muted rounded animate-pulse" />
+                    <div className="h-4 w-2/3 bg-muted rounded animate-pulse" />
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        <Footer />
       </div>
     );
   }
 
   return (
     <div className="min-h-screen bg-background">
-      <Navigation />
 
       {/* Hero Section */}
       <section className="py-20 bg-gradient-to-br from-primary/10 to-accent/5">

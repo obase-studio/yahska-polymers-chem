@@ -25,16 +25,14 @@ export async function GET(request: NextRequest) {
       ? Math.max(...content.map(item => new Date(item.updated_at || 0).getTime()))
       : 0;
     
-    return NextResponse.json({ 
-      success: true, 
+    return NextResponse.json({
+      success: true,
       data: { content },
       lastUpdated: lastUpdated,
       timestamp: new Date().toISOString()
     }, {
       headers: {
-        'Cache-Control': 'no-store, no-cache, must-revalidate',
-        'Pragma': 'no-cache',
-        'Expires': '0'
+        'Cache-Control': 'public, s-maxage=120, stale-while-revalidate=300'
       }
     });
   } catch (error: any) {

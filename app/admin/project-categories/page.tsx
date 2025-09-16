@@ -31,6 +31,17 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 
 interface ProjectCategory {
   id: string;
@@ -111,9 +122,6 @@ export default function ProjectCategoriesPage() {
   };
 
   const handleDelete = async (id: string) => {
-    if (!confirm("Are you sure you want to delete this project category?"))
-      return;
-
     setLoading(true);
     try {
       const response = await fetch(`/api/admin/project-categories/${id}`, {
@@ -471,16 +479,10 @@ export default function ProjectCategoriesPage() {
                   <Edit className="h-4 w-4 mr-1" />
                   Edit
                 </Button>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => handleDelete(category.id)}
+                <ProjectCategoryDeleteButton
                   disabled={loading}
-                  className="text-destructive hover:text-destructive h-8"
-                >
-                  <Trash2 className="h-4 w-4 mr-1" />
-                  Delete
-                </Button>
+                  onConfirm={() => handleDelete(category.id)}
+                />
               </div>
             </CardContent>
           </Card>
@@ -506,4 +508,57 @@ export default function ProjectCategoriesPage() {
       )}
     </div>
   );
+}
+
+function ProjectCategoryDeleteButton({
+  onConfirm,
+  disabled,
+}: {
+  onConfirm: () => Promise<void>
+  disabled?: boolean
+}) {
+  const [isDeleting, setIsDeleting] = useState(false)
+
+  const handleConfirm = async () => {
+    setIsDeleting(true)
+    try {
+      await onConfirm()
+    } finally {
+      setIsDeleting(false)
+    }
+  }
+
+  return (
+    <AlertDialog>
+      <AlertDialogTrigger asChild>
+        <Button
+          variant="outline"
+          size="sm"
+          disabled={disabled}
+          className="text-destructive hover:text-destructive h-8"
+        >
+          <Trash2 className="h-4 w-4 mr-1" />
+          Delete
+        </Button>
+      </AlertDialogTrigger>
+      <AlertDialogContent>
+        <AlertDialogHeader>
+          <AlertDialogTitle>Delete Project Category</AlertDialogTitle>
+          <AlertDialogDescription>
+            This action will permanently delete the project category and cannot be undone.
+          </AlertDialogDescription>
+        </AlertDialogHeader>
+        <AlertDialogFooter>
+          <AlertDialogCancel>Cancel</AlertDialogCancel>
+          <AlertDialogAction
+            onClick={handleConfirm}
+            disabled={isDeleting}
+            className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+          >
+            {isDeleting ? "Deleting..." : "Delete"}
+          </AlertDialogAction>
+        </AlertDialogFooter>
+      </AlertDialogContent>
+    </AlertDialog>
+  )
 }

@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Navigation } from "@/components/navigation";
 import { Footer } from "@/components/footer";
 import { AutoScrollLogos } from "@/components/auto-scroll-logos";
 import { ContentItem } from "@/lib/database-client";
@@ -118,7 +117,6 @@ export default function ClientsPage() {
 
   return (
     <div className="min-h-screen bg-background">
-      <Navigation />
 
       {/* Page Header */}
       <section className="py-20 bg-gradient-to-br from-primary/10 to-accent/5">

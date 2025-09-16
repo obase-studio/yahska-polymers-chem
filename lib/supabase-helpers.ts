@@ -69,10 +69,22 @@ export const supabaseHelpers = {
       .from("products")
       .select(
         `
-        *,
-        product_categories (
-          name
-        )
+        id,
+        name,
+        description,
+        category_id,
+        applications,
+        features,
+        image_url,
+        usage,
+        advantages,
+        technical_specifications,
+        packaging_info,
+        safety_information,
+        product_code,
+        specification_pdf,
+        is_active,
+        product_categories!products_category_id_fkey ( name )
       `
       )
       .eq("is_active", true)
@@ -93,7 +105,21 @@ export const supabaseHelpers = {
       .from("products")
       .select(
         `
-        *,
+        id,
+        name,
+        description,
+        category_id,
+        applications,
+        features,
+        image_url,
+        usage,
+        advantages,
+        technical_specifications,
+        packaging_info,
+        safety_information,
+        product_code,
+        specification_pdf,
+        is_active,
         product_categories!products_category_id_fkey(name)
       `
       )
@@ -193,9 +219,9 @@ export const supabaseHelpers = {
   getAllCategories: async () => {
     const { data, error } = await supabase
       .from("product_categories")
-      .select("*")
+      .select("id, name, description, image_url, sort_order, is_active")
       .eq("is_active", true)
-      .order("sort_order");
+      .order("name");
 
     if (error) throw error;
     return data || [];
@@ -206,12 +232,17 @@ export const supabaseHelpers = {
       .from("product_categories")
       .select(
         `
-        *,
+        id,
+        name,
+        description,
+        image_url,
+        sort_order,
+        is_active,
         products (count)
       `
       )
       .eq("is_active", true)
-      .order("sort_order");
+      .order("name");
 
     if (error) throw error;
 
@@ -226,7 +257,7 @@ export const supabaseHelpers = {
   getCategoryById: async (id: string) => {
     const { data, error } = await supabase
       .from("product_categories")
-      .select("*")
+      .select("id, name, description, image_url, sort_order, is_active")
       .eq("id", id)
       .single();
 
@@ -306,7 +337,6 @@ export const supabaseHelpers = {
       .from("client_testimonials")
       .select("*")
       .eq("is_active", true)
-      .order("sort_order")
       .order("id");
 
     if (error) throw error;
@@ -530,7 +560,6 @@ export const supabaseHelpers = {
       `
       )
       .eq("is_active", true)
-      .order("sort_order")
       .order("updated_at", { ascending: false });
 
     if (error) throw error;
@@ -543,7 +572,7 @@ export const supabaseHelpers = {
       .from("clients")
       .select("*")
       .eq("is_active", true)
-      .order("sort_order");
+      .order("name");
 
     if (error) throw error;
     return data || [];
@@ -555,7 +584,7 @@ export const supabaseHelpers = {
       .from("approvals")
       .select("*")
       .eq("is_active", true)
-      .order("sort_order");
+      .order("name");
 
     if (error) throw error;
     return data || [];
@@ -565,9 +594,9 @@ export const supabaseHelpers = {
   getAllProjectCategories: async () => {
     const { data, error } = await supabase
       .from("project_categories")
-      .select("*")
+      .select("id, name, description, icon_url, sort_order, is_active")
       .eq("is_active", true)
-      .order("sort_order");
+      .order("name");
 
     if (error) throw error;
     return data || [];
