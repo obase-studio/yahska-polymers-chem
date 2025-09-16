@@ -58,7 +58,7 @@ export function ProductForm({ categories: initialCategories, product, isEdit = f
         if (result.success && result.data) {
           const activeCategories = result.data
             .filter((cat: any) => cat.is_active)
-            .sort((a: any, b: any) => a.sort_order - b.sort_order);
+            .sort((a: any, b: any) => a.name.localeCompare(b.name));
           setCategories(activeCategories);
         }
       } catch (error) {

@@ -461,10 +461,6 @@ export default function ProjectsPage() {
                           </div>
                         )}
                         
-                        {/* Hover overlay with quick info */}
-                        <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-primary/80 to-transparent p-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                          <p className="text-white text-sm font-medium">Professional Grade Solutions</p>
-                        </div>
                       </div>
                       <CardContent className="p-6 flex-1 flex flex-col">
                         <div className="flex-1 space-y-3">

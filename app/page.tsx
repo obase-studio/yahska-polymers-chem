@@ -160,7 +160,7 @@ export default function HomePage() {
         if (categoriesResult.success && categoriesResult.data) {
           const activeCategories = categoriesResult.data
             .filter((cat: any) => cat.is_active)
-            .sort((a: any, b: any) => a.sort_order - b.sort_order)
+            .sort((a: any, b: any) => a.name.localeCompare(b.name))
             .slice(0, 4); // Show max 4 categories on homepage
           setCategories(activeCategories);
 

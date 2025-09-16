@@ -39,10 +39,10 @@ export function Navigation() {
         const result = await response.json();
 
         if (result.success && result.data) {
-          // Filter active categories and sort by sort_order
+          // Filter active categories and sort by name
           const activeCategories = result.data
             .filter((cat: any) => cat.is_active)
-            .sort((a: any, b: any) => a.sort_order - b.sort_order)
+            .sort((a: any, b: any) => a.name.localeCompare(b.name))
             .slice(0, 8); // Show max 8 categories in dropdown
 
           setCategories(activeCategories);

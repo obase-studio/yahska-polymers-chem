@@ -448,10 +448,6 @@ export default function ProductsPage() {
                             </h3>
                           </div>
 
-                          {/* Hover overlay with quick info */}
-                          <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-primary/80 to-transparent p-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                            <p className="text-white text-sm font-medium">Industrial Grade Quality</p>
-                          </div>
                         </div>
 
                         <CardContent className="p-6">
