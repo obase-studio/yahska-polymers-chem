@@ -24,7 +24,8 @@
       "Bash(git merge:*)",
       "Bash(git push:*)",
       "WebFetch(domain:atplgroup.in)",
-      "Bash(git pull:*)"
+      "Bash(git pull:*)",
+      "Bash(lsof:*)"
     ],
     "deny": [],
     "ask": []

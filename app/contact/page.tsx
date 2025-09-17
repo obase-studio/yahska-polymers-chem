@@ -38,43 +38,26 @@ export default function ContactPage() {
     e.preventDefault();
     setIsSubmitting(true);
 
-    try {
-      const response = await fetch("/api/contact", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(formData),
-      });
+    // Simulate form submission
+    await new Promise((resolve) => setTimeout(resolve, 2000));
 
-      const result = await response.json();
+    console.log("Form submitted:", formData);
+    alert(
+      "Thank you for your inquiry! Please contact us directly at admin@yahskapolymers.com or call +91-8890913222 for immediate assistance."
+    );
 
-      if (response.ok) {
-        alert(
-          "Thank you for your inquiry! We have received your message and will get back to you within 24 hours."
-        );
+    // Reset form
+    setFormData({
+      name: "",
+      email: "",
+      phone: "",
+      company: "",
+      industry: "",
+      inquiryType: "",
+      message: "",
+    });
 
-        // Reset form on success
-        setFormData({
-          name: "",
-          email: "",
-          phone: "",
-          company: "",
-          industry: "",
-          inquiryType: "",
-          message: "",
-        });
-      } else {
-        throw new Error(result.error || "Failed to send message");
-      }
-    } catch (error) {
-      console.error("Error submitting form:", error);
-      alert(
-        "Sorry, there was an error sending your message. Please try again or contact us directly at admin@yahskapolymers.com"
-      );
-    } finally {
-      setIsSubmitting(false);
-    }
+    setIsSubmitting(false);
   };
 
   return (
