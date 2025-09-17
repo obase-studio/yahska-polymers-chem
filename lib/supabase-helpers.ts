@@ -138,7 +138,7 @@ export const supabaseHelpers = {
     // Add category_name to the product data
     const productWithCategory = {
       ...data,
-      category_name: data.product_categories?.name || data.category_id,
+      category_name: (data.product_categories as any)?.name || data.category_id,
     };
 
     return parseProductData(productWithCategory);
