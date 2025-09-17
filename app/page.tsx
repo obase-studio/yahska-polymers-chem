@@ -848,7 +848,7 @@ export default function HomePage() {
 
       {/* Client Logos Ribbon */}
       <AutoScrollLogos
-        logos={clientLogos.slice(0, 12)}
+        logos={clientLogos}
         title={keyCustomersTitle}
         description={keyCustomersDescription}
         className="bg-muted/30"
@@ -856,7 +856,7 @@ export default function HomePage() {
 
       {/* Approval Logos Ribbon */}
       <AutoScrollLogos
-        logos={approvalLogos.slice(0, 8)}
+        logos={approvalLogos}
         title={keyApprovalsTitle}
         description={keyApprovalsDescription}
         className="bg-background"

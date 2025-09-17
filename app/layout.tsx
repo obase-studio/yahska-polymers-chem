@@ -4,7 +4,7 @@ import { Montserrat, Open_Sans } from "next/font/google";
 import "./globals.css";
 import { ProductProvider } from "@/contexts/ProductContext";
 import { supabaseHelpers } from "@/lib/supabase-helpers";
-import { Navigation } from "@/components/navigation";
+import { NavigationWrapper } from "@/components/navigation-wrapper";
 
 const montserrat = Montserrat({
   subsets: ["latin"],
@@ -81,7 +81,7 @@ export default async function RootLayout({
       </head>
       <body className="font-sans antialiased">
         <ProductProvider>
-          <Navigation
+          <NavigationWrapper
             categories={categories}
             projectCategories={projectCategories}
             branding={branding}
