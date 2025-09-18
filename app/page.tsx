@@ -6,14 +6,11 @@ import {
   Card,
   CardContent,
   CardDescription,
-  CardHeader,
   CardTitle,
 } from "@/components/ui/card";
 import {
   ArrowRight,
   Award,
-  Users,
-  Globe,
   CheckCircle,
   Building2,
   Palette,
@@ -62,12 +59,9 @@ function CategoryImage({
   const imageUrl = categoryImages[categoryId];
 
   const finalImageUrl = useMemo(() => {
-    if (!categoryImagesReady) {
-      // Wait for CMS-provided images before falling back to older assets
-      return imageUrl || null;
-    }
-    return imageUrl || categoryImageUrl || productImage;
-  }, [categoryImageUrl, imageUrl, productImage, categoryImagesReady]);
+    // Always prioritize the category's own image_url since page_images is empty
+    return categoryImageUrl || imageUrl || productImage;
+  }, [categoryImageUrl, imageUrl, productImage]);
 
   // Try to fetch a product image for this category only after CMS images resolve
   useEffect(() => {
@@ -236,10 +230,9 @@ function CategoryImage({
 }
 
 function ProjectCategoryImage({
-  categoryId,
   categoryName,
   categoryImageUrl,
-}: ProjectCategoryImageProps) {
+}: Omit<ProjectCategoryImageProps, 'categoryId'>) {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
   const [retryCount, setRetryCount] = useState(0);
@@ -367,119 +360,47 @@ export default function HomePage() {
   const [projectCategories, setProjectCategories] = useState<any[]>([]);
   const [clientLogos, setClientLogos] = useState<any[]>([]);
   const [approvalLogos, setApprovalLogos] = useState<any[]>([]);
-  const [videoData, setVideoData] = useState<any>(null);
-  const [loading, setLoading] = useState(true);
+  const [, setLoading] = useState(true);
 
-  // Fetch content and images from API
+  // Fetch all homepage data from optimized endpoint
   useEffect(() => {
-    const fetchContent = async () => {
+    const fetchHomepageData = async () => {
       setLoading(true);
+      setCategoryImagesReady(false);
+
       try {
-        setCategoryImagesReady(false);
-        const [homeResponse, categoriesResponse, projectCategoriesResponse] =
-          await Promise.all([
-            fetch("/api/content?page=home"),
-            fetch("/api/admin/categories"),
-            fetch("/api/admin/project-categories"),
-          ]);
+        const response = await fetch("/api/homepage-data");
+        const result = await response.json();
 
-        const homeResult = await homeResponse.json();
-        const categoriesResult = await categoriesResponse.json();
-        const projectCategoriesResult = await projectCategoriesResponse.json();
+        if (result.success) {
+          const {
+            content,
+            categories,
+            projectCategories,
+            clientLogos,
+            approvalLogos,
+            categoryImages
+          } = result.data;
 
-        if (homeResult.success) {
-          setContentItems(homeResult.data.content);
-        }
-
-        // Set categories
-        if (categoriesResult.success && categoriesResult.data) {
-          const activeCategories = categoriesResult.data
-            .filter((cat: any) => cat.is_active)
-            .sort((a: any, b: any) => a.sort_order - b.sort_order)
-            .slice(0, 4); // Show max 4 categories on homepage
-          setCategories(activeCategories);
-        }
-
-        // Set project categories
-        if (projectCategoriesResult.success && projectCategoriesResult.data) {
-          const activeProjectCategories = projectCategoriesResult.data
-            .filter((cat: any) => cat.is_active)
-            .sort((a: any, b: any) => a.sort_order - b.sort_order)
-            .slice(0, 4); // Show max 4 project categories on homepage
-          setProjectCategories(activeProjectCategories);
-        }
-
-        const loadCategoryImages = async () => {
-          const categoryImagePromises = [
-            { category: "construction", section: "construction_image" },
-            { category: "concrete", section: "concrete_image" },
-            { category: "textile", section: "textile_image" },
-            { category: "dyestuff", section: "dyestuff_image" },
-          ].map(async ({ category, section }) => {
-            const response = await fetch(
-              `/api/admin/page-images?page=home&section=${section}`
-            );
-            if (response.ok) {
-              const data = await response.json();
-              if (data?.media_files?.file_path) {
-                return { category, url: data.media_files.file_path };
-              }
-            }
-            return null;
-          });
-
-          const categoryResults = await Promise.all(categoryImagePromises);
-          const categoryImageMap: Record<string, string> = {};
-          categoryResults.forEach((result) => {
-            if (result) {
-              categoryImageMap[result.category] = result.url;
-            }
-          });
-          setCategoryImages(categoryImageMap);
+          // Set all data at once
+          setContentItems(content);
+          setCategories(categories);
+          setProjectCategories(projectCategories);
+          setClientLogos(clientLogos);
+          setApprovalLogos(approvalLogos);
+          setCategoryImages(categoryImages);
           setCategoryImagesReady(true);
-        };
-
-        const loadLogos = async () => {
-          try {
-            const clientLogosResponse = await fetch("/api/client-logos");
-            if (clientLogosResponse.ok) {
-              const clientLogosData = await clientLogosResponse.json();
-              const filteredLogos = clientLogosData.filter(
-                (logo: any) =>
-                  logo.filename !== "17.Raj Infrastructure – Pkg 13.jpg"
-              );
-              setClientLogos(filteredLogos);
-            }
-          } catch (error) {
-            console.error("Error fetching client logos:", error);
-          }
-
-          try {
-            const approvalLogosResponse = await fetch("/api/approval-logos");
-            if (approvalLogosResponse.ok) {
-              const approvalLogosData = await approvalLogosResponse.json();
-              setApprovalLogos(approvalLogosData);
-            }
-          } catch (error) {
-            console.error("Error fetching approval logos:", error);
-          }
-        };
-
-        loadCategoryImages().catch((error) => {
-          console.error("Error loading category images:", error);
-          setCategoryImagesReady(true);
-        });
-        loadLogos();
-      } catch (err) {
-        console.error("Error fetching home content:", err);
-        setCategoryImagesReady(true);
+        }
+      } catch (error) {
+        console.error("Error fetching homepage data:", error);
       } finally {
         setLoading(false);
       }
     };
 
-    fetchContent();
+    fetchHomepageData();
   }, []);
+
 
   // Get content values from new structure
   const heroHeadline =
@@ -686,23 +607,7 @@ export default function HomePage() {
           </div>
 
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
-            {categories.map((category, index) => {
-              // Get unique icon for each category based on name
-              const getCategoryIcon = (name: string) => {
-                if (name.toLowerCase().includes("admixture")) return Package;
-                if (name.toLowerCase().includes("accelerator")) return Zap;
-                if (name.toLowerCase().includes("waterproofing"))
-                  return Building2;
-                if (name.toLowerCase().includes("grout")) return Wrench;
-                if (name.toLowerCase().includes("curing")) return CheckCircle;
-                if (name.toLowerCase().includes("micro silica")) return Factory;
-                if (name.toLowerCase().includes("floor")) return Building2;
-                if (name.toLowerCase().includes("structural")) return Building2;
-                if (name.toLowerCase().includes("corrosion")) return Award;
-                if (name.toLowerCase().includes("release")) return Truck;
-                return Package;
-              };
-              const CategoryIcon = getCategoryIcon(category.name);
+            {categories.map((category) => {
 
               return (
                 <Card
@@ -797,7 +702,6 @@ export default function HomePage() {
                 >
                   <div className="aspect-video overflow-hidden bg-gradient-to-br from-primary/5 to-accent/5 relative">
                     <ProjectCategoryImage
-                      categoryId={category.id}
                       categoryName={category.name}
                       categoryImageUrl={category.icon_url}
                     />

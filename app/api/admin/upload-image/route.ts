@@ -61,13 +61,37 @@ export async function POST(request: NextRequest) {
       .from("yahska-media")
       .getPublicUrl(fileName);
 
+    // Save media file record to database
+    const { data: mediaFile, error: dbError } = await supabaseAdmin
+      .from("media_files")
+      .insert({
+        filename: fileName,
+        original_name: file.name,
+        file_path: urlData.publicUrl,
+        file_size: file.size,
+        mime_type: file.type,
+        alt_text: file.name.replace(/\.[^/.]+$/, ""), // Remove extension for alt text
+        uploaded_at: new Date().toISOString(),
+      })
+      .select()
+      .single();
+
+    if (dbError) {
+      console.error("Database insert error:", dbError);
+      // File was uploaded to storage but failed to save to database
+      // We'll still return success but log the error
+      console.warn("File uploaded to storage but not saved to database:", dbError);
+    }
+
     return NextResponse.json({
       success: true,
       data: {
         filename: fileName,
         url: urlData.publicUrl,
+        file_path: urlData.publicUrl,
         size: file.size,
         originalName: file.name,
+        mediaFile: mediaFile,
       },
     });
   } catch (error: any) {

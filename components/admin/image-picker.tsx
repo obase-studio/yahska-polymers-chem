@@ -248,22 +248,31 @@ export function ImagePicker({
       if (response.ok) {
         const result = await response.json();
         if (result.success) {
+          // Auto-select the newly uploaded image
+          const uploadedImageUrl = result.data.url || result.data.file_path;
+          setSelectedImage(uploadedImageUrl);
           // Refresh media files list
           await fetchMediaFiles();
-          // Auto-select the newly uploaded image
-          setSelectedImage(result.data.file_path);
-          setTimeout(() => setUploadProgress(0), 1000);
+          setTimeout(() => {
+            setUploadProgress(0);
+            setUploading(false);
+          }, 1000);
         } else {
           alert(result.error || "Failed to upload image");
         }
       } else {
-        alert("Failed to upload image");
+        const errorData = await response.json().catch(() => ({ error: 'Unknown error' }));
+        alert(errorData.error || "Failed to upload image");
       }
     } catch (error) {
       console.error("Error uploading image:", error);
       alert("Error uploading image");
     } finally {
-      setUploading(false);
+      // Reset states
+      setTimeout(() => {
+        setUploading(false);
+        setUploadProgress(0);
+      }, 1500);
       // Reset file input
       event.target.value = "";
     }

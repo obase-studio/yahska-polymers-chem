@@ -282,15 +282,19 @@ export default function CategoriesPage() {
                 </div>
               </CardHeader>
               <CardContent className="px-8 pb-8">
+                <div className="mb-6 text-sm text-muted-foreground bg-muted/30 px-3 py-2 rounded">
+                  Order: {category.sort_order}
+                </div>
                 <div className="flex items-center justify-between">
-                  <div className="flex items-baseline gap-3">
+                  {/* <div className="flex items-baseline gap-3">
                     <span className="text-2xl font-bold text-primary">
                       {category.product_count || 0}
                     </span>
                     <span className="text-sm text-muted-foreground font-medium">
                       product{(category.product_count || 0) !== 1 ? "s" : ""}
                     </span>
-                  </div>
+                  </div> */}
+                  
                   <div className="flex gap-3 flex-shrink-0">
                     <Button
                       variant="outline"
@@ -306,9 +310,7 @@ export default function CategoriesPage() {
                     />
                   </div>
                 </div>
-                <div className="mt-4 text-xs text-muted-foreground bg-muted/30 px-3 py-2 rounded">
-                  Sort order: {category.sort_order}
-                </div>
+                
               </CardContent>
             </Card>
           );

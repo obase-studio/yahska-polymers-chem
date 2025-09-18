@@ -436,12 +436,12 @@ export default function ProjectCategoriesPage() {
                   </div>
                   <div>
                     <div className="text-lg font-semibold">{category.name}</div>
-                    <Badge
+                    {/* <Badge
                       variant={category.is_active ? "default" : "secondary"}
                       className="mt-2 px-3 py-1"
                     >
                       {category.is_active ? "Active" : "Inactive"}
-                    </Badge>
+                    </Badge> */}
                   </div>
                 </div>
               </CardTitle>
@@ -453,15 +453,15 @@ export default function ProjectCategoriesPage() {
               <div className="mb-6">
                 <div className="text-sm text-muted-foreground bg-muted/30 px-4 py-3 rounded-lg">
                   Order: {category.sort_order}
-                  {category.project_count !== undefined && (
+                  {/* {category.project_count !== undefined && (
                     <span className="ml-2">
                       • Projects: {category.project_count}
                     </span>
-                  )}
+                  )} */}
                 </div>
               </div>
               <div className="flex gap-2 flex-wrap">
-                <Button
+                {/* <Button
                   variant="outline"
                   size="sm"
                   onClick={() => handleToggleActive(category)}
@@ -469,7 +469,7 @@ export default function ProjectCategoriesPage() {
                   className="h-8"
                 >
                   {category.is_active ? "Deactivate" : "Activate"}
-                </Button>
+                </Button> */}
                 <Button
                   variant="outline"
                   size="sm"
