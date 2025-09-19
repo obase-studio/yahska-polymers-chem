@@ -51,7 +51,7 @@ export function AutoScrollLogos({
   // Calculate consistent scroll speed: each logo should take ~2.5 seconds to pass
   const logoWidth = 200; // 180px width + 20px gap
   const speedPerLogo = 2.5; // seconds per logo
-  const animationDuration = logos.length * speedPerLogo;
+  const animationDuration = Math.max(logos.length * speedPerLogo, speedPerLogo * 4);
 
   return (
     <section className={`py-12 ${className}`}>
@@ -79,7 +79,7 @@ export function AutoScrollLogos({
             {duplicatedLogos.map((logo, index) => (
               <Card
                 key={`${logo.id}-${index}`}
-                className="flex-shrink-0 hover:shadow-lg transition-all duration-300 hover:scale-105 bg-background border border-border/50"
+                className="flex-shrink-0 bg-background border border-border/50"
                 style={{ width: "180px" }}
               >
                 <CardContent className="p-6 flex items-center justify-center h-24">
@@ -93,26 +93,20 @@ export function AutoScrollLogos({
                           ""
                         )
                       }
-                      className="max-w-full max-h-full object-contain filter grayscale hover:grayscale-0 transition-all duration-300"
+                      className="max-w-full max-h-full object-contain"
                       onError={(e) => {
                         console.log("Image failed to load:", logo.file_path, e);
-                        // Fallback to company name text
+                        // Fallback to company name text when image is unavailable
                         const target = e.target as HTMLImageElement;
                         target.style.display = "none";
                         const parent = target.parentElement;
                         if (parent) {
-                          parent.innerHTML = `<div class="text-xs text-center text-muted-foreground p-2">${logo.original_name.replace(
+                          parent.innerHTML = `<div class=\"text-xs text-center text-muted-foreground p-2\">${logo.original_name.replace(
                             /\.(jpg|jpeg|png|webp|svg)$/i,
                             ""
                           )}</div>`;
                         }
                       }}
-                      // onLoad={() =>
-                      //   console.log(
-                      //     "Image loaded successfully:",
-                      //     logo.original_name
-                      //   )
-                      // }
                     />
                   </div>
                 </CardContent>

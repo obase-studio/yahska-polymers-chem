@@ -41,16 +41,34 @@ export function Navigation({
   const [isOpen, setIsOpen] = useState(false);
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [projectDropdownOpen, setProjectDropdownOpen] = useState(false);
+  const [mobileProductsOpen, setMobileProductsOpen] = useState(false);
+  const [mobileProjectsOpen, setMobileProjectsOpen] = useState(false);
   const { setSelectedCategory } = useProductContext();
   const { logoUrl, companyName } = branding;
   const router = useRouter();
 
-  const toggleMenu = () => setIsOpen(!isOpen);
+  const closeMobileMenu = () => {
+    setIsOpen(false);
+    setMobileProductsOpen(false);
+    setMobileProjectsOpen(false);
+  };
+
+  const toggleMenu = () => {
+    setIsOpen((prev) => {
+      if (prev) {
+        setMobileProductsOpen(false);
+        setMobileProjectsOpen(false);
+      }
+      return !prev;
+    });
+  };
 
   const handleCategorySelect = (categoryId: string) => {
     setSelectedCategory(categoryId);
     setDropdownOpen(false);
-    if (isOpen) setIsOpen(false);
+    if (isOpen) {
+      closeMobileMenu();
+    }
     const target =
       categoryId === "all"
         ? "/products"
@@ -60,7 +78,9 @@ export function Navigation({
 
   const goToProjectCategory = (categoryId: string | "all") => {
     setProjectDropdownOpen(false);
-    if (isOpen) setIsOpen(false);
+    if (isOpen) {
+      closeMobileMenu();
+    }
     const target =
       categoryId === "all"
         ? "/projects"
@@ -195,73 +215,97 @@ export function Navigation({
               </Link>
 
               <div className="space-y-1">
-                <Link
-                  href="/products"
-                  className="text-foreground hover:text-primary hover:bg-muted block px-3 py-3 rounded-md text-base font-medium transition-all duration-200"
-                  onClick={toggleMenu}
+                <button
+                  type="button"
+                  onClick={() => setMobileProductsOpen((prev) => !prev)}
+                  aria-expanded={mobileProductsOpen}
+                  aria-controls="mobile-products-list"
+                  className="w-full flex items-center justify-between text-foreground hover:text-primary hover:bg-muted px-3 py-3 rounded-md text-base font-medium transition-all duration-200"
                 >
-                  Products
-                </Link>
-                <div className="pl-4 space-y-1">
-                  {categories.map((category) => (
-                    <Link
-                      key={category.id}
-                      href="/products"
-                      className="text-muted-foreground hover:text-primary hover:bg-muted block px-3 py-2 rounded-md text-sm transition-all duration-200"
-                      onClick={() => {
-                        handleCategorySelect(category.id);
-                      }}
-                    >
-                      {category.name}
-                    </Link>
-                  ))}
-                  {categories.length > 0 && (
-                    <Link
-                      href="/products"
-                      className="text-primary hover:text-primary/80 font-semibold hover:bg-muted block px-3 py-2 rounded-md text-sm transition-all duration-200"
-                      onClick={() => {
-                        handleCategorySelect("all");
-                      }}
-                    >
-                      See All
-                    </Link>
-                  )}
-                </div>
+                  <span>Products</span>
+                  <ChevronDown
+                    className={`h-4 w-4 transition-transform ${
+                      mobileProductsOpen ? "rotate-180" : ""
+                    }`}
+                  />
+                </button>
+                {mobileProductsOpen && (
+                  <div
+                    id="mobile-products-list"
+                    className="pl-4 space-y-1"
+                  >
+                    {categories.map((category) => (
+                      <Link
+                        key={category.id}
+                        href="/products"
+                        className="text-muted-foreground hover:text-primary hover:bg-muted block px-3 py-2 rounded-md text-sm transition-all duration-200"
+                        onClick={() => {
+                          handleCategorySelect(category.id);
+                        }}
+                      >
+                        {category.name}
+                      </Link>
+                    ))}
+                    {categories.length > 0 && (
+                      <Link
+                        href="/products"
+                        className="text-primary hover:text-primary/80 font-semibold hover:bg-muted block px-3 py-2 rounded-md text-sm transition-all duration-200"
+                        onClick={() => {
+                          handleCategorySelect("all");
+                        }}
+                      >
+                        See All Products
+                      </Link>
+                    )}
+                  </div>
+                )}
               </div>
 
               <div className="space-y-1">
-                <Link
-                  href="/projects"
-                  className="text-foreground hover:text-primary hover:bg-muted block px-3 py-3 rounded-md text-base font-medium transition-all duration-200"
-                  onClick={toggleMenu}
+                <button
+                  type="button"
+                  onClick={() => setMobileProjectsOpen((prev) => !prev)}
+                  aria-expanded={mobileProjectsOpen}
+                  aria-controls="mobile-projects-list"
+                  className="w-full flex items-center justify-between text-foreground hover:text-primary hover:bg-muted px-3 py-3 rounded-md text-base font-medium transition-all duration-200"
                 >
-                  Projects
-                </Link>
-                <div className="pl-4 space-y-1">
-                  {projectCategories.map((category) => (
-                    <Link
-                      key={category.id}
-                      href="/projects"
-                      className="text-muted-foreground hover:text-primary hover:bg-muted block px-3 py-2 rounded-md text-sm transition-all duration-200"
-                      onClick={() => {
-                        goToProjectCategory(category.id);
-                      }}
-                    >
-                      {category.name}
-                    </Link>
-                  ))}
-                  {projectCategories.length > 0 && (
-                    <Link
-                      href="/projects"
-                      className="text-primary hover:text-primary/80 font-semibold hover:bg-muted block px-3 py-2 rounded-md text-sm transition-all duration-200"
-                      onClick={() => {
-                        goToProjectCategory("all");
-                      }}
-                    >
-                      See All
-                    </Link>
-                  )}
-                </div>
+                  <span>Projects</span>
+                  <ChevronDown
+                    className={`h-4 w-4 transition-transform ${
+                      mobileProjectsOpen ? "rotate-180" : ""
+                    }`}
+                  />
+                </button>
+                {mobileProjectsOpen && (
+                  <div
+                    id="mobile-projects-list"
+                    className="pl-4 space-y-1"
+                  >
+                    {projectCategories.map((category) => (
+                      <Link
+                        key={category.id}
+                        href="/projects"
+                        className="text-muted-foreground hover:text-primary hover:bg-muted block px-3 py-2 rounded-md text-sm transition-all duration-200"
+                        onClick={() => {
+                          goToProjectCategory(category.id);
+                        }}
+                      >
+                        {category.name}
+                      </Link>
+                    ))}
+                    {projectCategories.length > 0 && (
+                      <Link
+                        href="/projects"
+                        className="text-primary hover:text-primary/80 font-semibold hover:bg-muted block px-3 py-2 rounded-md text-sm transition-all duration-200"
+                        onClick={() => {
+                          goToProjectCategory("all");
+                        }}
+                      >
+                        See All Projects
+                      </Link>
+                    )}
+                  </div>
+                )}
               </div>
               <Link
                 href="/clients"

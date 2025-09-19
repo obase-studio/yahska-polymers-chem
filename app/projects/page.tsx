@@ -19,12 +19,12 @@ import {
   Building2,
   Train,
   Factory,
-  Award,
-  Users,
   MapPin,
   Loader2,
   RefreshCw,
+  Users,
 } from "lucide-react";
+import type { LucideIcon } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { Footer } from "@/components/footer";
@@ -48,13 +48,47 @@ interface Project {
   sort_order: number;
 }
 
-const projectCategories = [
-  { id: "bullet-train", name: "High Speed Rail", icon: Train },
-  { id: "metro-rail", name: "Metro & Rail", icon: Train },
-  { id: "roads", name: "Roads & Highways", icon: MapPin },
-  { id: "buildings-factories", name: "Buildings & Factories", icon: Building2 },
-  { id: "others", name: "Other Projects", icon: Factory },
-];
+interface ProjectCategoryItem {
+  id: string;
+  name: string;
+  description?: string;
+  icon_url?: string;
+  sort_order?: number;
+  icon: LucideIcon;
+}
+
+const normalizeCategoryId = (value: string) =>
+  value
+    .toLowerCase()
+    .trim()
+    .replace(/_/g, "-")
+    .replace(/\s+/g, "-");
+
+const getDefaultIconForCategory = (id: string, name: string): LucideIcon => {
+  const normalized = normalizeCategoryId(id || name);
+
+  if (normalized.includes("bullet") || normalized.includes("high-speed")) {
+    return Train;
+  }
+
+  if (normalized.includes("metro") || normalized.includes("rail")) {
+    return Train;
+  }
+
+  if (normalized.includes("road") || normalized.includes("highway")) {
+    return MapPin;
+  }
+
+  if (normalized.includes("factory") || normalized.includes("building")) {
+    return Building2;
+  }
+
+  if (normalized.includes("industrial") || normalized.includes("plant")) {
+    return Factory;
+  }
+
+  return Building2;
+};
 
 function ProjectsPageContent() {
   const [projectOverview, setProjectOverview] = useState("");
@@ -64,6 +98,7 @@ function ProjectsPageContent() {
   const [selectedCategory, setSelectedCategory] = useState("all");
   const [error, setError] = useState<string | null>(null);
   const [refreshing, setRefreshing] = useState(false);
+  const [projectCategories, setProjectCategories] = useState<ProjectCategoryItem[]>([]);
 
   const searchParams = useSearchParams();
 
@@ -82,13 +117,15 @@ function ProjectsPageContent() {
     const fetchData = async () => {
       try {
         setLoading(true);
-        const [projectsRes, contentRes] = await Promise.all([
+        const [projectsRes, contentRes, categoriesRes] = await Promise.all([
           fetch("/api/projects"),
           fetch("/api/content?page=projects"),
+          fetch("/api/project-categories"),
         ]);
 
         const projectsData = await projectsRes.json();
         const contentData = await contentRes.json();
+        const categoriesData = await categoriesRes.json();
 
         if (projectsData.success || projectsData.data) {
           setProjects(projectsData.data || []);
@@ -104,6 +141,26 @@ function ProjectsPageContent() {
                 i.section === "project_overview" && i.content_key === "content"
             )?.content_value || ""
           );
+        }
+
+        if (categoriesData.success && Array.isArray(categoriesData.data)) {
+          const formatted: ProjectCategoryItem[] = categoriesData.data
+            .map((category: any) => ({
+              ...category,
+              icon: getDefaultIconForCategory(category.id, category.name),
+            }))
+            .sort((a, b) => {
+              const orderA = a.sort_order ?? Number.MAX_SAFE_INTEGER;
+              const orderB = b.sort_order ?? Number.MAX_SAFE_INTEGER;
+              if (orderA !== orderB) {
+                return orderA - orderB;
+              }
+              return a.name.localeCompare(b.name);
+            });
+
+          setProjectCategories(formatted);
+        } else {
+          setProjectCategories([]);
         }
       } catch (err) {
         setError(err instanceof Error ? err.message : "An error occurred");
@@ -136,40 +193,21 @@ function ProjectsPageContent() {
   };
 
   const getCategoryIcon = (category: string) => {
-    switch (category) {
-      case "bullet-train":
-        return <Train className="h-4 w-4" />;
-      case "metro-rail":
-        return <Train className="h-4 w-4" />;
-      case "roads":
-        return <MapPin className="h-4 w-4" />;
-      case "buildings-factories":
-        return <Building2 className="h-4 w-4" />;
-      case "others":
-        return <Factory className="h-4 w-4" />;
-      default:
-        return <Building2 className="h-4 w-4" />;
-    }
+    const match = projectCategories.find((cat) => cat.id === category);
+    const IconComponent = match?.icon ?? getDefaultIconForCategory(category, category);
+    return <IconComponent className="h-4 w-4" />;
   };
 
   const getCategoryName = (category: string) => {
-    switch (category) {
-      case "bullet-train":
-        return "High Speed Rail";
-      case "metro-rail":
-        return "Metro & Rail";
-      case "roads":
-        return "Roads & Highways";
-      case "buildings-factories":
-        return "Buildings & Factories";
-      case "others":
-        return "Other Projects";
-      default:
-        return (
-          category.charAt(0).toUpperCase() +
-          category.slice(1).replace(/-/g, " ")
-        );
+    const match = projectCategories.find((cat) => cat.id === category);
+    if (match) {
+      return match.name;
     }
+
+    return (
+      category.charAt(0).toUpperCase() +
+      category.slice(1).replace(/-/g, " ")
+    );
   };
 
   // Get filtered projects

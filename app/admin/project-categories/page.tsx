@@ -93,7 +93,7 @@ export default function ProjectCategoriesPage() {
 
     try {
       const url = editingCategory
-        ? `/api/admin/project-categories/${editingCategory.id}`
+        ? `/api/admin/project-categories/${encodeURIComponent(editingCategory.id)}`
         : "/api/admin/project-categories";
       const method = editingCategory ? "PUT" : "POST";
 
@@ -124,9 +124,12 @@ export default function ProjectCategoriesPage() {
   const handleDelete = async (id: string) => {
     setLoading(true);
     try {
-      const response = await fetch(`/api/admin/project-categories/${id}`, {
-        method: "DELETE",
-      });
+      const response = await fetch(
+        `/api/admin/project-categories/${encodeURIComponent(id)}`,
+        {
+          method: "DELETE",
+        }
+      );
 
       const result = await response.json();
       if (result.success) {
@@ -146,7 +149,7 @@ export default function ProjectCategoriesPage() {
     setLoading(true);
     try {
       const response = await fetch(
-        `/api/admin/project-categories/${category.id}`,
+        `/api/admin/project-categories/${encodeURIComponent(category.id)}`,
         {
           method: "PUT",
           headers: { "Content-Type": "application/json" },

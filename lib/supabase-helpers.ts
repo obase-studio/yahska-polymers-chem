@@ -603,7 +603,7 @@ export const supabaseHelpers = {
   },
 
   getProjectCategoryById: async (id: string) => {
-    const { data, error } = await supabase
+    const { data, error } = await supabaseAdmin
       .from("project_categories")
       .select("*")
       .eq("id", id)
@@ -620,7 +620,7 @@ export const supabaseHelpers = {
   },
 
   createProjectCategory: async (category: any) => {
-    const { data, error } = await supabase
+    const { data, error } = await supabaseAdmin
       .from("project_categories")
       .insert({
         id: category.id,
@@ -655,7 +655,7 @@ export const supabaseHelpers = {
       updatePayload
     );
 
-    const { data, error } = await supabase
+    const { data, error } = await supabaseAdmin
       .from("project_categories")
       .update(updatePayload)
       .eq("id", id)
@@ -675,7 +675,7 @@ export const supabaseHelpers = {
   },
 
   deleteProjectCategory: async (id: string) => {
-    const { data, error } = await supabase
+    const { data, error } = await supabaseAdmin
       .from("project_categories")
       .delete()
       .eq("id", id);
@@ -685,7 +685,7 @@ export const supabaseHelpers = {
   },
 
   getProjectCountByCategory: async (categoryId: string) => {
-    const { count, error } = await supabase
+    const { count, error } = await supabaseAdmin
       .from("projects")
       .select("*", { count: "exact", head: true })
       .eq("category", categoryId);

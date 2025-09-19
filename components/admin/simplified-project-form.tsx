@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
@@ -17,23 +17,68 @@ interface SimplifiedProjectFormProps {
   onCancel?: () => void
 }
 
+interface ProjectCategoryOption {
+  value: string
+  label: string
+}
+
 export function SimplifiedProjectForm({ initialData, onSubmit, loading, onCancel }: SimplifiedProjectFormProps) {
   const [formData, setFormData] = useState({
     name: initialData?.name || "",
     description: initialData?.description || "",
-    category: initialData?.category || "others",
+    category: initialData?.category || "",
     key_features: initialData?.key_features ? 
       (typeof initialData.key_features === 'string' ? initialData.key_features : initialData.key_features.join(', ')) : "",
     image_url: initialData?.image_url || "",
   })
+  const [categories, setCategories] = useState<ProjectCategoryOption[]>([])
+  const [categoriesLoading, setCategoriesLoading] = useState(false)
 
-  const categories = [
-    { value: "bullet-train", label: "High Speed Rail" },
-    { value: "metro-rail", label: "Metro & Rail" },
-    { value: "roads", label: "Roads & Highways" },
-    { value: "buildings-factories", label: "Buildings & Factories" },
-    { value: "others", label: "Other Projects" },
-  ]
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        setCategoriesLoading(true)
+        const response = await fetch('/api/admin/project-categories')
+        const result = await response.json()
+
+        if (result.success && Array.isArray(result.data)) {
+          const formatted: ProjectCategoryOption[] = result.data.map((category: any) => ({
+            value: category.id,
+            label: category.name,
+          }))
+          // Sort alphabetically by label for predictable ordering when sort_order is absent
+          formatted.sort((a, b) => a.label.localeCompare(b.label))
+          setCategories(formatted)
+        } else {
+          setCategories([])
+        }
+      } catch (error) {
+        console.error('Failed to load project categories:', error)
+        setCategories([])
+      } finally {
+        setCategoriesLoading(false)
+      }
+    }
+
+    fetchCategories()
+  }, [])
+
+  useEffect(() => {
+    if (categories.length === 0) {
+      return
+    }
+
+    setFormData((prev) => {
+      if (prev.category && categories.some((cat) => cat.value === prev.category)) {
+        return prev
+      }
+
+      return {
+        ...prev,
+        category: categories[0].value,
+      }
+    })
+  }, [categories])
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
@@ -89,9 +134,13 @@ export function SimplifiedProjectForm({ initialData, onSubmit, loading, onCancel
               
               <div className="space-y-2">
                 <Label htmlFor="category" className="text-sm font-medium">Project Category *</Label>
-                <Select value={formData.category} onValueChange={(value) => handleInputChange("category", value)}>
+                <Select
+                  value={formData.category}
+                  onValueChange={(value) => handleInputChange("category", value)}
+                  disabled={categoriesLoading || categories.length === 0}
+                >
                   <SelectTrigger className="h-10">
-                    <SelectValue placeholder="Select a category" />
+                    <SelectValue placeholder={categoriesLoading ? "Loading categories..." : "Select a category"} />
                   </SelectTrigger>
                   <SelectContent>
                     {categories.map((category) => (

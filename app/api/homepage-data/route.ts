@@ -11,8 +11,7 @@ export async function GET(request: NextRequest) {
     const [
       categoriesResult,
       projectCategoriesResult,
-      clientLogosResult,
-      approvalLogosResult,
+      mediaFiles,
       pageImagesResult,
     ] = await Promise.all([
 
@@ -32,18 +31,8 @@ export async function GET(request: NextRequest) {
         .order("sort_order", { ascending: true })
         .limit(4),
 
-      // Client logos - get all media files first, then filter in JS
-      supabaseAdmin
-        .from("media_files")
-        .select("*")
-        .order("uploaded_at", { ascending: false }),
-
-      // Approval logos
-      supabaseAdmin
-        .from("media_files")
-        .select("*")
-        .like("file_path", "%approvals%")
-        .order("uploaded_at", { ascending: false }),
+      // All media files for logo processing
+      supabaseHelpers.getAllMediaFiles(),
 
       // Page images for categories
       supabaseAdmin
@@ -58,13 +47,12 @@ export async function GET(request: NextRequest) {
     const projectCategories = projectCategoriesResult.data || [];
 
     // Filter and process client logos (similar to client-logos API)
-    const clientLogos = (clientLogosResult.data || [])
+    const clientLogos = (mediaFiles || [])
       .filter(
         (file: any) =>
           file.file_path.includes("client-logos") ||
           file.file_path.includes("Client%20Logos")
       )
-      .filter((logo: any) => logo.filename !== "17.Raj Infrastructure – Pkg 13.jpg")
       .map((file: any) => ({
         ...file,
         // Fix file_path: replace client-logos with Client Logos and encode properly
@@ -87,10 +75,34 @@ export async function GET(request: NextRequest) {
           index ===
           self.findIndex((f: any) => f.original_name === file.original_name)
       )
-      .sort((a: any, b: any) => a.original_name.localeCompare(b.original_name))
-      .slice(0, 50); // Limit to 50 logos for performance
+      .filter(
+        (logo: any) => logo.filename !== "17.Raj Infrastructure – Pkg 13.jpg"
+      )
+      .sort((a: any, b: any) => a.original_name.localeCompare(b.original_name));
 
-    const approvalLogos = approvalLogosResult.data || [];
+    const approvalLogos = (mediaFiles || [])
+      .filter(
+        (file: any) =>
+          file.file_path.includes("approval-logos") ||
+          file.file_path.includes("approvals")
+      )
+      .map((file: any) => ({
+        ...file,
+        file_path: file.file_path
+          .replace("approval-logos", "approvals")
+          .replace(/([^:]\/)\/+/g, "$1")
+          .split("/")
+          .map((part: string, index: number) =>
+            index < 3 ? part : encodeURIComponent(part)
+          )
+          .join("/"),
+      }))
+      .filter(
+        (file: any, index: number, self: any[]) =>
+          index ===
+          self.findIndex((f: any) => f.original_name === file.original_name)
+      )
+      .sort((a: any, b: any) => a.original_name.localeCompare(b.original_name));
 
     // Process category images
     const categoryImages: Record<string, string> = {};
