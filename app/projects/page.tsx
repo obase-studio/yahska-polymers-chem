@@ -23,6 +23,7 @@ import {
   Loader2,
   RefreshCw,
   Users,
+  Award,
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 import Image from "next/image";
@@ -149,7 +150,7 @@ function ProjectsPageContent() {
               ...category,
               icon: getDefaultIconForCategory(category.id, category.name),
             }))
-            .sort((a, b) => {
+            .sort((a: ProjectCategoryItem, b: ProjectCategoryItem) => {
               const orderA = a.sort_order ?? Number.MAX_SAFE_INTEGER;
               const orderB = b.sort_order ?? Number.MAX_SAFE_INTEGER;
               if (orderA !== orderB) {

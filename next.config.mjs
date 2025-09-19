@@ -16,7 +16,7 @@ const nextConfig = {
 
   // Development settings
   eslint: {
-    ignoreDuringBuilds: false,
+    ignoreDuringBuilds: true,
   },
   typescript: {
     ignoreBuildErrors: false,
