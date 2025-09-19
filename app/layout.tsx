@@ -1,24 +1,12 @@
 import type React from "react";
 import type { Metadata } from "next";
-import { Montserrat, Open_Sans } from "next/font/google";
 import "./globals.css";
 import { ProductProvider } from "@/contexts/ProductContext";
 import { supabaseHelpers } from "@/lib/supabase-helpers";
 import { NavigationWrapper } from "@/components/navigation-wrapper";
 
-const montserrat = Montserrat({
-  subsets: ["latin"],
-  display: "swap",
-  variable: "--font-montserrat",
-  weight: ["400", "600", "700", "900"],
-});
-
-const openSans = Open_Sans({
-  subsets: ["latin"],
-  display: "swap",
-  variable: "--font-open-sans",
-  weight: ["400", "500", "600"],
-});
+const headingFontStack = "'Montserrat', 'Segoe UI', 'Helvetica Neue', Arial, sans-serif";
+const bodyFontStack = "'Open Sans', 'Segoe UI', 'Helvetica Neue', Arial, sans-serif";
 
 export const metadata: Metadata = {
   title: "Yahska Polymers - Construction Chemicals & Concrete Admixtures",
@@ -63,13 +51,13 @@ export default async function RootLayout({
   }
 
   return (
-    <html lang="en" className={`${montserrat.variable} ${openSans.variable}`}>
+    <html lang="en">
       <head>
         <style>{`
           html {
-            font-family: ${openSans.style.fontFamily};
-            --font-heading: ${montserrat.style.fontFamily};
-            --font-body: ${openSans.style.fontFamily};
+            font-family: ${bodyFontStack};
+            --font-heading: ${headingFontStack};
+            --font-body: ${bodyFontStack};
           }
         `}</style>
         <link
