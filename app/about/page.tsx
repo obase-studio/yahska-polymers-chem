@@ -268,7 +268,7 @@ export default function AboutPage() {
           <div className="grid lg:grid-cols-2 gap-12 items-center">
             <div>
               <h1
-                className="text-4xl lg:text-5xl font-black text-foreground mb-6"
+                className="text-3xl lg:text-4xl font-black text-foreground mb-6"
                 style={{ fontFamily: "var(--font-heading)" }}
               >
                 About Yahska Polymers

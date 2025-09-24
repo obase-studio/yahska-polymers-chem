@@ -3,7 +3,7 @@
 import { useState, useEffect, type ReactNode } from "react"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Plus, Edit, Trash2, Building2, Calendar, Users, MapPin } from "lucide-react"
 import {
@@ -26,6 +26,7 @@ interface Project {
   location: string
   client_name: string
   completion_date: string
+  project_info_details?: string
   project_value: number
   key_features: string[]
   challenges: string
@@ -104,9 +105,15 @@ export default function ProjectsAdmin() {
   }
 
   return (
-    <div className="container mx-auto py-6">
-      <div className="flex justify-between items-center mb-8">
-        <h1 className="text-3xl font-bold">Projects Management</h1>
+    <div className="space-y-6">
+      {/* Header */}
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-3xl font-bold tracking-tight">Projects Management</h1>
+          <p className="text-muted-foreground">
+            Manage your project portfolio and showcase your work
+          </p>
+        </div>
         <Button asChild>
           <Link href="/admin/projects/new">
             <Plus className="h-4 w-4 mr-2" />
@@ -115,22 +122,38 @@ export default function ProjectsAdmin() {
         </Button>
       </div>
 
-      <div className="grid gap-6">
-        {projects.length === 0 ? (
-          <Card className="border-2 shadow-sm bg-white">
-            <CardContent className="text-center py-16 px-8">
-              <Building2 className="h-16 w-16 mx-auto text-muted-foreground mb-6" />
-              <p className="text-muted-foreground mb-6">No projects found</p>
-              <Button asChild>
-                <Link href="/admin/projects/new">
-                  <Plus className="h-4 w-4 mr-2" />
-                  Create your first project
-                </Link>
-              </Button>
-            </CardContent>
-          </Card>
-        ) : (
-          projects.map((project) => (
+      {/* Projects Overview */}
+      <Card className="border-2 shadow-sm bg-white">
+        <CardHeader className="pb-6 px-8 pt-8">
+          <CardTitle className="text-xl font-semibold">All Projects</CardTitle>
+          <CardDescription className="text-base mt-2">
+            {projects.length} project{projects.length !== 1 ? "s" : ""} in your portfolio
+          </CardDescription>
+        </CardHeader>
+      </Card>
+
+      {/* Projects List */}
+      {projects.length === 0 ? (
+        <Card className="border-2 shadow-sm bg-white">
+          <CardContent className="text-center py-16 px-8">
+            <div className="bg-primary/10 w-24 h-24 rounded-full flex items-center justify-center mx-auto mb-6">
+              <Building2 className="h-12 w-12 text-primary" />
+            </div>
+            <h3 className="text-xl font-semibold mb-3">No projects yet</h3>
+            <p className="text-muted-foreground mb-6 max-w-md mx-auto">
+              Get started by adding your first project to showcase your work and expertise.
+            </p>
+            <Button asChild size="lg">
+              <Link href="/admin/projects/new">
+                <Plus className="h-4 w-4 mr-2" />
+                Add First Project
+              </Link>
+            </Button>
+          </CardContent>
+        </Card>
+      ) : (
+        <div className="space-y-6">
+          {projects.map((project) => (
             <Card key={project.id} className="border-2 shadow-sm hover:shadow-md transition-shadow bg-white">
               <CardHeader className="px-8 pt-8 pb-6">
                 <div className="flex justify-between items-start">
@@ -209,9 +232,9 @@ export default function ProjectsAdmin() {
                 )}
               </CardContent>
             </Card>
-          ))
-        )}
-      </div>
+          ))}
+        </div>
+      )}
     </div>
   )
 }

@@ -25,7 +25,9 @@
       "Bash(git push:*)",
       "WebFetch(domain:atplgroup.in)",
       "Bash(git pull:*)",
-      "Bash(lsof:*)"
+      "Bash(lsof:*)",
+      "Bash(npx:*)",
+      "Bash(npm cache clean:*)"
     ],
     "deny": [],
     "ask": []

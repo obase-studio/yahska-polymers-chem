@@ -23,6 +23,7 @@ import {
   Upload,
   Image as ImageIcon,
 } from "lucide-react";
+import { ImagePicker } from "@/components/admin/image-picker";
 import {
   Dialog,
   DialogContent,
@@ -59,7 +60,6 @@ export default function ProjectCategoriesPage() {
   const [editingCategory, setEditingCategory] =
     useState<ProjectCategory | null>(null);
   const [showAddDialog, setShowAddDialog] = useState(false);
-  const [uploadingImage, setUploadingImage] = useState(false);
   const [formData, setFormData] = useState({
     id: "",
     name: "",
@@ -198,53 +198,6 @@ export default function ProjectCategoriesPage() {
     setEditingCategory(null);
   };
 
-  const handleImageUpload = async (
-    event: React.ChangeEvent<HTMLInputElement>
-  ) => {
-    const file = event.target.files?.[0];
-    if (!file) return;
-
-    // Validate file type
-    if (!file.type.startsWith("image/")) {
-      alert("Please select an image file");
-      return;
-    }
-
-    // Validate file size (5MB limit)
-    const maxSize = 5 * 1024 * 1024; // 5MB
-    if (file.size > maxSize) {
-      alert("File size must be less than 5MB");
-      return;
-    }
-
-    setUploadingImage(true);
-
-    try {
-      const formData = new FormData();
-      formData.append("file", file);
-
-      const response = await fetch("/api/admin/upload-image", {
-        method: "POST",
-        body: formData,
-      });
-
-      const result = await response.json();
-
-      if (result.success) {
-        setFormData((prev) => ({
-          ...prev,
-          icon_url: result.data.url,
-        }));
-      } else {
-        alert(result.error || "Failed to upload image");
-      }
-    } catch (error) {
-      console.error("Error uploading image:", error);
-      alert("Error uploading image");
-    } finally {
-      setUploadingImage(false);
-    }
-  };
 
   if (loading && categories.length === 0) {
     return (
@@ -332,49 +285,17 @@ export default function ProjectCategoriesPage() {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="category-icon" className="text-sm font-medium">
-                  Category Icon
-                </Label>
-                <div className="border-2 border-dashed border-muted-foreground/25 rounded-lg p-6">
-                  <div className="text-center">
-                    {formData.icon_url ? (
-                      <div className="space-y-4">
-                        <img
-                          src={formData.icon_url}
-                          alt="Category preview"
-                          className="w-24 h-24 object-cover rounded-lg mx-auto"
-                        />
-                        <div className="flex justify-center">
-                          <Input
-                            type="file"
-                            accept="image/*"
-                            onChange={handleImageUpload}
-                            disabled={uploadingImage}
-                            className="file:mr-4 file:py-1 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-primary file:text-primary-foreground hover:file:bg-primary/90"
-                          />
-                        </div>
-                      </div>
-                    ) : (
-                      <div className="space-y-4">
-                        <ImageIcon className="h-8 w-8 text-muted-foreground mx-auto" />
-                        <div className="flex justify-center">
-                          <Input
-                            type="file"
-                            accept="image/*"
-                            onChange={handleImageUpload}
-                            disabled={uploadingImage}
-                            className="file:mr-4 file:py-1 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-primary file:text-primary-foreground hover:file:bg-primary/90"
-                          />
-                        </div>
-                      </div>
-                    )}
-                    {uploadingImage && (
-                      <div className="text-sm text-muted-foreground text-center mt-2">
-                        Uploading image...
-                      </div>
-                    )}
-                  </div>
-                </div>
+                <ImagePicker
+                  label="Category Icon"
+                  value={formData.icon_url}
+                  onChange={(url) =>
+                    setFormData({ ...formData, icon_url: url })
+                  }
+                  placeholder="Select category icon"
+                  folder="project-categories"
+                  recommendedDimensions="400x400px (1:1 ratio)"
+                  imageGuidelines="Square icon representing the project category. Should be simple, clear, and work well at various sizes for navigation and category displays."
+                />
               </div>
               <div className="space-y-2">
                 <Label htmlFor="sort_order" className="text-sm font-medium">

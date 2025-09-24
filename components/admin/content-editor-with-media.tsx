@@ -46,8 +46,39 @@ interface ContentEditorWithMediaProps {
       label: string;
       type: "text" | "textarea" | "image" | "select";
       options?: Array<{ value: string; label: string }>;
+      placeholder?: string;
+      maxLength?: number;
+      helperText?: string;
     }>;
   };
+}
+
+// Helper function to get recommended image dimensions based on field key
+function getImageDimensions(fieldKey: string): string {
+  switch (fieldKey) {
+    case 'logo':
+      return '200x80px (5:2 ratio)';
+    case 'hero_image':
+      return '1920x1080px (16:9 ratio)';
+    case 'hero_background':
+      return '1920x1080px (16:9 ratio)';
+    default:
+      return '1200x800px (3:2 ratio)';
+  }
+}
+
+// Helper function to get image guidelines based on field key
+function getImageGuidelines(fieldKey: string): string {
+  switch (fieldKey) {
+    case 'logo':
+      return 'Company logo for header. Should be clear on both light and dark backgrounds, optimized for web display.';
+    case 'hero_image':
+      return 'High-quality hero image for page banner. Should be visually appealing and support text overlay. Ensure good contrast for readability.';
+    case 'hero_background':
+      return 'Full-width background image for hero section. High resolution recommended for crisp display on all devices.';
+    default:
+      return 'High-quality image optimized for web. Ensure appropriate file size for fast loading.';
+  }
 }
 
 export function ContentEditorWithMedia({
@@ -275,16 +306,22 @@ export function ContentEditorWithMedia({
   return (
     <>
       <form onSubmit={handleSubmit} className="space-y-4">
-        {section.fields.map((field) => (
-          <div key={field.key} className="space-y-2">
-            <Label htmlFor={`${section.id}-${field.key}`}>{field.label}</Label>
+        {section.fields.map((field) => {
+          const helperMessage = field.helperText && field.maxLength
+            ? `${field.helperText} (Max ${field.maxLength} characters.)`
+            : field.helperText || (field.maxLength ? `Maximum ${field.maxLength} characters.` : "");
+
+          return (
+            <div key={field.key} className="space-y-2">
+              <Label htmlFor={`${section.id}-${field.key}`}>{field.label}</Label>
 
             {field.type === "text" && (
               <Input
                 id={`${section.id}-${field.key}`}
                 value={formData[field.key] || ""}
                 onChange={(e) => handleFieldChange(field.key, e.target.value)}
-                placeholder={field.label}
+                placeholder={field.placeholder || field.label}
+                maxLength={field.maxLength}
               />
             )}
 
@@ -293,13 +330,29 @@ export function ContentEditorWithMedia({
                 id={`${section.id}-${field.key}`}
                 value={formData[field.key] || ""}
                 onChange={(e) => handleFieldChange(field.key, e.target.value)}
-                placeholder={field.label}
+                placeholder={field.placeholder || field.label}
+                maxLength={field.maxLength}
                 rows={4}
               />
             )}
 
+            {helperMessage && (
+              <p className="text-xs text-muted-foreground">{helperMessage}</p>
+            )}
+
             {field.type === "image" && (
               <div className="space-y-3">
+                {/* Image Guidelines */}
+                <div className="text-xs text-muted-foreground space-y-1 bg-muted/30 p-3 rounded border-l-2 border-primary/20">
+                  <div className="flex items-center gap-1">
+                    <ImageIcon className="h-3 w-3" />
+                    <span className="font-medium">Recommended Dimensions:</span>
+                    <span>{getImageDimensions(field.key)}</span>
+                  </div>
+                  <div className="text-xs">
+                    {getImageGuidelines(field.key)}
+                  </div>
+                </div>
                 {pageImages[field.key] ? (
                   <Card>
                     <CardContent className="p-4">
@@ -364,8 +417,7 @@ export function ContentEditorWithMedia({
                           setShowMediaPicker(true);
                         }}
                       >
-                        <ImageIcon className="h-4 w-4 mr-2" />
-                        Browse Media
+                        Select Image
                       </Button>
                     </CardContent>
                   </Card>
@@ -390,8 +442,9 @@ export function ContentEditorWithMedia({
                 </SelectContent>
               </Select>
             )}
-          </div>
-        ))}
+            </div>
+          );
+        })}
 
         <div className="flex items-center justify-between">
           <Button

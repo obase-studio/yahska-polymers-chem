@@ -38,6 +38,8 @@ export default function ContentPage() {
               label: "Company Name",
               type: "text" as const,
               placeholder: "Yahska Polymers",
+              maxLength: 26,
+              helperText: "Keep under 26 characters so it fits next to the logo on mobile.",
             },
           ],
         },
@@ -194,21 +196,9 @@ export default function ContentPage() {
     if (page === "products") {
       return [
         {
-          id: "hero",
-          title: "Products Hero Section",
-          description: "Hero image for products page",
-          fields: [
-            {
-              key: "hero_image",
-              label: "Products Hero Image",
-              type: "image" as const,
-            },
-          ],
-        },
-        {
           id: "product_overview",
           title: "Products Overview",
-          description: "Intro paragraph for products hero",
+          description: "Intro paragraph for products page",
           fields: [
             {
               key: "content",
@@ -223,21 +213,9 @@ export default function ContentPage() {
     if (page === "projects") {
       return [
         {
-          id: "hero",
-          title: "Projects Hero Section",
-          description: "Hero image for projects page",
-          fields: [
-            {
-              key: "hero_image",
-              label: "Projects Hero Image",
-              type: "image" as const,
-            },
-          ],
-        },
-        {
           id: "project_overview",
           title: "Projects Overview",
-          description: "Intro paragraph for projects hero",
+          description: "Intro paragraph for projects page",
           fields: [
             {
               key: "content",
@@ -326,28 +304,16 @@ export default function ContentPage() {
           ],
         },
         {
-          id: "form_section",
-          title: "Contact Form Section",
-          description: "Form heading and description",
-          fields: [
-            {
-              key: "title",
-              label: "Form Section Title",
-              type: "text" as const,
-            },
-            {
-              key: "description",
-              label: "Form Description",
-              type: "textarea" as const,
-            },
-          ],
-        },
-        {
           id: "contact_info_section",
           title: "Contact Info Section",
           description: "Right side contact information section",
           fields: [
             { key: "title", label: "Section Title", type: "text" as const },
+            {
+              key: "description",
+              label: "Section Description",
+              type: "textarea" as const,
+            },
           ],
         },
         {

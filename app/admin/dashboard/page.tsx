@@ -22,5 +22,5 @@ export default async function AdminDashboard() {
     contentPages: 4, // Home, About, Contact, Certifications
   };
 
-  return <SimpleDashboard stats={stats} recentProducts={products} />;
+  return <SimpleDashboard stats={stats} />;
 }

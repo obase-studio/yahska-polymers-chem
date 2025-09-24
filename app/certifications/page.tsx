@@ -188,55 +188,6 @@ export default function CertificationsPage() {
         </div>
       </section>
 
-      {/* Quality Commitment Section */}
-      <section className="py-20 bg-primary text-primary-foreground">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h2
-            className="text-3xl lg:text-4xl font-bold mb-6"
-            style={{ fontFamily: "var(--font-heading)" }}
-          >
-            Our Quality Commitment
-          </h2>
-          <p className="text-xl mb-8 opacity-90 max-w-3xl mx-auto">
-            These certifications represent our unwavering commitment to quality,
-            safety, and environmental responsibility in everything we
-            manufacture and deliver.
-          </p>
-
-          <div className="grid md:grid-cols-3 gap-8 mt-12">
-            <div className="text-center">
-              <div className="bg-white/10 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
-                <Shield className="h-8 w-8" />
-              </div>
-              <h3 className="text-xl font-semibold mb-2">Safety First</h3>
-              <p className="text-primary-foreground/80">
-                All our products meet the highest safety standards and
-                regulatory requirements.
-              </p>
-            </div>
-            <div className="text-center">
-              <div className="bg-white/10 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
-                <Award className="h-8 w-8" />
-              </div>
-              <h3 className="text-xl font-semibold mb-2">Excellence</h3>
-              <p className="text-primary-foreground/80">
-                Continuous improvement and adherence to international quality
-                standards.
-              </p>
-            </div>
-            <div className="text-center">
-              <div className="bg-white/10 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
-                <CheckCircle className="h-8 w-8" />
-              </div>
-              <h3 className="text-xl font-semibold mb-2">Compliance</h3>
-              <p className="text-primary-foreground/80">
-                Full compliance with all relevant industry regulations and
-                standards.
-              </p>
-            </div>
-          </div>
-        </div>
-      </section>
 
       <Footer />
     </div>

@@ -4,8 +4,8 @@ import { useState } from "react"
 import { useRouter } from "next/navigation"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { ArrowLeft } from "lucide-react"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { ArrowLeft, Building2 } from "lucide-react"
 import { SimplifiedProjectForm } from "@/components/admin/simplified-project-form"
 
 export default function NewProject() {
@@ -54,11 +54,26 @@ export default function NewProject() {
         </div>
       </div>
 
-      <SimplifiedProjectForm 
-        onSubmit={handleSubmit} 
-        loading={loading} 
-        onCancel={() => router.push('/admin/projects')}
-      />
+      <Card className="border-2 shadow-sm bg-white">
+        <CardHeader className="px-8 pt-8 pb-6">
+          <CardTitle className="flex items-center gap-3 text-xl font-semibold">
+            <div className="p-3 bg-primary/10 rounded-lg">
+              <Building2 className="h-6 w-6 text-primary" />
+            </div>
+            Project Information
+          </CardTitle>
+          <CardDescription className="text-sm leading-relaxed mt-2">
+            Enter the basic details about the project
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="px-8 pb-8">
+          <SimplifiedProjectForm
+            onSubmit={handleSubmit}
+            loading={loading}
+            onCancel={() => router.push('/admin/projects')}
+          />
+        </CardContent>
+      </Card>
     </div>
   )
 }

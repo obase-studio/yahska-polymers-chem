@@ -216,7 +216,7 @@ export default function ProductsPage() {
                   key={index}
                   className="border border-border rounded-lg overflow-hidden"
                 >
-                  <div className="aspect-video bg-muted animate-pulse" />
+                  <div className="aspect-[3/2] bg-muted animate-pulse" />
                   <div className="p-6 space-y-3">
                     <div className="h-5 w-3/4 bg-muted rounded animate-pulse" />
                     <div className="h-4 w-full bg-muted rounded animate-pulse" />
@@ -236,26 +236,8 @@ export default function ProductsPage() {
   return (
     <div className="min-h-screen bg-background">
 
-      {/* Hero Section */}
-      <section className="py-20 bg-gradient-to-br from-primary/10 to-accent/5">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center">
-            <h1
-              className="text-4xl lg:text-5xl font-black text-foreground mb-6"
-              style={{ fontFamily: "var(--font-heading)" }}
-            >
-              Our Product Range
-            </h1>
-            <p className="text-xl text-muted-foreground max-w-3xl mx-auto leading-relaxed">
-              {productOverview ||
-                "Premium chemical solutions for construction, concrete admixtures, and industrial applications with over 20 years of manufacturing excellence."}
-            </p>
-          </div>
-        </div>
-      </section>
-
       {/* Main Content with Sidebar */}
-      <section className="py-12">
+      <section className="py-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex gap-8">
             {/* Left Sidebar - Categories */}
@@ -335,25 +317,6 @@ export default function ProductsPage() {
                   })}
                 </div>
 
-                {/* Refresh Button */}
-                <Button
-                  variant="outline"
-                  onClick={handleRefresh}
-                  disabled={refreshing}
-                  className="w-full mt-6"
-                >
-                  {refreshing ? (
-                    <>
-                      <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                      Refreshing...
-                    </>
-                  ) : (
-                    <>
-                      <RefreshCw className="h-4 w-4 mr-2" />
-                      Refresh Products
-                    </>
-                  )}
-                </Button>
               </div>
             </div>
 
@@ -498,7 +461,7 @@ export default function ProductsPage() {
                         key={product.id}
                         className="group h-full hover:shadow-xl hover:scale-[1.02] transition-all duration-300 border border-border/50 hover:border-primary/30 overflow-hidden flex flex-col"
                       >
-                        <div className="aspect-video relative overflow-hidden bg-gradient-to-br from-primary/5 to-accent/5 rounded-t-lg">
+                        <div className="aspect-[3/2] relative overflow-hidden bg-gradient-to-br from-primary/5 to-accent/5 rounded-t-lg">
                           {/* Background overlay */}
                           <div className="absolute inset-0 bg-gradient-to-br from-primary/10 to-accent/10 group-hover:from-primary/20 group-hover:to-accent/20 transition-colors duration-300" />
                           {product.image_url ? (

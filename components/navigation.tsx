@@ -45,6 +45,7 @@ export function Navigation({
   const [mobileProjectsOpen, setMobileProjectsOpen] = useState(false);
   const { setSelectedCategory } = useProductContext();
   const { logoUrl, companyName } = branding;
+  const normalizedCompanyName = companyName?.trim() || "Yahska Polymers";
   const router = useRouter();
 
   const closeMobileMenu = () => {
@@ -94,17 +95,21 @@ export function Navigation({
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
           <div className="flex-shrink-0">
-            <Link href="/" className="flex items-center gap-3">
-              {logoUrl && (
+            <Link href="/" className="flex items-center gap-2 md:gap-3">
+              {logoUrl ? (
                 <img
                   src={logoUrl}
-                  alt="Yahska Polymers logo"
-                  className="h-9 w-auto"
+                  alt={`${normalizedCompanyName} logo`}
+                  className="h-10 w-auto md:h-12"
                 />
+              ) : (
+                <span className="inline-flex h-10 w-10 items-center justify-center rounded-full bg-primary text-sm font-semibold text-primary-foreground md:h-12 md:w-12">
+                  {normalizedCompanyName.slice(0, 2).toUpperCase()}
+                </span>
               )}
-              <div className="text-2xl font-bold text-primary">
-                {companyName}
-              </div>
+              <span className="max-w-[140px] truncate text-base font-semibold text-foreground md:max-w-none md:text-xl">
+                {normalizedCompanyName}
+              </span>
             </Link>
           </div>
 

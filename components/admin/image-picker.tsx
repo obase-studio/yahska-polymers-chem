@@ -125,6 +125,8 @@ interface ImagePickerProps {
   placeholder?: string;
   folder?: string; // For filtering images by folder
   className?: string;
+  recommendedDimensions?: string; // e.g., "1200x600px (2:1 ratio)"
+  imageGuidelines?: string; // Additional guidelines for the image
 }
 
 export function ImagePicker({
@@ -134,6 +136,8 @@ export function ImagePicker({
   placeholder = "Select an image",
   folder,
   className,
+  recommendedDimensions,
+  imageGuidelines,
 }: ImagePickerProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [mediaFiles, setMediaFiles] = useState<MediaFile[]>([]);
@@ -321,6 +325,24 @@ export function ImagePicker({
   return (
     <div className={cn("space-y-2", className)}>
       {label && <Label>{label}</Label>}
+
+      {/* Image Guidelines */}
+      {(recommendedDimensions || imageGuidelines) && (
+        <div className="text-xs text-muted-foreground space-y-1 bg-muted/30 p-2 rounded border-l-2 border-primary/20">
+          {recommendedDimensions && (
+            <div className="flex items-center gap-1">
+              <ImageIcon className="h-3 w-3" />
+              <span>Recommended: {recommendedDimensions}</span>
+            </div>
+          )}
+          {imageGuidelines && (
+            <div className="flex items-start gap-1">
+              <FileImage className="h-3 w-3 mt-0.5 flex-shrink-0" />
+              <span>{imageGuidelines}</span>
+            </div>
+          )}
+        </div>
+      )}
 
       <div className="flex items-center gap-2">
         {value && (

@@ -81,6 +81,7 @@ export interface ProjectCreateRequest {
   client_name?: string
   completion_date?: string
   project_value?: string
+  project_info_details?: string
   key_features?: string[]
   challenges?: string
   solutions?: string

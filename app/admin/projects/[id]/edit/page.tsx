@@ -12,6 +12,7 @@ interface Project {
   id: number
   name: string
   description: string
+  project_info_details?: string
   category: string
   key_features: string[]
   image_url: string

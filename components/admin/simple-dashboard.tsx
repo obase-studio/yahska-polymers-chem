@@ -1,21 +1,15 @@
 "use client"
 
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { 
   Package, 
-  Users, 
   FileText, 
   Image, 
   ExternalLink,
   ArrowRight,
   Edit,
   Upload,
-  Settings,
-  TrendingUp,
-  BarChart3,
-  Activity,
-  Plus,
   Building2
 } from "lucide-react"
 import Link from "next/link"
@@ -27,10 +21,9 @@ interface SimpleDashboardProps {
     mediaFiles: number
     contentPages: number
   }
-  recentProducts: any[]
 }
 
-export function SimpleDashboard({ stats, recentProducts }: SimpleDashboardProps) {
+export function SimpleDashboard({ stats }: SimpleDashboardProps) {
   const mainStats = [
     {
       title: "Products",
@@ -83,6 +76,13 @@ export function SimpleDashboard({ stats, recentProducts }: SimpleDashboardProps)
       primary: true
     },
     {
+      title: "Add Projects",
+      description: "Create a new project for the showcase",
+      href: "/admin/projects/new",
+      icon: Building2,
+      primary: false
+    },
+    {
       title: "Manage Media",
       description: "Upload and organize images",
       href: "/admin/media",
@@ -94,13 +94,6 @@ export function SimpleDashboard({ stats, recentProducts }: SimpleDashboardProps)
       description: "Add new products to catalog",
       href: "/admin/products",
       icon: Package,
-      primary: false
-    },
-    {
-      title: "SEO Settings",
-      description: "Update meta tags and SEO",
-      href: "/admin/seo",
-      icon: Settings,
       primary: false
     }
   ]
@@ -179,45 +172,6 @@ export function SimpleDashboard({ stats, recentProducts }: SimpleDashboardProps)
             )
           })}
         </div>
-      </div>
-
-      {/* Recent Activity */}
-      <div>
-        <Card className="border-2 shadow-sm bg-white">
-          <CardHeader className="pb-6 px-8 pt-8">
-            <CardTitle className="text-xl font-semibold">Recent Products</CardTitle>
-          </CardHeader>
-          <CardContent className="pt-0 px-8 pb-8">
-            {recentProducts.length > 0 ? (
-              <div className="space-y-4">
-                {recentProducts.slice(0, 3).map((product: any) => (
-                  <div key={product.id} className="flex items-center justify-between p-6 rounded-lg border bg-card hover:bg-muted/50 transition-colors">
-                    <div>
-                      <p className="text-sm font-semibold">{product.name}</p>
-                      <p className="text-sm text-muted-foreground mt-2">{product.category_name}</p>
-                    </div>
-                  </div>
-                ))}
-                <div className="pt-2">
-                  <Button asChild variant="outline" className="w-full">
-                    <Link href="/admin/products">
-                      View All Products
-                    </Link>
-                  </Button>
-                </div>
-              </div>
-            ) : (
-              <div className="text-center py-6">
-                <p className="text-sm text-muted-foreground mb-3">No products yet</p>
-                <Button asChild size="sm">
-                  <Link href="/admin/products/new">
-                    Add Product
-                  </Link>
-                </Button>
-              </div>
-            )}
-          </CardContent>
-        </Card>
       </div>
     </div>
   )

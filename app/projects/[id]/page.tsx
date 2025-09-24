@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react"
 import { useParams, useRouter } from "next/navigation"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { 
@@ -27,8 +27,9 @@ interface Project {
   description: string
   category: string
   location: string
-  client_name: string
+  client_name?: string
   completion_date: string
+  project_info_details?: string
   project_value: number
   key_features: string[]
   challenges: string
@@ -44,20 +45,21 @@ export default function ProjectDetailPage() {
   const params = useParams()
   const router = useRouter()
   const [project, setProject] = useState<Project | null>(null)
+  const [contentItems, setContentItems] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState("")
 
   useEffect(() => {
     if (params.id) {
       fetchProject(params.id as string)
+      fetchContent()
     }
   }, [params.id])
 
   const fetchProject = async (id: string) => {
     try {
-      setLoading(true)
       const response = await fetch(`/api/projects/${id}`)
-      
+
       if (!response.ok) {
         if (response.status === 404) {
           setError("Project not found")
@@ -66,7 +68,7 @@ export default function ProjectDetailPage() {
         }
         return
       }
-      
+
       const data = await response.json()
       if (data.success) {
         setProject(data.data)
@@ -76,6 +78,18 @@ export default function ProjectDetailPage() {
     } catch (error) {
       console.error('Error fetching project:', error)
       setError("Failed to load project details")
+    }
+  }
+
+  const fetchContent = async () => {
+    try {
+      const response = await fetch('/api/content?page=project_details')
+      const result = await response.json()
+      if (result.success && result.data && result.data.content) {
+        setContentItems(result.data.content)
+      }
+    } catch (error) {
+      console.error('Error fetching content:', error)
     } finally {
       setLoading(false)
     }
@@ -148,9 +162,24 @@ export default function ProjectDetailPage() {
     )
   }
 
+  // Get content values from CMS
+  const projectInfoTitle = contentItems.find(
+    (item) => item.section === "hero_section" && item.content_key === "project_info_title"
+  )?.content_value || "Project Information";
+
+  const keyFeaturesSectionTitle = contentItems.find(
+    (item) => item.section === "key_features_section" && item.content_key === "section_title"
+  )?.content_value || "Key Features";
+
+  const keyFeaturesSectionDescription = contentItems.find(
+    (item) => item.section === "key_features_section" && item.content_key === "section_description"
+  )?.content_value || "What makes this project special and unique in the industry";
+
+  const projectInfoDetails = project.project_info_details?.trim() || "";
+
   return (
     <div className="min-h-screen bg-background">
-      
+
       {/* Breadcrumb */}
       <section className="py-6 bg-muted/30">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -168,21 +197,26 @@ export default function ProjectDetailPage() {
         </div>
       </section>
 
-      {/* Project Header */}
-      <section className="py-12 bg-gradient-to-br from-primary/10 to-accent/5">
+      {/* Back to Projects Button */}
+      <section className="py-6 bg-muted/30">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="mb-6">
-            <Button asChild variant="outline" size="sm">
-              <Link href="/projects">
-                <ArrowLeft className="mr-2 h-4 w-4" />
-                Back to Projects
-              </Link>
-            </Button>
-          </div>
+          <Button asChild variant="outline" size="sm">
+            <Link href="/projects">
+              <ArrowLeft className="mr-2 h-4 w-4" />
+              Back to Projects
+            </Link>
+          </Button>
+        </div>
+      </section>
 
+      {/* Hero Section - Standard Background */}
+      <section className="py-16 bg-gradient-to-br from-primary/10 to-accent/5">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid lg:grid-cols-2 gap-12 items-start">
-            <div>
-              <div className="flex items-center gap-4 mb-4">
+            {/* Left Side - Project Info */}
+            <div className="space-y-6">
+              {/* Project Category Badge */}
+              <div className="flex items-center gap-4">
                 <Badge variant="secondary" className="flex items-center gap-1">
                   {getCategoryIcon(project.category)}
                   {getCategoryName(project.category)}
@@ -191,147 +225,117 @@ export default function ProjectDetailPage() {
                   <Badge variant="default">Featured Project</Badge>
                 )}
               </div>
+
+              {/* Project Title */}
               <h1
-                className="text-4xl lg:text-5xl font-black text-foreground mb-6"
+                className="text-3xl lg:text-4xl font-black text-foreground mb-4"
                 style={{ fontFamily: "var(--font-heading)" }}
               >
                 {project.name}
               </h1>
-              <p className="text-xl text-muted-foreground leading-relaxed mb-6">
-                {project.description}
-              </p>
 
-              <div className="flex flex-wrap gap-6 text-sm text-muted-foreground mb-6">
-                {project.client_name && (
-                  <div className="flex items-center gap-2">
-                    <Users className="h-4 w-4" />
-                    <span>Client: {project.client_name}</span>
-                  </div>
-                )}
-                
-                {project.location && (
-                  <div className="flex items-center gap-2">
-                    <MapPin className="h-4 w-4" />
-                    <span>{project.location}</span>
-                  </div>
-                )}
-                
-                {project.completion_date && (
-                  <div className="flex items-center gap-2">
-                    <Calendar className="h-4 w-4" />
-                    <span>Completed: {new Date(project.completion_date).getFullYear()}</span>
-                  </div>
-                )}
-              </div>
-
-              {/* Project Info Text Block */}
-              <div className="mt-6 p-4 bg-muted/20 rounded-lg border border-border/50">
-                <h4 className="text-sm font-semibold text-foreground mb-2">Project Information</h4>
-                <p className="text-sm text-muted-foreground">
-                  Project information will be updated soon.
+              {/* Subtitle/Caption - Project Information */}
+              <div className="space-y-4">
+                <p className="text-xl text-muted-foreground leading-relaxed">
+                  {project.description}
                 </p>
+
+                {/* Project Information Display */}
+                <div className="space-y-3 text-lg text-muted-foreground">
+                  {project.location && (
+                    <div className="flex items-center gap-3">
+                      <MapPin className="h-5 w-5" />
+                      <span>{project.location}</span>
+                    </div>
+                  )}
+
+                  {project.completion_date && (
+                    <div className="flex items-center gap-3">
+                      <Calendar className="h-5 w-5" />
+                      <span>Completed: {new Date(project.completion_date).getFullYear()}</span>
+                    </div>
+                  )}
+                </div>
+
+                {/* Additional Project Information from CMS */}
+                {(projectInfoTitle || projectInfoDetails) && (
+                  <div className="mt-6 space-y-2">
+                    {projectInfoTitle && (
+                      <h2 className="text-xl font-semibold text-foreground">
+                        {projectInfoTitle}
+                      </h2>
+                    )}
+                    {projectInfoDetails && (
+                      <p className="text-xl text-muted-foreground leading-relaxed">
+                        {projectInfoDetails}
+                      </p>
+                    )}
+                  </div>
+                )}
               </div>
             </div>
 
-            <div className="bg-muted/30 rounded-lg p-8 flex items-center justify-center min-h-[400px]">
+            {/* Right Side - Project Image */}
+            <div className="flex justify-center">
               {project.image_url ? (
-                <div className="w-full h-full relative min-h-[400px] rounded-lg overflow-hidden">
-                  <Image
-                    src={project.image_url}
-                    alt={project.name}
-                    fill
-                    className="object-cover"
-                  />
+                <div className="w-full max-w-md lg:max-w-lg">
+                  <div className="aspect-[4/3] relative rounded-lg overflow-hidden shadow-2xl">
+                    <Image
+                      src={project.image_url}
+                      alt={project.name}
+                      fill
+                      className="object-cover"
+                    />
+                  </div>
                 </div>
               ) : (
-                <div className="text-center">
-                  <div className="w-32 h-32 bg-muted rounded-lg flex items-center justify-center mb-4 mx-auto">
-                    <Building2 className="w-16 h-16 text-muted-foreground" />
+                <div className="w-full max-w-md lg:max-w-lg">
+                  <div className="aspect-[4/3] bg-white/10 rounded-lg flex items-center justify-center border border-white/20">
+                    <div className="text-center">
+                      <Building2 className="w-16 h-16 text-white/60 mx-auto mb-4" />
+                      <p className="text-white/70">Project Image</p>
+                      <p className="text-xs text-white/50 mt-1">Coming Soon</p>
+                    </div>
                   </div>
-                  <p className="text-sm text-muted-foreground">Project Image</p>
-                  <p className="text-xs text-muted-foreground/70 mt-1">Coming Soon</p>
                 </div>
               )}
-
             </div>
           </div>
         </div>
       </section>
 
-      {/* Project Details */}
-      <section className="py-20">
+      {/* Key Features Section */}
+      <section className="py-20 bg-muted/30">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid lg:grid-cols-2 gap-12">
-            {/* Key Features */}
-            {project.key_features && project.key_features.length > 0 && (
+          {project.key_features && project.key_features.length > 0 && (
+            <div className="grid lg:grid-cols-2 gap-12">
               <Card className="py-6">
                 <CardHeader>
-                  <CardTitle className="text-primary">Key Features</CardTitle>
-                  <p className="text-muted-foreground text-sm">What makes this project special</p>
+                  <CardTitle className="text-primary">{keyFeaturesSectionTitle}</CardTitle>
+                  <CardDescription>
+                    {keyFeaturesSectionDescription}
+                  </CardDescription>
                 </CardHeader>
                 <CardContent>
                   <ul className="space-y-3">
                     {project.key_features.map((feature: string, index: number) => (
                       <li key={index} className="flex items-start">
-                        <div className="w-2 h-2 bg-accent rounded-full mr-3 mt-2 flex-shrink-0" />
+                        <div className="w-2 h-2 bg-primary rounded-full mr-3 mt-2 flex-shrink-0" />
                         <span className="text-muted-foreground">{feature}</span>
                       </li>
                     ))}
                   </ul>
                 </CardContent>
               </Card>
-            )}
+            </div>
+          )}
+        </div>
+      </section>
 
-            {/* Project Information */}
-            <Card className="py-6">
-              <CardHeader>
-                <CardTitle className="text-primary">Project Information</CardTitle>
-                <p className="text-muted-foreground text-sm">Essential project details</p>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-4">
-                  {project.client_name && (
-                    <div className="flex items-start">
-                      <div className="w-2 h-2 bg-primary rounded-full mr-3 mt-2 flex-shrink-0" />
-                      <div>
-                        <span className="text-sm font-medium text-foreground">Client: </span>
-                        <span className="text-muted-foreground">{project.client_name}</span>
-                      </div>
-                    </div>
-                  )}
-                  
-                  {project.location && (
-                    <div className="flex items-start">
-                      <div className="w-2 h-2 bg-primary rounded-full mr-3 mt-2 flex-shrink-0" />
-                      <div>
-                        <span className="text-sm font-medium text-foreground">Location: </span>
-                        <span className="text-muted-foreground">{project.location}</span>
-                      </div>
-                    </div>
-                  )}
-                  
-                  {project.completion_date && (
-                    <div className="flex items-start">
-                      <div className="w-2 h-2 bg-primary rounded-full mr-3 mt-2 flex-shrink-0" />
-                      <div>
-                        <span className="text-sm font-medium text-foreground">Completed: </span>
-                        <span className="text-muted-foreground">
-                          {new Date(project.completion_date).toLocaleDateString()}
-                        </span>
-                      </div>
-                    </div>
-                  )}
-                  
-                  <div className="flex items-start">
-                    <div className="w-2 h-2 bg-primary rounded-full mr-3 mt-2 flex-shrink-0" />
-                    <div>
-                      <span className="text-sm font-medium text-foreground">Category: </span>
-                      <span className="text-muted-foreground">{getCategoryName(project.category)}</span>
-                    </div>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
+      {/* Additional Project Details */}
+      <section className="py-20">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid lg:grid-cols-2 gap-12">
 
             {/* Challenges */}
             {project.challenges && (
@@ -383,7 +387,7 @@ export default function ProjectDetailPage() {
                 <CardContent>
                   <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
                     {project.gallery_images.map((imageUrl, index) => (
-                      <div key={index} className="aspect-video relative overflow-hidden rounded-lg bg-muted">
+                      <div key={index} className="aspect-[3/2] relative overflow-hidden rounded-lg bg-muted">
                         <Image
                           src={imageUrl}
                           alt={`${project.name} - Image ${index + 1}`}
@@ -400,26 +404,6 @@ export default function ProjectDetailPage() {
         </div>
       </section>
 
-      {/* Contact CTA */}
-      <section className="py-20 bg-primary text-primary-foreground">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h2
-            className="text-3xl lg:text-4xl font-bold mb-4"
-            style={{ fontFamily: "var(--font-heading)" }}
-          >
-            Need a Similar Project?
-          </h2>
-          <p className="text-xl mb-8 opacity-90 max-w-2xl mx-auto">
-            Our project management and technical teams can help you deliver
-            complex infrastructure projects on time and within budget.
-          </p>
-          <div className="text-center">
-            <p className="text-lg opacity-90">
-              For similar project inquiries, please <Link href="/contact" className="underline hover:text-primary-foreground/80">contact us</Link>
-            </p>
-          </div>
-        </div>
-      </section>
       
       <Footer />
     </div>

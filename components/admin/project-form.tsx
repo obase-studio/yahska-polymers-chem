@@ -22,9 +22,9 @@ export function ProjectForm({ initialData, onSubmit, loading }: ProjectFormProps
   const [formData, setFormData] = useState({
     name: initialData?.name || "",
     description: initialData?.description || "",
+    project_info_details: initialData?.project_info_details || "",
     category: initialData?.category || "others",
     location: initialData?.location || "",
-    client_name: initialData?.client_name || "",
     completion_date: initialData?.completion_date ? initialData.completion_date.split('T')[0] : "",
     project_value: initialData?.project_value || 0,
     challenges: initialData?.challenges || "",
@@ -124,16 +124,18 @@ export function ProjectForm({ initialData, onSubmit, loading }: ProjectFormProps
           />
         </div>
 
+        <div className="space-y-2">
+          <Label htmlFor="project_info_details">Project Information Details</Label>
+          <Textarea
+            id="project_info_details"
+            value={formData.project_info_details}
+            onChange={(e) => handleInputChange("project_info_details", e.target.value)}
+            placeholder="Add supporting project information to display below the main description"
+            rows={3}
+          />
+        </div>
+
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div className="space-y-2">
-            <Label htmlFor="client_name">Client Name</Label>
-            <Input
-              id="client_name"
-              value={formData.client_name}
-              onChange={(e) => handleInputChange("client_name", e.target.value)}
-              placeholder="Enter client name"
-            />
-          </div>
 
           <div className="space-y-2">
             <Label htmlFor="location">Location</Label>

@@ -257,7 +257,7 @@ export default function ProductDetailPage() {
                 {product.category_name}
               </Badge>
               <h1
-                className="text-4xl lg:text-5xl font-black text-foreground mb-6"
+                className="text-3xl lg:text-4xl font-black text-foreground mb-6"
                 style={{ fontFamily: "var(--font-heading)" }}
               >
                 {product.name}

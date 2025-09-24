@@ -21,7 +21,6 @@ import {
   Factory,
   MapPin,
   Loader2,
-  RefreshCw,
   Users,
   Award,
 } from "lucide-react";
@@ -36,8 +35,8 @@ interface Project {
   description: string;
   category: string;
   location: string;
-  client_name: string;
   completion_date: string;
+  project_info_details?: string;
   project_value: number;
   key_features: string[];
   challenges: string;
@@ -98,7 +97,6 @@ function ProjectsPageContent() {
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("all");
   const [error, setError] = useState<string | null>(null);
-  const [refreshing, setRefreshing] = useState(false);
   const [projectCategories, setProjectCategories] = useState<ProjectCategoryItem[]>([]);
 
   const searchParams = useSearchParams();
@@ -174,24 +172,6 @@ function ProjectsPageContent() {
     fetchData();
   }, []);
 
-  const handleRefresh = async () => {
-    setRefreshing(true);
-    try {
-      const response = await fetch("/api/projects");
-      const result = await response.json();
-
-      if (result.success || result.data) {
-        setProjects(result.data || []);
-      } else {
-        setError(result.error || "Failed to refresh projects");
-      }
-    } catch (err) {
-      setError("Failed to refresh projects");
-      console.error("Error refreshing projects:", err);
-    } finally {
-      setRefreshing(false);
-    }
-  };
 
   const getCategoryIcon = (category: string) => {
     const match = projectCategories.find((cat) => cat.id === category);
@@ -222,9 +202,6 @@ function ProjectsPageContent() {
           project.description
             .toLowerCase()
             .includes(searchTerm.toLowerCase()) ||
-          project.client_name
-            ?.toLowerCase()
-            .includes(searchTerm.toLowerCase()) ||
           project.location?.toLowerCase().includes(searchTerm.toLowerCase())
         );
       }
@@ -244,17 +221,7 @@ function ProjectsPageContent() {
   if (loading) {
     return (
       <div className="min-h-screen bg-background">
-        <section className="py-20 bg-gradient-to-br from-primary/10 to-accent/5">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="text-center space-y-4">
-              <div className="h-10 w-72 mx-auto bg-muted rounded animate-pulse" />
-              <div className="h-4 w-3/4 mx-auto bg-muted rounded animate-pulse" />
-              <div className="h-4 w-2/3 mx-auto bg-muted rounded animate-pulse" />
-            </div>
-          </div>
-        </section>
-
-        <section className="py-12">
+        <section className="py-20">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
               {Array.from({ length: 6 }).map((_, index) => (
@@ -262,7 +229,7 @@ function ProjectsPageContent() {
                   key={index}
                   className="border border-border rounded-lg overflow-hidden"
                 >
-                  <div className="aspect-video bg-muted animate-pulse" />
+                  <div className="aspect-[3/2] bg-muted animate-pulse" />
                   <div className="p-6 space-y-3">
                     <div className="h-5 w-3/5 bg-muted rounded animate-pulse" />
                     <div className="h-4 w-full bg-muted rounded animate-pulse" />
@@ -282,26 +249,8 @@ function ProjectsPageContent() {
   return (
     <div className="min-h-screen bg-background">
 
-      {/* Hero Section */}
-      <section className="py-20 bg-gradient-to-br from-primary/10 to-accent/5">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center">
-            <h1
-              className="text-4xl lg:text-5xl font-black text-foreground mb-6"
-              style={{ fontFamily: "var(--font-heading)" }}
-            >
-              Our Project Portfolio
-            </h1>
-            <p className="text-xl text-muted-foreground max-w-3xl mx-auto leading-relaxed">
-              {projectOverview ||
-                "Showcasing our expertise across diverse industrial and infrastructure projects with innovative chemical solutions."}
-            </p>
-          </div>
-        </div>
-      </section>
-
       {/* Main Content with Sidebar */}
-      <section className="py-12">
+      <section className="py-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex gap-8">
             {/* Left Sidebar - Categories */}
@@ -382,25 +331,6 @@ function ProjectsPageContent() {
                   })}
                 </div>
 
-                {/* Refresh Button */}
-                <Button
-                  variant="outline"
-                  onClick={handleRefresh}
-                  disabled={refreshing}
-                  className="w-full mt-6"
-                >
-                  {refreshing ? (
-                    <>
-                      <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                      Refreshing...
-                    </>
-                  ) : (
-                    <>
-                      <RefreshCw className="h-4 w-4 mr-2" />
-                      Refresh Projects
-                    </>
-                  )}
-                </Button>
               </div>
             </div>
 
@@ -476,14 +406,6 @@ function ProjectsPageContent() {
               {error && (
                 <div className="bg-destructive/15 border border-destructive/20 rounded-lg p-4 mb-6">
                   <p className="text-destructive text-sm">{error}</p>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={handleRefresh}
-                    className="mt-2"
-                  >
-                    Try Again
-                  </Button>
                 </div>
               )}
 
@@ -516,7 +438,7 @@ function ProjectsPageContent() {
                       key={project.id}
                       className="group h-full hover:shadow-xl hover:scale-[1.02] transition-all duration-300 border border-border/50 hover:border-primary/30 overflow-hidden flex flex-col"
                     >
-                      <div className="aspect-video relative overflow-hidden bg-gradient-to-br from-primary/5 to-accent/5 rounded-t-lg">
+                      <div className="aspect-[3/2] relative overflow-hidden bg-gradient-to-br from-primary/5 to-accent/5 rounded-t-lg">
                         {/* Background overlay */}
                         <div className="absolute inset-0 bg-gradient-to-br from-primary/10 to-accent/10 group-hover:from-primary/20 group-hover:to-accent/20 transition-colors duration-300" />
                         {project.image_url ? (
@@ -567,17 +489,6 @@ function ProjectsPageContent() {
                           </div>
 
                           <div className="space-y-2">
-                            {project.client_name && (
-                              <div className="flex items-center gap-2 text-sm">
-                                <Users className="h-4 w-4 text-muted-foreground" />
-                                <span className="text-muted-foreground">
-                                  Client:
-                                </span>
-                                <span className="font-medium">
-                                  {project.client_name}
-                                </span>
-                              </div>
-                            )}
 
                             {project.location && (
                               <div className="flex items-center gap-2 text-sm">
