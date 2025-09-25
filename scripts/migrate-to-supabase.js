@@ -182,6 +182,7 @@ async function migrateProjects() {
           solutions: project.solutions,
           image_url: project.image_url,
           gallery_images: safeJSONParse(project.gallery_images),
+          project_info_details: project.project_info_details,
           is_featured: convertBoolean(project.is_featured),
           is_active: convertBoolean(project.is_active),
           sort_order: project.sort_order,

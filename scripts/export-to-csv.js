@@ -97,7 +97,7 @@ function exportProjects() {
     SELECT 
       name, description, category, location, client_name, completion_date,
       project_value, key_features, challenges, solutions, image_url,
-      gallery_images, is_featured, is_active, sort_order, created_at, updated_at
+      gallery_images, project_info_details, is_featured, is_active, sort_order, created_at, updated_at
     FROM projects 
     ORDER BY sort_order, updated_at DESC
   `).all();
@@ -105,7 +105,7 @@ function exportProjects() {
   const headers = [
     'name', 'description', 'category', 'location', 'client_name', 'completion_date',
     'project_value', 'key_features', 'challenges', 'solutions', 'image_url',
-    'gallery_images', 'is_featured', 'is_active', 'sort_order', 'created_at', 'updated_at'
+    'gallery_images', 'project_info_details', 'is_featured', 'is_active', 'sort_order', 'created_at', 'updated_at'
   ];
   
   const csv = arrayToCsv(data, headers);

@@ -80,10 +80,14 @@ export async function PUT(
       message: "Project updated successfully",
       data: result[0]
     })
-  } catch (error) {
+  } catch (error: any) {
     console.error("Update project error:", error)
+    console.error("Error message:", error?.message || 'No message')
+    console.error("Error details:", JSON.stringify(error, null, 2))
+
+    const errorMessage = error?.message || error?.toString() || 'Unknown error occurred'
     return NextResponse.json(
-      { error: "Failed to update project" },
+      { error: `Failed to update project: ${errorMessage}` },
       { status: 500 }
     )
   }

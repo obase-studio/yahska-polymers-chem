@@ -93,6 +93,7 @@ CREATE TABLE projects (
     solutions TEXT,
     image_url TEXT,
     gallery_images JSONB DEFAULT '[]'::jsonb,
+    project_info_details TEXT,
     is_featured BOOLEAN DEFAULT false,
     is_active BOOLEAN DEFAULT true,
     sort_order INTEGER DEFAULT 0,

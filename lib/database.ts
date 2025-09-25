@@ -88,6 +88,10 @@ export function initDatabase() {
     db.exec(`ALTER TABLE products ADD COLUMN specification_pdf TEXT DEFAULT NULL`)
   } catch (e) { /* Column already exists */ }
 
+  try {
+    db.exec(`ALTER TABLE projects ADD COLUMN project_info_details TEXT DEFAULT NULL`)
+  } catch (e) { /* Column already exists */ }
+
   // Create default admin user if not exists
   createDefaultAdmin()
 }
