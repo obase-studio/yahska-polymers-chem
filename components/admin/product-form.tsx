@@ -25,12 +25,18 @@ interface ProductFormProps {
   categories: any[];
   product?: any;
   isEdit?: boolean;
+  isSaved?: boolean;
+  lastSaved?: string;
+  onSaveSuccess?: () => void;
 }
 
 export function ProductForm({
   categories,
   product,
   isEdit = false,
+  isSaved,
+  lastSaved,
+  onSaveSuccess,
 }: ProductFormProps) {
   const [formData, setFormData] = useState({
     name: product?.name || "",
@@ -149,8 +155,13 @@ export function ProductForm({
       });
 
       if (response.ok) {
-        router.push("/admin/products");
-        router.refresh();
+        if (onSaveSuccess) {
+          onSaveSuccess();
+        } else {
+          // Fallback to redirect for new products
+          router.push("/admin/products");
+          router.refresh();
+        }
       } else {
         const errorData = await response.json();
         console.log("Failed to save product:", errorData);
@@ -400,22 +411,36 @@ export function ProductForm({
       </div>
 
       {/* Submit Actions */}
-      <div className="flex flex-col sm:flex-row gap-4 justify-end pt-6 border-t">
+      <div className="flex items-center justify-between pt-6 border-t">
         <Button
-          type="button"
-          variant="outline"
-          onClick={() => router.back()}
-          className="sm:w-auto"
+          type="submit"
+          disabled={isLoading}
+          className={isSaved ? "bg-green-600" : ""}
         >
-          Cancel
-        </Button>
-        <Button type="submit" disabled={isLoading} className="sm:w-auto">
           {isLoading
             ? "Saving..."
+            : isSaved
+            ? "Saved!"
             : isEdit
             ? "Update Product"
             : "Create Product"}
         </Button>
+
+        <div className="flex items-center gap-3">
+          {lastSaved && (
+            <div className="text-sm text-muted-foreground">
+              Last saved: {lastSaved}
+            </div>
+          )}
+          <Button
+            type="button"
+            variant="outline"
+            onClick={() => router.back()}
+            className="sm:w-auto"
+          >
+            Cancel
+          </Button>
+        </div>
       </div>
     </form>
   );

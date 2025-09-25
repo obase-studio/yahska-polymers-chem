@@ -26,6 +26,8 @@ export default function EditProject() {
   const [project, setProject] = useState<Project | null>(null)
   const [loading, setLoading] = useState(false)
   const [initialLoading, setInitialLoading] = useState(true)
+  const [isSaved, setIsSaved] = useState(false)
+  const [lastSaved, setLastSaved] = useState<string>("")
 
   useEffect(() => {
     const fetchProject = async () => {
@@ -65,7 +67,16 @@ export default function EditProject() {
       })
 
       if (response.ok) {
-        router.push('/admin/projects')
+        const timestamp = new Date().toLocaleTimeString()
+        setLastSaved(timestamp)
+        setIsSaved(true)
+        setTimeout(() => setIsSaved(false), 3000)
+
+        // Update project data to reflect changes
+        const updatedProject = await response.json()
+        if (updatedProject.success && updatedProject.data) {
+          setProject(updatedProject.data)
+        }
       } else {
         const errorData = await response.json()
         alert(`Failed to update project: ${errorData.error}`)
@@ -119,10 +130,12 @@ export default function EditProject() {
         </div>
       </div>
 
-      <SimplifiedProjectForm 
+      <SimplifiedProjectForm
         initialData={project}
-        onSubmit={handleSubmit} 
-        loading={loading} 
+        onSubmit={handleSubmit}
+        loading={loading}
+        isSaved={isSaved}
+        lastSaved={lastSaved}
         onCancel={() => router.push('/admin/projects')}
       />
     </div>

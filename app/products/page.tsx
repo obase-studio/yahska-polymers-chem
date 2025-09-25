@@ -233,8 +233,34 @@ export default function ProductsPage() {
     );
   }
 
+  // Get content values for hero section
+  const heroHeadline = contentItems.find(
+    (item) => item.section === "hero" && item.content_key === "headline"
+  )?.content_value || "Our Products";
+
+  const heroDescription = contentItems.find(
+    (item) => item.section === "hero" && item.content_key === "description"
+  )?.content_value || "Discover our comprehensive range of high-quality construction chemicals and concrete admixtures designed for professional applications.";
+
   return (
     <div className="min-h-screen bg-background">
+
+      {/* Hero Section */}
+      <section className="py-20 bg-gradient-to-br from-primary/10 to-accent/5">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center">
+            <h1
+              className="text-3xl lg:text-4xl font-black text-foreground mb-6"
+              style={{ fontFamily: "var(--font-heading)" }}
+            >
+              {heroHeadline}
+            </h1>
+            <p className="text-xl text-muted-foreground max-w-3xl mx-auto leading-relaxed">
+              {heroDescription}
+            </p>
+          </div>
+        </div>
+      </section>
 
       {/* Main Content with Sidebar */}
       <section className="py-20">

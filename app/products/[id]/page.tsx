@@ -330,9 +330,6 @@ export default function ProductDetailPage() {
               <Card className="py-6">
                 <CardHeader>
                   <CardTitle className="text-primary">Applications</CardTitle>
-                  <CardDescription>
-                    Where and how this product can be used
-                  </CardDescription>
                 </CardHeader>
                 <CardContent>
                   <ul className="space-y-3">
@@ -352,9 +349,6 @@ export default function ProductDetailPage() {
               <Card className="py-6">
                 <CardHeader>
                   <CardTitle className="text-primary">Key Features</CardTitle>
-                  <CardDescription>
-                    What makes this product special
-                  </CardDescription>
                 </CardHeader>
                 <CardContent>
                   <ul className="space-y-3">

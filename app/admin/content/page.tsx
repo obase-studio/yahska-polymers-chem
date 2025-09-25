@@ -196,6 +196,25 @@ export default function ContentPage() {
     if (page === "products") {
       return [
         {
+          id: "hero",
+          title: "Products Hero Section",
+          description: "Main hero section displayed at the top of the products page",
+          fields: [
+            {
+              key: "headline",
+              label: "Hero Title",
+              type: "text" as const,
+              placeholder: "Our Products",
+            },
+            {
+              key: "description",
+              label: "Hero Description",
+              type: "textarea" as const,
+              placeholder: "Discover our comprehensive range of high-quality construction chemicals and concrete admixtures designed for professional applications.",
+            },
+          ],
+        },
+        {
           id: "product_overview",
           title: "Products Overview",
           description: "Intro paragraph for products page",
@@ -212,6 +231,25 @@ export default function ContentPage() {
 
     if (page === "projects") {
       return [
+        {
+          id: "hero",
+          title: "Projects Hero Section",
+          description: "Main hero section displayed at the top of the projects page",
+          fields: [
+            {
+              key: "headline",
+              label: "Hero Title",
+              type: "text" as const,
+              placeholder: "Our Projects",
+            },
+            {
+              key: "description",
+              label: "Hero Description",
+              type: "textarea" as const,
+              placeholder: "Explore our portfolio of successful construction projects across infrastructure, railways, and industrial applications.",
+            },
+          ],
+        },
         {
           id: "project_overview",
           title: "Projects Overview",
@@ -304,42 +342,15 @@ export default function ContentPage() {
           ],
         },
         {
-          id: "contact_info_section",
-          title: "Contact Info Section",
-          description: "Right side contact information section",
-          fields: [
-            { key: "title", label: "Section Title", type: "text" as const },
-            {
-              key: "description",
-              label: "Section Description",
-              type: "textarea" as const,
-            },
-          ],
-        },
-        {
           id: "locations",
           title: "Office Locations",
-          description: "Company office addresses",
+          description: "Company office addresses - add multiple locations as needed",
           fields: [
             {
-              key: "unit1_title",
-              label: "Unit 1 Title",
-              type: "text" as const,
-            },
-            {
-              key: "unit1_address",
-              label: "Unit 1 Address",
+              key: "content",
+              label: "Office Locations",
               type: "textarea" as const,
-            },
-            {
-              key: "unit2_title",
-              label: "Unit 2 Title",
-              type: "text" as const,
-            },
-            {
-              key: "unit2_address",
-              label: "Unit 2 Address",
-              type: "textarea" as const,
+              placeholder: "Add your office locations here. You can format them as needed, for example:\n\nUnit 1 - Changodar\nS. No 407, Khata No 1217, Bh Sarvodaya Hotel,\nMoraiya, Changodar, Ahmedabad – 382213\n\nUnit 2 - Vatva\nC-1/127, Phase I, Nr Tiger Surgical,\nGIDC Vatva, Ahmedabad – 382245",
             },
           ],
         },

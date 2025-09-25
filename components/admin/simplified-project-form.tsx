@@ -13,6 +13,8 @@ interface SimplifiedProjectFormProps {
   initialData?: any
   onSubmit: (data: any) => void
   loading: boolean
+  isSaved?: boolean
+  lastSaved?: string
   onCancel?: () => void
 }
 
@@ -21,7 +23,7 @@ interface ProjectCategoryOption {
   label: string
 }
 
-export function SimplifiedProjectForm({ initialData, onSubmit, loading, onCancel }: SimplifiedProjectFormProps) {
+export function SimplifiedProjectForm({ initialData, onSubmit, loading, isSaved, lastSaved, onCancel }: SimplifiedProjectFormProps) {
   const [formData, setFormData] = useState({
     name: initialData?.name || "",
     description: initialData?.description || "",
@@ -194,17 +196,29 @@ export function SimplifiedProjectForm({ initialData, onSubmit, loading, onCancel
       </div>
 
       {/* Submit Actions */}
-      <div className="flex justify-end gap-3 pt-6 border-t">
-        {onCancel && (
-          <Button type="button" variant="outline" onClick={onCancel}>
-            <X className="h-4 w-4 mr-2" />
-            Cancel
-          </Button>
-        )}
-        <Button type="submit" disabled={loading}>
+      <div className="flex items-center justify-between pt-6 border-t">
+        <Button
+          type="submit"
+          disabled={loading}
+          className={isSaved ? "bg-green-600" : ""}
+        >
           <Save className="h-4 w-4 mr-2" />
-          {loading ? "Saving..." : initialData ? "Update Project" : "Create Project"}
+          {loading ? "Saving..." : isSaved ? "Saved!" : initialData ? "Update Project" : "Create Project"}
         </Button>
+
+        <div className="flex items-center gap-3">
+          {lastSaved && (
+            <div className="text-sm text-muted-foreground">
+              Last saved: {lastSaved}
+            </div>
+          )}
+          {onCancel && (
+            <Button type="button" variant="outline" onClick={onCancel}>
+              <X className="h-4 w-4 mr-2" />
+              Cancel
+            </Button>
+          )}
+        </div>
       </div>
     </form>
   )

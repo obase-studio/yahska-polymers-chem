@@ -22,7 +22,7 @@ export default async function RootLayout({
 }>) {
   let categories: { id: string; name: string }[] = [];
   let projectCategories: { id: string; name: string }[] = [];
-  let branding = { logoUrl: null as string | null, companyName: "Yahska Polymers" };
+  let branding = { logoUrl: null as string | null, companyName: "" };
 
   try {
     const [categoryData, projectCategoryData, headerContent] = await Promise.all([
@@ -43,7 +43,7 @@ export default async function RootLayout({
       );
       branding = {
         logoUrl: logoItem?.content_value || null,
-        companyName: nameItem?.content_value?.trim() || "Yahska Polymers",
+        companyName: nameItem?.content_value?.trim() || "",
       };
     }
   } catch (error) {

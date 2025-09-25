@@ -163,17 +163,13 @@ export default function ProjectDetailPage() {
   }
 
   // Get content values from CMS
-  const projectInfoTitle = contentItems.find(
-    (item) => item.section === "hero_section" && item.content_key === "project_info_title"
-  )?.content_value || "Project Information";
-
   const keyFeaturesSectionTitle = contentItems.find(
     (item) => item.section === "key_features_section" && item.content_key === "section_title"
   )?.content_value || "Key Features";
 
   const keyFeaturesSectionDescription = contentItems.find(
     (item) => item.section === "key_features_section" && item.content_key === "section_description"
-  )?.content_value || "What makes this project special and unique in the industry";
+  )?.content_value || "";
 
   const projectInfoDetails = project.project_info_details?.trim() || "";
 
@@ -258,18 +254,11 @@ export default function ProjectDetailPage() {
                 </div>
 
                 {/* Additional Project Information from CMS */}
-                {(projectInfoTitle || projectInfoDetails) && (
+                {projectInfoDetails && (
                   <div className="mt-6 space-y-2">
-                    {projectInfoTitle && (
-                      <h2 className="text-xl font-semibold text-foreground">
-                        {projectInfoTitle}
-                      </h2>
-                    )}
-                    {projectInfoDetails && (
-                      <p className="text-xl text-muted-foreground leading-relaxed">
-                        {projectInfoDetails}
-                      </p>
-                    )}
+                    <p className="text-xl text-muted-foreground leading-relaxed">
+                      {projectInfoDetails}
+                    </p>
                   </div>
                 )}
               </div>
@@ -312,9 +301,11 @@ export default function ProjectDetailPage() {
               <Card className="py-6">
                 <CardHeader>
                   <CardTitle className="text-primary">{keyFeaturesSectionTitle}</CardTitle>
-                  <CardDescription>
-                    {keyFeaturesSectionDescription}
-                  </CardDescription>
+                  {keyFeaturesSectionDescription && (
+                    <CardDescription>
+                      {keyFeaturesSectionDescription}
+                    </CardDescription>
+                  )}
                 </CardHeader>
                 <CardContent>
                   <ul className="space-y-3">
