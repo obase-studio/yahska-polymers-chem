@@ -1,4 +1,11 @@
 import { NextRequest, NextResponse } from "next/server";
+import { NO_CACHE_HEADERS } from "@/lib/api-cache-config";
+import { triggerRevalidation } from "@/lib/cms-revalidation";
+
+export const dynamic = 'force-dynamic'
+export const revalidate = 0
+
+
 import { supabaseHelpers } from "@/lib/supabase-helpers";
 import { supabaseAdmin } from "@/lib/supabase";
 
@@ -40,7 +47,7 @@ export async function DELETE(
 
     if (!file) {
       console.error("File not found with ID:", id);
-      return NextResponse.json({ error: "File not found" }, { status: 404 });
+      return NextResponse.json({ error: "File not found" }, { status: 404, headers: NO_CACHE_HEADERS });
     }
 
     console.log("Found file to delete:", file.original_name, file.file_path);

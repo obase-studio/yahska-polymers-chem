@@ -37,7 +37,7 @@ export const DynamicMediaManager = dynamic(
 );
 
 export const DynamicProductForm = dynamic(
-  () => import('@/components/admin/product-form'),
+  () => import('@/components/admin/product-form').then(mod => ({ default: mod.ProductForm })),
   {
     loading: LoadingSpinner,
     ssr: false,
@@ -53,13 +53,7 @@ export const DynamicProjectForm = dynamic(
 );
 
 // Chart Components - Heavy dependencies
-export const DynamicCharts = dynamic(
-  () => import('recharts').then(mod => mod),
-  {
-    loading: LoadingSpinner,
-    ssr: false,
-  }
-);
+// Note: Import individual chart components as needed from recharts directly
 
 // TinyMCE Editor - Very heavy component
 export const DynamicTinyMCE = dynamic(

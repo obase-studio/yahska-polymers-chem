@@ -6,8 +6,22 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Save, X } from "lucide-react"
-import { ImagePicker } from "@/components/admin/image-picker"
+import { Card, CardContent } from "@/components/ui/card"
+import { Save, X, FileText } from "lucide-react"
+import { MediaPickerModal } from "@/components/admin/media-picker-modal"
+import Image from "next/image"
+import { getImageUrl } from "@/lib/image-utils"
+
+interface MediaFile {
+  id: number;
+  filename: string;
+  original_name: string;
+  file_path: string;
+  file_size: number;
+  mime_type: string;
+  alt_text: string;
+  uploaded_at: string;
+}
 
 interface SimplifiedProjectFormProps {
   initialData?: any
@@ -35,6 +49,7 @@ export function SimplifiedProjectForm({ initialData, onSubmit, loading, isSaved,
   })
   const [categories, setCategories] = useState<ProjectCategoryOption[]>([])
   const [categoriesLoading, setCategoriesLoading] = useState(false)
+  const [showMediaPicker, setShowMediaPicker] = useState(false)
 
   useEffect(() => {
     const fetchCategories = async () => {
@@ -104,8 +119,14 @@ export function SimplifiedProjectForm({ initialData, onSubmit, loading, isSaved,
     }))
   }
 
+  const handleImageSelect = (file: MediaFile) => {
+    setFormData((prev) => ({ ...prev, image_url: file.file_path }))
+    setShowMediaPicker(false)
+  }
+
   return (
-    <form onSubmit={handleSubmit} className="space-y-6">
+    <>
+      <form onSubmit={handleSubmit} className="space-y-6">
       {/* Basic Information */}
       <div className="space-y-6">
         <div className="grid gap-6 md:grid-cols-2">
@@ -183,15 +204,75 @@ export function SimplifiedProjectForm({ initialData, onSubmit, loading, isSaved,
         </div>
 
         <div className="space-y-2">
-          <ImagePicker
-            label="Project Image"
-            value={formData.image_url}
-            onChange={(url) => handleInputChange("image_url", url)}
-            placeholder="Select project image"
-            folder="projects"
-            recommendedDimensions="1200x800px (3:2 ratio)"
-            imageGuidelines="High-resolution project photo showing the completed work or construction progress. Images should be clear and professional for showcase purposes."
-          />
+          <Label className="text-sm font-medium">Project Image</Label>
+          <div className="space-y-3">
+            {/* Image Guidelines */}
+            <div className="text-xs text-muted-foreground space-y-1 bg-muted/30 p-3 rounded border-l-2 border-primary/20">
+              <div className="flex items-center gap-1">
+                <FileText className="h-3 w-3" />
+                <span className="font-medium">Recommended Dimensions:</span>
+                <span>1200x800px (3:2 ratio)</span>
+              </div>
+              <div className="text-xs">
+                High-resolution project photo showing the completed work or construction progress. Images should be clear and professional for showcase purposes.
+              </div>
+            </div>
+            {formData.image_url ? (
+              <Card>
+                <CardContent className="p-4">
+                  <div className="flex items-start gap-4">
+                    <div className="relative">
+                      <Image
+                        src={getImageUrl(formData.image_url)}
+                        alt="Project image"
+                        width={100}
+                        height={100}
+                        className="rounded-lg object-cover"
+                      />
+                      <Button
+                        type="button"
+                        size="sm"
+                        variant="destructive"
+                        className="absolute -top-2 -right-2 h-6 w-6 p-0"
+                        onClick={() => setFormData((prev) => ({ ...prev, image_url: "" }))}
+                      >
+                        <X className="h-3 w-3" />
+                      </Button>
+                    </div>
+                    <div className="flex-1">
+                      <h4 className="font-medium">Project Image</h4>
+                      <Button
+                        type="button"
+                        size="sm"
+                        variant="outline"
+                        className="mt-2"
+                        onClick={() => setShowMediaPicker(true)}
+                      >
+                        Change Image
+                      </Button>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            ) : (
+              <Card className="border-dashed">
+                <CardContent className="p-6 text-center">
+                  <FileText className="h-12 w-12 text-muted-foreground mx-auto mb-2" />
+                  <p className="text-sm text-muted-foreground mb-3">
+                    No image selected
+                  </p>
+                  <Button
+                    type="button"
+                    size="sm"
+                    variant="outline"
+                    onClick={() => setShowMediaPicker(true)}
+                  >
+                    Select Image
+                  </Button>
+                </CardContent>
+              </Card>
+            )}
+          </div>
         </div>
       </div>
 
@@ -220,6 +301,15 @@ export function SimplifiedProjectForm({ initialData, onSubmit, loading, isSaved,
           )}
         </div>
       </div>
-    </form>
+      </form>
+
+      <MediaPickerModal
+        isOpen={showMediaPicker}
+        onClose={() => setShowMediaPicker(false)}
+        onSelect={handleImageSelect}
+        title="Select Project Image"
+        imagesOnly={true}
+      />
+    </>
   )
 }

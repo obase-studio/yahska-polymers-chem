@@ -244,27 +244,25 @@ export function Navigation({
                     className="pl-4 space-y-1"
                   >
                     {categories.map((category) => (
-                      <Link
+                      <button
                         key={category.id}
-                        href="/products"
-                        className="text-muted-foreground hover:text-primary hover:bg-muted block px-3 py-2 rounded-md text-sm transition-all duration-200"
+                        className="text-muted-foreground hover:text-primary hover:bg-muted block px-3 py-2 rounded-md text-sm transition-all duration-200 w-full text-left"
                         onClick={() => {
                           handleCategorySelect(category.id);
                         }}
                       >
                         {category.name}
-                      </Link>
+                      </button>
                     ))}
                     {categories.length > 0 && (
-                      <Link
-                        href="/products"
-                        className="text-primary hover:text-primary/80 font-semibold hover:bg-muted block px-3 py-2 rounded-md text-sm transition-all duration-200"
+                      <button
+                        className="text-primary hover:text-primary/80 font-semibold hover:bg-muted block px-3 py-2 rounded-md text-sm transition-all duration-200 w-full text-left"
                         onClick={() => {
                           handleCategorySelect("all");
                         }}
                       >
                         See All Products
-                      </Link>
+                      </button>
                     )}
                   </div>
                 )}
@@ -291,27 +289,25 @@ export function Navigation({
                     className="pl-4 space-y-1"
                   >
                     {projectCategories.map((category) => (
-                      <Link
+                      <button
                         key={category.id}
-                        href="/projects"
-                        className="text-muted-foreground hover:text-primary hover:bg-muted block px-3 py-2 rounded-md text-sm transition-all duration-200"
+                        className="text-muted-foreground hover:text-primary hover:bg-muted block px-3 py-2 rounded-md text-sm transition-all duration-200 w-full text-left"
                         onClick={() => {
                           goToProjectCategory(category.id);
                         }}
                       >
                         {category.name}
-                      </Link>
+                      </button>
                     ))}
                     {projectCategories.length > 0 && (
-                      <Link
-                        href="/projects"
-                        className="text-primary hover:text-primary/80 font-semibold hover:bg-muted block px-3 py-2 rounded-md text-sm transition-all duration-200"
+                      <button
+                        className="text-primary hover:text-primary/80 font-semibold hover:bg-muted block px-3 py-2 rounded-md text-sm transition-all duration-200 w-full text-left"
                         onClick={() => {
                           goToProjectCategory("all");
                         }}
                       >
                         See All Projects
-                      </Link>
+                      </button>
                     )}
                   </div>
                 )}

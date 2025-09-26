@@ -206,16 +206,26 @@ export function ContentEditorWithMedia({
         setIsSaved(true);
         setTimeout(() => setIsSaved(false), 3000);
 
-        // Notify sync system
+        // Notify sync system - critical for header/branding updates
         try {
-          await fetch("/api/sync/content", {
+          const syncResponse = await fetch("/api/sync/content", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ page }),
+            body: JSON.stringify({
+              page,
+              contentType: 'content'
+            }),
             cache: "no-store",
           });
+          const syncResult = await syncResponse.json();
+          console.log("🔄 Sync notification result:", syncResult);
+
+          // If this is header content with branding changes, provide user feedback
+          if (page === 'header' && syncResult.revalidation?.layoutRevalidated) {
+            console.log("🚀 Header branding updated - all pages refreshed for immediate visibility across all environments");
+          }
         } catch (e) {
-          console.log("Sync notification attempt completed");
+          console.log("⚠️ Sync notification error:", e);
         }
       } else {
         alert("Some content failed to save. Please try again.");
@@ -266,6 +276,23 @@ export function ContentEditorWithMedia({
 
         setCurrentImageField(null);
         setShowMediaPicker(false);
+
+        // Trigger sync for immediate revalidation (especially important for header/branding images)
+        try {
+          const syncResponse = await fetch("/api/sync/content", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              page,
+              contentType: 'content'
+            }),
+            cache: "no-store",
+          });
+          const syncResult = await syncResponse.json();
+          console.log("🖼️ Image update sync result:", syncResult);
+        } catch (e) {
+          console.log("⚠️ Image update sync error:", e);
+        }
       }
     } catch (error) {
       console.error("Error setting page image:", error);

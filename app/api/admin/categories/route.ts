@@ -1,4 +1,11 @@
 import { NextRequest, NextResponse } from "next/server";
+import { NO_CACHE_HEADERS } from "@/lib/api-cache-config";
+import { triggerRevalidation } from "@/lib/cms-revalidation";
+
+export const dynamic = 'force-dynamic'
+export const revalidate = 0
+
+
 import { supabaseHelpers } from "@/lib/supabase-helpers";
 
 export async function GET() {
@@ -48,10 +55,13 @@ export async function POST(request: NextRequest) {
       sort_order: sort_order || 999,
     });
 
+    // Trigger revalidation for categories (affects navigation and product pages)
+    await triggerRevalidation('categories');
+
     return NextResponse.json({
       success: true,
       data: { id: result?.[0]?.id },
-    });
+    }, { headers: NO_CACHE_HEADERS });
   } catch (error: any) {
     console.error("Error creating category:", error);
     return NextResponse.json(

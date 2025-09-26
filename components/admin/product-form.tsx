@@ -14,12 +14,26 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
+import { Card, CardContent } from "@/components/ui/card";
 import {
   X,
   Plus,
   FileText,
 } from "lucide-react";
-import { ImagePicker } from "@/components/admin/image-picker";
+import { MediaPickerModal } from "@/components/admin/media-picker-modal";
+import Image from "next/image";
+import { getImageUrl } from "@/lib/image-utils";
+
+interface MediaFile {
+  id: number;
+  filename: string;
+  original_name: string;
+  file_path: string;
+  file_size: number;
+  mime_type: string;
+  alt_text: string;
+  uploaded_at: string;
+}
 
 interface ProductFormProps {
   categories: any[];
@@ -65,6 +79,7 @@ export function ProductForm({
   const [newFeature, setNewFeature] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [uploadingPdf, setUploadingPdf] = useState(false);
+  const [showMediaPicker, setShowMediaPicker] = useState(false);
   const router = useRouter();
 
   const addApplication = () => {
@@ -101,6 +116,11 @@ export function ProductForm({
       ...prev,
       features: prev.features.filter((_: string, i: number) => i !== index),
     }));
+  };
+
+  const handleImageSelect = (file: MediaFile) => {
+    setFormData((prev) => ({ ...prev, image_url: file.file_path }));
+    setShowMediaPicker(false);
   };
 
   const handlePdfUpload = async (
@@ -180,6 +200,7 @@ export function ProductForm({
   };
 
   return (
+    <>
     <form onSubmit={handleSubmit} className="space-y-6">
       {/* Basic Information */}
       <div className="space-y-6">
@@ -244,17 +265,75 @@ export function ProductForm({
         </div>
 
         <div className="space-y-2">
-          <ImagePicker
-            label="Product Image"
-            value={formData.image_url}
-            onChange={(url) =>
-              setFormData((prev) => ({ ...prev, image_url: url }))
-            }
-            placeholder="Select product image"
-            folder="uploads"
-            recommendedDimensions="1200x800px (3:2 ratio)"
-            imageGuidelines="High-quality image showing the product clearly. 3:2 aspect ratio recommended for optimal display on product cards and detail pages."
-          />
+          <Label className="text-sm font-medium">Product Image</Label>
+          <div className="space-y-3">
+            {/* Image Guidelines */}
+            <div className="text-xs text-muted-foreground space-y-1 bg-muted/30 p-3 rounded border-l-2 border-primary/20">
+              <div className="flex items-center gap-1">
+                <FileText className="h-3 w-3" />
+                <span className="font-medium">Recommended Dimensions:</span>
+                <span>1200x800px (3:2 ratio)</span>
+              </div>
+              <div className="text-xs">
+                High-quality image showing the product clearly. 3:2 aspect ratio recommended for optimal display on product cards and detail pages.
+              </div>
+            </div>
+            {formData.image_url ? (
+              <Card>
+                <CardContent className="p-4">
+                  <div className="flex items-start gap-4">
+                    <div className="relative">
+                      <Image
+                        src={getImageUrl(formData.image_url)}
+                        alt="Product image"
+                        width={100}
+                        height={100}
+                        className="rounded-lg object-cover"
+                      />
+                      <Button
+                        type="button"
+                        size="sm"
+                        variant="destructive"
+                        className="absolute -top-2 -right-2 h-6 w-6 p-0"
+                        onClick={() => setFormData((prev) => ({ ...prev, image_url: "" }))}
+                      >
+                        <X className="h-3 w-3" />
+                      </Button>
+                    </div>
+                    <div className="flex-1">
+                      <h4 className="font-medium">Product Image</h4>
+                      <Button
+                        type="button"
+                        size="sm"
+                        variant="outline"
+                        className="mt-2"
+                        onClick={() => setShowMediaPicker(true)}
+                      >
+                        Change Image
+                      </Button>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            ) : (
+              <Card className="border-dashed">
+                <CardContent className="p-6 text-center">
+                  <FileText className="h-12 w-12 text-muted-foreground mx-auto mb-2" />
+                  <p className="text-sm text-muted-foreground mb-3">
+                    No image selected
+                  </p>
+                  <Button
+                    type="button"
+                    size="sm"
+                    variant="outline"
+                    onClick={() => setShowMediaPicker(true)}
+                  >
+                    Select Image
+                  </Button>
+                </CardContent>
+              </Card>
+            )}
+          </div>
         </div>
 
         <div className="space-y-3">
@@ -443,5 +522,14 @@ export function ProductForm({
         </div>
       </div>
     </form>
+
+    <MediaPickerModal
+      isOpen={showMediaPicker}
+      onClose={() => setShowMediaPicker(false)}
+      onSelect={handleImageSelect}
+      title="Select Product Image"
+      imagesOnly={true}
+    />
+    </>
   );
 }

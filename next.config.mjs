@@ -36,7 +36,7 @@ const nextConfig = {
         headers: [
           {
             key: 'Cache-Control',
-            value: 'public, max-age=60, stale-while-revalidate=30',
+            value: 'no-store, no-cache, must-revalidate',
           },
         ],
       },
@@ -54,7 +54,7 @@ const nextConfig = {
         headers: [
           {
             key: 'Cache-Control',
-            value: 'public, max-age=31536000, immutable',
+            value: 'public, max-age=0, must-revalidate',
           },
         ],
       },
@@ -125,7 +125,6 @@ const nextConfig = {
   // Production optimizations
   poweredByHeader: false,
   reactStrictMode: true,
-  swcMinify: true,
 }
 
 export default nextConfig

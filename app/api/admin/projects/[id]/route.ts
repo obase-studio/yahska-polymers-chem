@@ -1,4 +1,11 @@
 import { NextRequest, NextResponse } from "next/server"
+import { NO_CACHE_HEADERS } from "@/lib/api-cache-config";
+import { triggerRevalidation } from "@/lib/cms-revalidation";
+
+export const dynamic = 'force-dynamic'
+export const revalidate = 0
+
+
 import { requireAuth } from "@/lib/auth"
 import { supabaseAdmin } from "@/lib/supabase"
 

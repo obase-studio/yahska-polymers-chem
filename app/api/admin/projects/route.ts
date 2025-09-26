@@ -1,4 +1,11 @@
 import { NextRequest, NextResponse } from "next/server";
+import { NO_CACHE_HEADERS } from "@/lib/api-cache-config";
+import { triggerRevalidation } from "@/lib/cms-revalidation";
+
+export const dynamic = 'force-dynamic'
+export const revalidate = 0
+
+
 import { requireAuth } from "@/lib/auth";
 import { supabaseAdmin } from "@/lib/supabase";
 
@@ -69,13 +76,16 @@ export async function POST(request: NextRequest) {
 
     console.log("Project created successfully:", result?.[0]);
 
+    // Trigger revalidation for projects
+    await triggerRevalidation('projects');
+
     return NextResponse.json(
       {
         success: true,
         message: "Project created successfully",
         data: result?.[0],
       },
-      { status: 201 }
+      { status: 201, headers: NO_CACHE_HEADERS }
     );
   } catch (error: any) {
     console.error("Create project error:", error);

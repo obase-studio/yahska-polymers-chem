@@ -37,6 +37,8 @@ interface ImageWithFallbackProps {
   alt: string;
   filename: string;
   className?: string;
+  fileId?: number;
+  onError?: (fileId: number) => void;
 }
 
 function ImageWithFallback({
@@ -44,6 +46,8 @@ function ImageWithFallback({
   alt,
   filename,
   className,
+  fileId,
+  onError: onImageError,
 }: ImageWithFallbackProps) {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
@@ -58,6 +62,9 @@ function ImageWithFallback({
   const handleError = () => {
     setLoading(false);
     setError(true);
+    if (fileId && onImageError && retryCount >= maxRetries) {
+      onImageError(fileId);
+    }
   };
 
   const handleRetry = () => {
@@ -147,6 +154,9 @@ export function ImagePicker({
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedImage, setSelectedImage] = useState<string>(value || "");
   const [uploadProgress, setUploadProgress] = useState<number>(0);
+  const [brokenImages, setBrokenImages] = useState<Set<number>>(new Set());
+  const [refreshing, setRefreshing] = useState(false);
+  const [activeFolder, setActiveFolder] = useState<string | undefined>(folder);
 
   // Fetch existing media files
   const fetchMediaFiles = async () => {
@@ -172,15 +182,36 @@ export function ImagePicker({
     folderFilter?: string
   ) => {
     let filtered = files.filter(
-      (file) => file.mime_type.startsWith("image/") // Only show image files
+      (file) => file.mime_type.startsWith("image/") && !brokenImages.has(file.id) // Only show image files that aren't broken
     );
 
+    // Apply folder filter if specified
     if (folderFilter) {
-      filtered = filtered.filter((file) =>
-        file.file_path.toLowerCase().includes(folderFilter.toLowerCase())
-      );
+      // Check for exact folder match in path structure
+      const folderFiltered = filtered.filter((file) => {
+        const pathParts = file.file_path.split('/');
+        // Get the folder name from the path (second to last part)
+        const fileFolderName = pathParts[pathParts.length - 2];
+        return fileFolderName && fileFolderName.toLowerCase() === folderFilter.toLowerCase();
+      });
+
+      // If folder filter returns results, use them
+      if (folderFiltered.length > 0) {
+        filtered = folderFiltered;
+      } else {
+        // If no exact match, try partial matching for backwards compatibility
+        const partialFiltered = filtered.filter((file) =>
+          file.file_path.toLowerCase().includes(folderFilter.toLowerCase())
+        );
+
+        if (partialFiltered.length > 0) {
+          filtered = partialFiltered;
+        }
+        // If still no results, show all images as fallback
+      }
     }
 
+    // Apply search filter
     if (search) {
       filtered = filtered.filter(
         (file) =>
@@ -293,6 +324,34 @@ export function ImagePicker({
     setIsOpen(false);
   };
 
+  // Mark image as broken
+  const markImageAsBroken = (fileId: number) => {
+    setBrokenImages(prev => new Set([...prev, fileId]));
+  };
+
+  // Clean up broken images
+  const cleanupBrokenImages = async () => {
+    if (brokenImages.size === 0) return;
+
+    setRefreshing(true);
+    try {
+      const response = await fetch('/api/admin/cleanup-images', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ dryRun: false })
+      });
+
+      if (response.ok) {
+        setBrokenImages(new Set());
+        await fetchMediaFiles();
+      }
+    } catch (error) {
+      console.error('Error cleaning up images:', error);
+    } finally {
+      setRefreshing(false);
+    }
+  };
+
   // Get folder categories for filtering
   const getFolderCategories = () => {
     const folders = new Set<string>();
@@ -313,8 +372,8 @@ export function ImagePicker({
   }, [isOpen]);
 
   useEffect(() => {
-    filterFiles(mediaFiles, searchQuery, folder);
-  }, [mediaFiles, searchQuery, folder]);
+    filterFiles(mediaFiles, searchQuery, activeFolder);
+  }, [mediaFiles, searchQuery, activeFolder]);
 
   const getDisplayFileName = (url: string) => {
     if (!url) return placeholder;
@@ -397,22 +456,43 @@ export function ImagePicker({
                     />
                   </div>
 
-                  {!folder && (
-                    <div className="flex gap-2 flex-wrap">
-                      {getFolderCategories()
-                        .slice(0, 4)
-                        .map((cat) => (
-                          <Badge
-                            key={cat}
-                            variant="outline"
-                            className="text-xs"
-                          >
-                            <FolderOpen className="h-3 w-3 mr-1" />
-                            {cat}
-                          </Badge>
-                        ))}
-                    </div>
+                  <div className="text-xs text-muted-foreground">
+                    {filteredFiles.length} of {mediaFiles.filter(f => f.mime_type.startsWith("image/") && !brokenImages.has(f.id)).length} images
+                  </div>
+
+                  {brokenImages.size > 0 && (
+                    <Button
+                      variant="destructive"
+                      size="sm"
+                      onClick={cleanupBrokenImages}
+                      disabled={refreshing}
+                    >
+                      {refreshing ? (
+                        <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                      ) : (
+                        <X className="h-4 w-4 mr-2" />
+                      )}
+                      Clean up {brokenImages.size} broken
+                    </Button>
                   )}
+
+                  <div className="flex gap-2 flex-wrap">
+                    <select
+                      className="text-xs border rounded px-2 py-1 bg-background text-foreground min-w-32"
+                      value={activeFolder || ""}
+                      onChange={(e) => {
+                        const newFolder = e.target.value || undefined;
+                        setActiveFolder(newFolder);
+                      }}
+                    >
+                      <option value="">All Media</option>
+                      {getFolderCategories().map((cat) => (
+                        <option key={cat} value={cat}>
+                          {cat.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase())}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
                 </div>
 
                 {/* Image Grid */}
@@ -446,6 +526,8 @@ export function ImagePicker({
                                 alt={file.alt_text || file.original_name}
                                 filename={file.original_name}
                                 className="w-full h-full object-cover"
+                                fileId={file.id}
+                                onError={markImageAsBroken}
                               />
 
                               {/* Overlay */}
@@ -480,8 +562,8 @@ export function ImagePicker({
                     <div className="text-center py-8 text-muted-foreground">
                       <Image className="h-12 w-12 mx-auto mb-2 opacity-50" />
                       <p className="mb-2">No images found</p>
-                      {folder && (
-                        <p className="text-sm mb-4">in folder: {folder}</p>
+                      {activeFolder && (
+                        <p className="text-sm mb-4">in folder: {activeFolder.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase())}</p>
                       )}
                       <div className="flex gap-2 justify-center">
                         {searchQuery && (
@@ -587,9 +669,14 @@ export function ImagePicker({
             </Tabs>
 
             <DialogFooter className="flex justify-between">
-              <div className="flex items-center text-sm text-muted-foreground">
+              <div className="flex items-center gap-4 text-sm text-muted-foreground">
                 {selectedImage && (
                   <span>Selected: {getDisplayFileName(selectedImage)}</span>
+                )}
+                {brokenImages.size > 0 && (
+                  <span className="text-destructive">
+                    {brokenImages.size} broken image{brokenImages.size !== 1 ? 's' : ''} detected
+                  </span>
                 )}
               </div>
               <div className="flex gap-2">

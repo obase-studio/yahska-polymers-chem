@@ -2,15 +2,16 @@
 
 import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
-import { 
-  Package, 
-  FileText, 
-  Image, 
+import {
+  Package,
+  FileText,
+  Image,
   ExternalLink,
   ArrowRight,
   Edit,
   Upload,
-  Building2
+  Building2,
+  Trash2
 } from "lucide-react"
 import Link from "next/link"
 
@@ -87,6 +88,13 @@ export function SimpleDashboard({ stats }: SimpleDashboardProps) {
       description: "Upload and organize images",
       href: "/admin/media",
       icon: Upload,
+      primary: false
+    },
+    {
+      title: "Cleanup Images",
+      description: "Remove broken image references",
+      href: "/admin/cleanup-images",
+      icon: Trash2,
       primary: false
     },
     {

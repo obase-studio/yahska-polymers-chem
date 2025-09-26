@@ -1,4 +1,11 @@
 import { NextRequest, NextResponse } from "next/server"
+import { NO_CACHE_HEADERS } from "@/lib/api-cache-config";
+import { triggerRevalidation } from "@/lib/cms-revalidation";
+
+export const dynamic = 'force-dynamic'
+export const revalidate = 0
+
+
 import { requireAuth } from "@/lib/auth"
 import { supabaseHelpers } from "@/lib/supabase-helpers"
 
@@ -22,7 +29,7 @@ export async function GET(
   } catch (error) {
     return NextResponse.json(
       { error: "Unauthorized" },
-      { status: 401 }
+      { status: 401, headers: NO_CACHE_HEADERS }
     )
   }
 }

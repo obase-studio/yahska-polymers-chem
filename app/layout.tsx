@@ -1,10 +1,14 @@
 import type React from "react";
 import type { Metadata } from "next";
+import { unstable_cache } from 'next/cache';
 import "./globals.css";
 import { ProductProvider } from "@/contexts/ProductContext";
 import { supabaseHelpers } from "@/lib/supabase-helpers";
 import { NavigationWrapper } from "@/components/navigation-wrapper";
 import { PerformanceMonitor } from "@/components/performance-monitor";
+
+export const dynamic = 'force-dynamic'
+export const revalidate = 0
 
 const headingFontStack = "'Montserrat', 'Segoe UI', 'Helvetica Neue', Arial, sans-serif";
 const bodyFontStack = "'Open Sans', 'Segoe UI', 'Helvetica Neue', Arial, sans-serif";
@@ -63,27 +67,40 @@ export default async function RootLayout({
   let branding = { logoUrl: null as string | null, companyName: "" };
 
   try {
-    const [categoryData, projectCategoryData, headerContent] = await Promise.all([
+    // Use unstable_cache for branding data with tags for invalidation
+    const getBrandingData = unstable_cache(
+      async () => {
+        const headerContent = await supabaseHelpers.getContent("header");
+        if (Array.isArray(headerContent)) {
+          const logoItem = headerContent.find(
+            (item: any) => item.section === "branding" && item.content_key === "logo"
+          );
+          const nameItem = headerContent.find(
+            (item: any) => item.section === "branding" && item.content_key === "company_name"
+          );
+          return {
+            logoUrl: logoItem?.content_value || null,
+            companyName: nameItem?.content_value?.trim() || "",
+          };
+        }
+        return { logoUrl: null, companyName: "" };
+      },
+      ['header-branding'],
+      {
+        tags: ['branding', 'navigation', 'header'],
+        revalidate: false // Don't cache, always fetch fresh
+      }
+    );
+
+    const [categoryData, projectCategoryData, brandingData] = await Promise.all([
       supabaseHelpers.getAllCategories(),
       supabaseHelpers.getAllProjectCategories(),
-      supabaseHelpers.getContent("header"),
+      getBrandingData(),
     ]);
 
     categories = (categoryData || []).map((cat: any) => ({ id: cat.id, name: cat.name }));
     projectCategories = (projectCategoryData || []).map((cat: any) => ({ id: cat.id, name: cat.name }));
-
-    if (Array.isArray(headerContent)) {
-      const logoItem = headerContent.find(
-        (item: any) => item.section === "branding" && item.content_key === "logo"
-      );
-      const nameItem = headerContent.find(
-        (item: any) => item.section === "branding" && item.content_key === "company_name"
-      );
-      branding = {
-        logoUrl: logoItem?.content_value || null,
-        companyName: nameItem?.content_value?.trim() || "",
-      };
-    }
+    branding = brandingData;
   } catch (error) {
     console.error("Failed to load navigation data:", error);
   }

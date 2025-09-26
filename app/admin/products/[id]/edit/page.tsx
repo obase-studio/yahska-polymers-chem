@@ -26,15 +26,31 @@ export default function EditProductPage() {
           fetch('/api/admin/categories')
         ])
 
+        // Check authentication first
+        if (productResponse.status === 401 || categoriesResponse.status === 401) {
+          // Redirect to login if unauthorized
+          window.location.href = '/admin/login'
+          return
+        }
+
         const productData = await productResponse.json()
         const categoriesData = await categoriesResponse.json()
 
-        if (productData.success) {
-          setProduct(productData.data)
+        // Handle product response
+        if (productResponse.ok) {
+          setProduct(productData)
+        } else {
+          console.error('Failed to fetch product:', productData)
+          if (productResponse.status === 404) {
+            console.log(`Product ${productId} not found - may have been deleted`)
+          }
         }
 
-        if (categoriesData.success) {
-          setCategories(categoriesData.data)
+        // Handle categories response
+        if (categoriesResponse.ok) {
+          setCategories(categoriesData.success ? categoriesData.data : categoriesData)
+        } else {
+          console.error('Failed to fetch categories:', categoriesData)
         }
       } catch (error) {
         console.error('Error fetching data:', error)
@@ -67,8 +83,19 @@ export default function EditProductPage() {
   if (!product) {
     return (
       <div className="space-y-8">
+        <div className="flex items-center gap-4 mb-8">
+          <Button asChild variant="outline" size="sm">
+            <Link href="/admin/products">
+              <ArrowLeft className="h-4 w-4 mr-2" />
+              Back to Products
+            </Link>
+          </Button>
+        </div>
         <div className="text-center py-16">
-          <p className="text-muted-foreground mb-4">Product not found</p>
+          <h1 className="text-2xl font-semibold mb-4">Product not found</h1>
+          <p className="text-muted-foreground mb-6">
+            Product ID {productId} could not be found. It may have been deleted or moved.
+          </p>
           <Button asChild>
             <Link href="/admin/products">Back to Products</Link>
           </Button>
