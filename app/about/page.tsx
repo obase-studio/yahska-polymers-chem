@@ -140,6 +140,17 @@ export default function AboutPage() {
         item.section === "company_overview" && item.content_key === "content"
     )?.content_value || "";
 
+  // Get hero page title
+  const pageTitle =
+    contentItems.find(
+      (item) => item.section === "hero" && item.content_key === "page_title"
+    )?.content_value || "About Yahska Polymers";
+
+  // Get Our Story section title
+  const ourStorySectionTitle =
+    contentItems.find(
+      (item) => item.section === "our_story" && item.content_key === "section_title"
+    )?.content_value || "Our Story";
 
   const experience =
     contentItems.find(
@@ -271,7 +282,7 @@ export default function AboutPage() {
                 className="text-3xl lg:text-4xl font-black text-foreground mb-6"
                 style={{ fontFamily: "var(--font-heading)" }}
               >
-                About Yahska Polymers
+                {pageTitle}
               </h1>
               {loading ? (
                 <div className="space-y-3">
@@ -355,7 +366,7 @@ export default function AboutPage() {
               className="text-3xl font-bold text-foreground mb-6"
               style={{ fontFamily: "var(--font-heading)" }}
             >
-              Our Story
+              {ourStorySectionTitle}
             </h2>
           </div>
           <div className="max-w-4xl mx-auto">

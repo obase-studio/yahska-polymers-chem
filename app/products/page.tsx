@@ -24,6 +24,7 @@ import {
   Download,
 } from "lucide-react";
 import Link from "next/link";
+import Image from "next/image";
 import { Footer } from "@/components/footer";
 import { ContentItem } from "@/lib/database-client";
 import { useProductContext } from "@/contexts/ProductContext";
@@ -491,10 +492,13 @@ export default function ProductsPage() {
                           {/* Background overlay */}
                           <div className="absolute inset-0 bg-gradient-to-br from-primary/10 to-accent/10 group-hover:from-primary/20 group-hover:to-accent/20 transition-colors duration-300" />
                           {product.image_url ? (
-                            <img
+                            <Image
                               src={product.image_url}
                               alt={product.name}
-                              className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
+                              fill
+                              className="object-cover hover:scale-105 transition-transform duration-300"
+                              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                              loading="lazy"
                             />
                           ) : (
                             <div className="flex items-center justify-center h-full">

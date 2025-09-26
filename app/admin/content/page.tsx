@@ -146,6 +146,13 @@ export default function ContentPage() {
             "Choose between image or video for hero section and intro text",
           fields: [
             {
+              key: "page_title",
+              label: "Page Title",
+              type: "text" as const,
+              placeholder: "About Yahska Polymers",
+              maxLength: 50,
+            },
+            {
               key: "hero_type",
               label: "Hero Media Type",
               type: "select" as const,
@@ -184,6 +191,13 @@ export default function ContentPage() {
           description: "Company history and background story",
           fields: [
             {
+              key: "section_title",
+              label: "Section Title",
+              type: "text" as const,
+              placeholder: "Our Story",
+              maxLength: 50,
+            },
+            {
               key: "content",
               label: "Our Story Content",
               type: "textarea" as const,
@@ -214,18 +228,6 @@ export default function ContentPage() {
             },
           ],
         },
-        {
-          id: "product_overview",
-          title: "Products Overview",
-          description: "Intro paragraph for products page",
-          fields: [
-            {
-              key: "content",
-              label: "Overview Content",
-              type: "textarea" as const,
-            },
-          ],
-        },
       ];
     }
 
@@ -247,18 +249,6 @@ export default function ContentPage() {
               label: "Hero Description",
               type: "textarea" as const,
               placeholder: "Explore our portfolio of successful construction projects across infrastructure, railways, and industrial applications.",
-            },
-          ],
-        },
-        {
-          id: "project_overview",
-          title: "Projects Overview",
-          description: "Intro paragraph for projects page",
-          fields: [
-            {
-              key: "content",
-              label: "Overview Content",
-              type: "textarea" as const,
             },
           ],
         },

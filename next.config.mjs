@@ -2,35 +2,69 @@
 const nextConfig = {
   // Performance optimizations
   experimental: {
-    optimizePackageImports: ['lucide-react'],
+    optimizePackageImports: [
+      'lucide-react',
+      '@radix-ui/react-dialog',
+      '@radix-ui/react-dropdown-menu',
+      '@radix-ui/react-accordion',
+      'recharts'
+    ],
+    turbo: {
+      rules: {
+        '*.svg': {
+          loaders: ['@svgr/webpack'],
+          as: '*.js',
+        },
+      },
+    },
   },
 
-  // Disable caching for dynamic content
+  // Smart caching strategy
   headers: async () => {
     return [
       {
-        source: '/api/:path*',
+        source: '/api/sync/:path*',
         headers: [
           {
             key: 'Cache-Control',
-            value: 'no-store, no-cache, must-revalidate, proxy-revalidate',
+            value: 'no-store, no-cache, must-revalidate',
           },
+        ],
+      },
+      {
+        source: '/api/content',
+        headers: [
           {
-            key: 'Pragma',
-            value: 'no-cache',
+            key: 'Cache-Control',
+            value: 'public, max-age=60, stale-while-revalidate=30',
           },
+        ],
+      },
+      {
+        source: '/api/products',
+        headers: [
           {
-            key: 'Expires',
-            value: '0',
+            key: 'Cache-Control',
+            value: 'public, max-age=300, stale-while-revalidate=60',
+          },
+        ],
+      },
+      {
+        source: '/((?!api/).*)',
+        headers: [
+          {
+            key: 'Cache-Control',
+            value: 'public, max-age=31536000, immutable',
           },
         ],
       },
     ]
   },
 
-  // Image optimization
+  // Enhanced image optimization
   images: {
-    unoptimized: false, // Enable optimization for better performance
+    unoptimized: false,
+    loader: 'default',
     domains: ['jlbwwbnatmmkcizqprdx.supabase.co'],
     remotePatterns: [
       {
@@ -40,9 +74,45 @@ const nextConfig = {
         pathname: '/storage/v1/object/public/**',
       },
     ],
-    formats: ['image/webp', 'image/avif'],
-    minimumCacheTTL: 0, // Disable image caching for immediate updates
+    formats: ['image/avif', 'image/webp'],
+    minimumCacheTTL: 86400, // 24 hours
+    dangerouslyAllowSVG: false,
+    contentSecurityPolicy: "default-src 'self'; script-src 'none'; sandbox;",
+    deviceSizes: [640, 750, 828, 1080, 1200, 1920, 2048, 3840],
+    imageSizes: [16, 32, 48, 64, 96, 128, 256, 384],
   },
+
+  // Compiler optimizations
+  compiler: {
+    removeConsole: process.env.NODE_ENV === 'production',
+  },
+
+  // Bundle analyzer and optimization
+  webpack: (config, { dev, isServer }) => {
+    if (!dev && !isServer) {
+      config.optimization.splitChunks = {
+        chunks: 'all',
+        cacheGroups: {
+          vendor: {
+            test: /[\\/]node_modules[\\/]/,
+            name: 'vendors',
+            priority: 10,
+            reuseExistingChunk: true,
+          },
+          radix: {
+            test: /[\\/]node_modules[\\/]@radix-ui[\\/]/,
+            name: 'radix-ui',
+            priority: 20,
+            reuseExistingChunk: true,
+          },
+        },
+      };
+    }
+    return config;
+  },
+
+  // Static optimization
+  trailingSlash: false,
 
   // Development settings
   eslint: {
@@ -52,9 +122,10 @@ const nextConfig = {
     ignoreBuildErrors: false,
   },
 
-  // Disable static generation for dynamic content
+  // Production optimizations
   poweredByHeader: false,
   reactStrictMode: true,
+  swcMinify: true,
 }
 
 export default nextConfig

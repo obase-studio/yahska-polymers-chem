@@ -4,6 +4,7 @@ import "./globals.css";
 import { ProductProvider } from "@/contexts/ProductContext";
 import { supabaseHelpers } from "@/lib/supabase-helpers";
 import { NavigationWrapper } from "@/components/navigation-wrapper";
+import { PerformanceMonitor } from "@/components/performance-monitor";
 
 const headingFontStack = "'Montserrat', 'Segoe UI', 'Helvetica Neue', Arial, sans-serif";
 const bodyFontStack = "'Open Sans', 'Segoe UI', 'Helvetica Neue', Arial, sans-serif";
@@ -13,6 +14,43 @@ export const metadata: Metadata = {
   description:
     "Leading manufacturer of construction chemicals, concrete admixtures, textile chemicals, and dyestuff chemicals. Quality products for industrial applications.",
   generator: "v0.app",
+  keywords: "construction chemicals, concrete admixtures, textile chemicals, dyestuff chemicals, industrial chemicals, building materials",
+  authors: [{ name: "Yahska Polymers" }],
+  creator: "Yahska Polymers",
+  publisher: "Yahska Polymers",
+  formatDetection: {
+    email: false,
+    address: false,
+    telephone: false,
+  },
+  metadataBase: new URL('https://yahskapolymers.com'),
+  alternates: {
+    canonical: '/',
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      'max-video-preview': -1,
+      'max-image-preview': 'large',
+      'max-snippet': -1,
+    },
+  },
+  openGraph: {
+    type: 'website',
+    locale: 'en_US',
+    url: '/',
+    title: 'Yahska Polymers - Construction Chemicals & Concrete Admixtures',
+    description: 'Leading manufacturer of construction chemicals, concrete admixtures, textile chemicals, and dyestuff chemicals.',
+    siteName: 'Yahska Polymers',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Yahska Polymers - Construction Chemicals & Concrete Admixtures',
+    description: 'Leading manufacturer of construction chemicals, concrete admixtures, textile chemicals, and dyestuff chemicals.',
+  },
 };
 
 export default async function RootLayout({
@@ -66,16 +104,21 @@ export default async function RootLayout({
           as="image"
           type="image/webp"
         />
+        <link rel="dns-prefetch" href="https://jlbwwbnatmmkcizqprdx.supabase.co" />
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
       </head>
       <body className="font-sans antialiased">
-        <ProductProvider>
-          <NavigationWrapper
-            categories={categories}
-            projectCategories={projectCategories}
-            branding={branding}
-          />
-          {children}
-        </ProductProvider>
+        <PerformanceMonitor>
+          <ProductProvider>
+            <NavigationWrapper
+              categories={categories}
+              projectCategories={projectCategories}
+              branding={branding}
+            />
+            {children}
+          </ProductProvider>
+        </PerformanceMonitor>
       </body>
     </html>
   );

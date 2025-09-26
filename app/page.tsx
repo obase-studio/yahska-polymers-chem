@@ -16,6 +16,7 @@ import {
   ImageIcon,
 } from "lucide-react";
 import Link from "next/link";
+import Image from "next/image";
 import { Footer } from "@/components/footer";
 import { LazySection } from "@/components/lazy-section";
 import { LazyProjectCategories } from "@/components/lazy-project-categories";
@@ -129,8 +130,8 @@ export default function OptimizedHomePage() {
       }
     };
 
-    // Check for updates every 2 seconds
-    const interval = setInterval(checkForUpdates, 2000);
+    // Check for updates every 30 seconds (reduced frequency)
+    const interval = setInterval(checkForUpdates, 30000);
     return () => clearInterval(interval);
   }, [lastKnownTimestamp]);
 
@@ -288,11 +289,16 @@ export default function OptimizedHomePage() {
                     )}
                   </div>
                 ) : heroImageFromAPI ? (
-                  <img
-                    src={heroImageFromAPI}
-                    alt="Yahska Polymers - Leading Construction Chemicals Manufacturer"
-                    className="rounded-lg shadow-2xl w-full h-auto object-cover"
-                  />
+                  <div className="aspect-video rounded-lg overflow-hidden shadow-2xl">
+                    <Image
+                      src={heroImageFromAPI}
+                      alt="Yahska Polymers - Leading Construction Chemicals Manufacturer"
+                      fill
+                      className="object-cover"
+                      priority
+                      sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                    />
+                  </div>
                 ) : (
                   <div className="aspect-video rounded-lg bg-muted/20 border-2 border-dashed border-muted-foreground/25 flex items-center justify-center shadow-lg">
                     <div className="text-center p-8">
