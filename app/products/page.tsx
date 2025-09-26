@@ -529,35 +529,6 @@ export default function ProductsPage() {
                               </p>
                             </div>
 
-                            {product.features &&
-                              product.features.length > 0 && (
-                                <div className="pt-3 border-t">
-                                  <p className="text-sm font-medium mb-2">
-                                    Key Features:
-                                  </p>
-                                  <div className="flex flex-wrap gap-1">
-                                    {product.features
-                                      .slice(0, 3)
-                                      .map((feature, index) => (
-                                        <Badge
-                                          key={index}
-                                          variant="secondary"
-                                          className="text-xs bg-muted/50 text-muted-foreground border-0"
-                                        >
-                                          {feature}
-                                        </Badge>
-                                      ))}
-                                    {product.features.length > 3 && (
-                                      <Badge
-                                        variant="secondary"
-                                        className="text-xs bg-muted/50 text-muted-foreground border-0"
-                                      >
-                                        +{product.features.length - 3} more
-                                      </Badge>
-                                    )}
-                                  </div>
-                                </div>
-                              )}
                           </div>
 
                           <div className="flex flex-col gap-2 mt-auto">

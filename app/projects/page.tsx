@@ -544,35 +544,6 @@ function ProjectsPageContent() {
                             )}
                           </div>
 
-                          {project.key_features &&
-                            project.key_features.length > 0 && (
-                              <div className="pt-3 border-t">
-                                <p className="text-sm font-medium mb-2">
-                                  Key Features:
-                                </p>
-                                <div className="flex flex-wrap gap-1">
-                                  {project.key_features
-                                    .slice(0, 3)
-                                    .map((feature, index) => (
-                                      <Badge
-                                        key={index}
-                                        variant="secondary"
-                                        className="text-xs bg-muted/50 text-muted-foreground border-0"
-                                      >
-                                        {feature}
-                                      </Badge>
-                                    ))}
-                                  {project.key_features.length > 3 && (
-                                    <Badge
-                                      variant="secondary"
-                                      className="text-xs bg-muted/50 text-muted-foreground border-0"
-                                    >
-                                      +{project.key_features.length - 3} more
-                                    </Badge>
-                                  )}
-                                </div>
-                              </div>
-                            )}
                         </div>
 
                         <Button
