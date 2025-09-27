@@ -221,7 +221,7 @@ export const supabaseHelpers = {
       .from("product_categories")
       .select("id, name, description, image_url, sort_order, is_active")
       .eq("is_active", true)
-      .order("name");
+      .order("sort_order");
 
     if (error) throw error;
     return data || [];
@@ -242,7 +242,7 @@ export const supabaseHelpers = {
       `
       )
       .eq("is_active", true)
-      .order("name");
+      .order("sort_order");
 
     if (error) throw error;
 
@@ -596,7 +596,7 @@ export const supabaseHelpers = {
       .from("project_categories")
       .select("id, name, description, icon_url, sort_order, is_active")
       .eq("is_active", true)
-      .order("name");
+      .order("sort_order");
 
     if (error) throw error;
     return data || [];

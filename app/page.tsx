@@ -248,7 +248,7 @@ export default function OptimizedHomePage() {
               </div>
             </div>
 
-            <div className="hidden lg:block">
+            <div className="block mt-8 lg:mt-0">
               <div className="relative">
                 {heroLoading ? (
                   <div className="aspect-video rounded-lg bg-muted/50 animate-pulse shadow-2xl"></div>
