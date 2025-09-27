@@ -17,11 +17,13 @@ import { useRouter } from "next/navigation";
 interface Category {
   id: string;
   name: string;
+  sort_order: number;
 }
 
 interface ProjectCategory {
   id: string;
   name: string;
+  sort_order: number;
 }
 
 interface NavigationProps {
@@ -48,6 +50,14 @@ export function Navigation({
   const normalizedCompanyName = companyName?.trim() || "";
   const router = useRouter();
 
+  // Sort categories by sort_order
+  const sortedCategories = [...categories].sort(
+    (a, b) => a.sort_order - b.sort_order
+  );
+  const sortedProjectCategories = [...projectCategories].sort(
+    (a, b) => a.sort_order - b.sort_order
+  );
+
   const closeMobileMenu = () => {
     setIsOpen(false);
     setMobileProductsOpen(false);
@@ -71,9 +81,7 @@ export function Navigation({
       closeMobileMenu();
     }
     const target =
-      categoryId === "all"
-        ? "/products"
-        : `/products?category=${categoryId}`;
+      categoryId === "all" ? "/products" : `/products?category=${categoryId}`;
     router.push(target);
   };
 
@@ -83,9 +91,7 @@ export function Navigation({
       closeMobileMenu();
     }
     const target =
-      categoryId === "all"
-        ? "/projects"
-        : `/projects?category=${categoryId}`;
+      categoryId === "all" ? "/projects" : `/projects?category=${categoryId}`;
     router.push(target);
   };
 
@@ -99,7 +105,11 @@ export function Navigation({
               {logoUrl ? (
                 <img
                   src={logoUrl}
-                  alt={normalizedCompanyName ? `${normalizedCompanyName} logo` : "Company logo"}
+                  alt={
+                    normalizedCompanyName
+                      ? `${normalizedCompanyName} logo`
+                      : "Company logo"
+                  }
                   className="h-10 w-auto md:h-12"
                 />
               ) : (
@@ -134,7 +144,7 @@ export function Navigation({
                   <ChevronDown className="ml-1 h-4 w-4" />
                 </DropdownMenuTrigger>
                 <DropdownMenuContent className="w-56">
-                  {categories.map((category) => (
+                  {sortedCategories.map((category) => (
                     <DropdownMenuItem
                       key={category.id}
                       onClick={() => handleCategorySelect(category.id)}
@@ -143,7 +153,7 @@ export function Navigation({
                       {category.name}
                     </DropdownMenuItem>
                   ))}
-                  {categories.length > 0 && <DropdownMenuSeparator />}
+                  {sortedCategories.length > 0 && <DropdownMenuSeparator />}
                   <DropdownMenuItem
                     onClick={() => handleCategorySelect("all")}
                     className="cursor-pointer font-semibold text-primary hover:text-primary/80"
@@ -162,7 +172,7 @@ export function Navigation({
                   <ChevronDown className="ml-1 h-4 w-4" />
                 </DropdownMenuTrigger>
                 <DropdownMenuContent className="w-56">
-                  {projectCategories.map((category) => (
+                  {sortedProjectCategories.map((category) => (
                     <DropdownMenuItem
                       key={category.id}
                       onClick={() => goToProjectCategory(category.id)}
@@ -239,11 +249,8 @@ export function Navigation({
                   />
                 </button>
                 {mobileProductsOpen && (
-                  <div
-                    id="mobile-products-list"
-                    className="pl-4 space-y-1"
-                  >
-                    {categories.map((category) => (
+                  <div id="mobile-products-list" className="pl-4 space-y-1">
+                    {sortedCategories.map((category) => (
                       <button
                         key={category.id}
                         className="text-muted-foreground hover:text-primary hover:bg-muted block px-3 py-2 rounded-md text-sm transition-all duration-200 w-full text-left"
@@ -284,11 +291,8 @@ export function Navigation({
                   />
                 </button>
                 {mobileProjectsOpen && (
-                  <div
-                    id="mobile-projects-list"
-                    className="pl-4 space-y-1"
-                  >
-                    {projectCategories.map((category) => (
+                  <div id="mobile-projects-list" className="pl-4 space-y-1">
+                    {sortedProjectCategories.map((category) => (
                       <button
                         key={category.id}
                         className="text-muted-foreground hover:text-primary hover:bg-muted block px-3 py-2 rounded-md text-sm transition-all duration-200 w-full text-left"

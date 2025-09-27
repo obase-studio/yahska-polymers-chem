@@ -1,24 +1,27 @@
 import type React from "react";
 import type { Metadata } from "next";
-import { unstable_cache } from 'next/cache';
+import { unstable_cache } from "next/cache";
 import "./globals.css";
 import { ProductProvider } from "@/contexts/ProductContext";
 import { supabaseHelpers } from "@/lib/supabase-helpers";
 import { NavigationWrapper } from "@/components/navigation-wrapper";
 import { PerformanceMonitor } from "@/components/performance-monitor";
 
-export const dynamic = 'force-dynamic'
-export const revalidate = 0
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
 
-const headingFontStack = "'Montserrat', 'Segoe UI', 'Helvetica Neue', Arial, sans-serif";
-const bodyFontStack = "'Open Sans', 'Segoe UI', 'Helvetica Neue', Arial, sans-serif";
+const headingFontStack =
+  "'Montserrat', 'Segoe UI', 'Helvetica Neue', Arial, sans-serif";
+const bodyFontStack =
+  "'Open Sans', 'Segoe UI', 'Helvetica Neue', Arial, sans-serif";
 
 export const metadata: Metadata = {
   title: "Yahska Polymers - Construction Chemicals & Concrete Admixtures",
   description:
     "Leading manufacturer of construction chemicals, concrete admixtures, textile chemicals, and dyestuff chemicals. Quality products for industrial applications.",
   generator: "v0.app",
-  keywords: "construction chemicals, concrete admixtures, textile chemicals, dyestuff chemicals, industrial chemicals, building materials",
+  keywords:
+    "construction chemicals, concrete admixtures, textile chemicals, dyestuff chemicals, industrial chemicals, building materials",
   authors: [{ name: "Yahska Polymers" }],
   creator: "Yahska Polymers",
   publisher: "Yahska Polymers",
@@ -27,9 +30,9 @@ export const metadata: Metadata = {
     address: false,
     telephone: false,
   },
-  metadataBase: new URL('https://yahskapolymers.com'),
+  metadataBase: new URL("https://yahskapolymers.com"),
   alternates: {
-    canonical: '/',
+    canonical: "/",
   },
   robots: {
     index: true,
@@ -37,23 +40,25 @@ export const metadata: Metadata = {
     googleBot: {
       index: true,
       follow: true,
-      'max-video-preview': -1,
-      'max-image-preview': 'large',
-      'max-snippet': -1,
+      "max-video-preview": -1,
+      "max-image-preview": "large",
+      "max-snippet": -1,
     },
   },
   openGraph: {
-    type: 'website',
-    locale: 'en_US',
-    url: '/',
-    title: 'Yahska Polymers - Construction Chemicals & Concrete Admixtures',
-    description: 'Leading manufacturer of construction chemicals, concrete admixtures, textile chemicals, and dyestuff chemicals.',
-    siteName: 'Yahska Polymers',
+    type: "website",
+    locale: "en_US",
+    url: "/",
+    title: "Yahska Polymers - Construction Chemicals & Concrete Admixtures",
+    description:
+      "Leading manufacturer of construction chemicals, concrete admixtures, textile chemicals, and dyestuff chemicals.",
+    siteName: "Yahska Polymers",
   },
   twitter: {
-    card: 'summary_large_image',
-    title: 'Yahska Polymers - Construction Chemicals & Concrete Admixtures',
-    description: 'Leading manufacturer of construction chemicals, concrete admixtures, textile chemicals, and dyestuff chemicals.',
+    card: "summary_large_image",
+    title: "Yahska Polymers - Construction Chemicals & Concrete Admixtures",
+    description:
+      "Leading manufacturer of construction chemicals, concrete admixtures, textile chemicals, and dyestuff chemicals.",
   },
 };
 
@@ -62,8 +67,9 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  let categories: { id: string; name: string }[] = [];
-  let projectCategories: { id: string; name: string }[] = [];
+  let categories: { id: string; name: string; sort_order: number }[] = [];
+  let projectCategories: { id: string; name: string; sort_order: number }[] =
+    [];
   let branding = { logoUrl: null as string | null, companyName: "" };
 
   try {
@@ -73,10 +79,12 @@ export default async function RootLayout({
         const headerContent = await supabaseHelpers.getContent("header");
         if (Array.isArray(headerContent)) {
           const logoItem = headerContent.find(
-            (item: any) => item.section === "branding" && item.content_key === "logo"
+            (item: any) =>
+              item.section === "branding" && item.content_key === "logo"
           );
           const nameItem = headerContent.find(
-            (item: any) => item.section === "branding" && item.content_key === "company_name"
+            (item: any) =>
+              item.section === "branding" && item.content_key === "company_name"
           );
           return {
             logoUrl: logoItem?.content_value || null,
@@ -85,21 +93,31 @@ export default async function RootLayout({
         }
         return { logoUrl: null, companyName: "" };
       },
-      ['header-branding'],
+      ["header-branding"],
       {
-        tags: ['branding', 'navigation', 'header'],
-        revalidate: false // Don't cache, always fetch fresh
+        tags: ["branding", "navigation", "header"],
+        revalidate: false, // Don't cache, always fetch fresh
       }
     );
 
-    const [categoryData, projectCategoryData, brandingData] = await Promise.all([
-      supabaseHelpers.getAllCategories(),
-      supabaseHelpers.getAllProjectCategories(),
-      getBrandingData(),
-    ]);
+    const [categoryData, projectCategoryData, brandingData] = await Promise.all(
+      [
+        supabaseHelpers.getAllCategories(),
+        supabaseHelpers.getAllProjectCategories(),
+        getBrandingData(),
+      ]
+    );
 
-    categories = (categoryData || []).map((cat: any) => ({ id: cat.id, name: cat.name }));
-    projectCategories = (projectCategoryData || []).map((cat: any) => ({ id: cat.id, name: cat.name }));
+    categories = (categoryData || []).map((cat: any) => ({
+      id: cat.id,
+      name: cat.name,
+      sort_order: cat.sort_order,
+    }));
+    projectCategories = (projectCategoryData || []).map((cat: any) => ({
+      id: cat.id,
+      name: cat.name,
+      sort_order: cat.sort_order,
+    }));
     branding = brandingData;
   } catch (error) {
     console.error("Failed to load navigation data:", error);
@@ -121,9 +139,16 @@ export default async function RootLayout({
           as="image"
           type="image/webp"
         />
-        <link rel="dns-prefetch" href="https://jlbwwbnatmmkcizqprdx.supabase.co" />
+        <link
+          rel="dns-prefetch"
+          href="https://jlbwwbnatmmkcizqprdx.supabase.co"
+        />
         <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+        <link
+          rel="preconnect"
+          href="https://fonts.gstatic.com"
+          crossOrigin="anonymous"
+        />
       </head>
       <body className="font-sans antialiased">
         <PerformanceMonitor>
