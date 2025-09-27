@@ -9,8 +9,8 @@ export async function GET() {
     const clientLogos = mediaFiles
       .filter(
         (file: any) =>
-          file.file_path.includes("client-logos") ||
-          file.file_path.includes("Client%20Logos")
+          file.file_path.includes("Client%20Logos") ||
+          file.filename.includes("Client Logos")
       )
       .map((file: any) => ({
         ...file,

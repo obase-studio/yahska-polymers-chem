@@ -22,20 +22,10 @@ import {
   Upload,
   Image as ImageIcon,
 } from "lucide-react";
-import { MediaPickerModal } from "@/components/admin/media-picker-modal";
+import { ImagePicker } from "@/components/admin/image-picker";
 import Image from "next/image";
 import { getImageUrl } from "@/lib/image-utils";
 
-interface MediaFile {
-  id: number;
-  filename: string;
-  original_name: string;
-  file_path: string;
-  file_size: number;
-  mime_type: string;
-  alt_text: string;
-  uploaded_at: string;
-}
 import {
   Dialog,
   DialogContent,
@@ -71,7 +61,6 @@ export default function CategoriesPage() {
   const [loading, setLoading] = useState(true);
   const [editingCategory, setEditingCategory] = useState<Category | null>(null);
   const [showAddDialog, setShowAddDialog] = useState(false);
-  const [showMediaPicker, setShowMediaPicker] = useState(false);
   const [formData, setFormData] = useState({
     id: "",
     name: "",
@@ -180,12 +169,6 @@ export default function CategoriesPage() {
     setShowAddDialog(true);
   };
 
-  const handleImageSelect = (file: MediaFile) => {
-    setFormData((prev) => ({ ...prev, image_url: file.file_path }));
-    setShowMediaPicker(false);
-  };
-
-
   if (loading && categories.length === 0) {
     return (
       <div className="flex items-center justify-center min-h-[400px]">
@@ -266,7 +249,7 @@ export default function CategoriesPage() {
                       product{(category.product_count || 0) !== 1 ? "s" : ""}
                     </span>
                   </div> */}
-                  
+
                   <div className="flex gap-3 flex-shrink-0">
                     <Button
                       variant="outline"
@@ -282,7 +265,6 @@ export default function CategoriesPage() {
                     />
                   </div>
                 </div>
-                
               </CardContent>
             </Card>
           );
@@ -384,75 +366,15 @@ export default function CategoriesPage() {
             </div>
 
             <div className="space-y-2">
-              <Label className="text-sm font-medium">Category Image</Label>
-              <div className="space-y-3">
-                {/* Image Guidelines */}
-                <div className="text-xs text-muted-foreground space-y-1 bg-muted/30 p-3 rounded border-l-2 border-primary/20">
-                  <div className="flex items-center gap-1">
-                    <ImageIcon className="h-3 w-3" />
-                    <span className="font-medium">Recommended Dimensions:</span>
-                    <span>400x400px (1:1 ratio)</span>
-                  </div>
-                  <div className="text-xs">
-                    Square icon or logo representing the category. Should be clear and recognizable at small sizes for use in category cards and navigation menus.
-                  </div>
-                </div>
-                {formData.image_url ? (
-                  <Card>
-                    <CardContent className="p-4">
-                      <div className="flex items-start gap-4">
-                        <div className="relative">
-                          <Image
-                            src={getImageUrl(formData.image_url)}
-                            alt="Category image"
-                            width={100}
-                            height={100}
-                            className="rounded-lg object-cover"
-                          />
-                          <Button
-                            type="button"
-                            size="sm"
-                            variant="destructive"
-                            className="absolute -top-2 -right-2 h-6 w-6 p-0"
-                            onClick={() => setFormData((prev) => ({ ...prev, image_url: "" }))}
-                          >
-                            <X className="h-3 w-3" />
-                          </Button>
-                        </div>
-                        <div className="flex-1">
-                          <h4 className="font-medium">Category Image</h4>
-                          <Button
-                            type="button"
-                            size="sm"
-                            variant="outline"
-                            className="mt-2"
-                            onClick={() => setShowMediaPicker(true)}
-                          >
-                            Change Image
-                          </Button>
-                        </div>
-                      </div>
-                    </CardContent>
-                  </Card>
-                ) : (
-                  <Card className="border-dashed">
-                    <CardContent className="p-6 text-center">
-                      <ImageIcon className="h-12 w-12 text-muted-foreground mx-auto mb-2" />
-                      <p className="text-sm text-muted-foreground mb-3">
-                        No image selected
-                      </p>
-                      <Button
-                        type="button"
-                        size="sm"
-                        variant="outline"
-                        onClick={() => setShowMediaPicker(true)}
-                      >
-                        Select Image
-                      </Button>
-                    </CardContent>
-                  </Card>
-                )}
-              </div>
+              <ImagePicker
+                label="Category Image"
+                value={formData.image_url}
+                onChange={(url) => setFormData({ ...formData, image_url: url })}
+                placeholder="Select category image"
+                folder="product-categories"
+                recommendedDimensions="400x400px (1:1 ratio)"
+                imageGuidelines="Square icon or logo representing the category. Should be clear and recognizable at small sizes for use in category cards and navigation menus."
+              />
             </div>
 
             <div className="flex justify-end gap-3 pt-6 border-t">
@@ -472,14 +394,6 @@ export default function CategoriesPage() {
           </form>
         </DialogContent>
       </Dialog>
-
-      <MediaPickerModal
-        isOpen={showMediaPicker}
-        onClose={() => setShowMediaPicker(false)}
-        onSelect={handleImageSelect}
-        title="Select Category Image"
-        imagesOnly={true}
-      />
     </div>
   );
 }
@@ -488,19 +402,19 @@ function DeleteConfirmationButton({
   onConfirm,
   disabled,
 }: {
-  onConfirm: () => Promise<void>
-  disabled?: boolean
+  onConfirm: () => Promise<void>;
+  disabled?: boolean;
 }) {
-  const [isDeleting, setIsDeleting] = useState(false)
+  const [isDeleting, setIsDeleting] = useState(false);
 
   const handleConfirm = async () => {
-    setIsDeleting(true)
+    setIsDeleting(true);
     try {
-      await onConfirm()
+      await onConfirm();
     } finally {
-      setIsDeleting(false)
+      setIsDeleting(false);
     }
-  }
+  };
 
   return (
     <AlertDialog>
@@ -519,7 +433,8 @@ function DeleteConfirmationButton({
         <AlertDialogHeader>
           <AlertDialogTitle>Delete Category</AlertDialogTitle>
           <AlertDialogDescription>
-            This action will permanently delete the category and cannot be undone.
+            This action will permanently delete the category and cannot be
+            undone.
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
@@ -534,5 +449,5 @@ function DeleteConfirmationButton({
         </AlertDialogFooter>
       </AlertDialogContent>
     </AlertDialog>
-  )
+  );
 }

@@ -1,133 +1,146 @@
-"use client"
+"use client";
 
-import { useState, useEffect } from "react"
-import { useParams, useRouter } from "next/navigation"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
-import { Badge } from "@/components/ui/badge"
-import { 
-  ArrowLeft, 
-  MapPin, 
-  Users, 
-  Calendar, 
-  DollarSign, 
-  Building2, 
-  Train, 
+import { useState, useEffect } from "react";
+import { useParams, useRouter } from "next/navigation";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import {
+  ArrowLeft,
+  MapPin,
+  Users,
+  Calendar,
+  DollarSign,
+  Building2,
+  Train,
   Factory,
   CheckCircle,
-  AlertTriangle
-} from "lucide-react"
-import Image from "next/image"
-import Link from "next/link"
-import { Footer } from "@/components/footer"
+  AlertTriangle,
+} from "lucide-react";
+import Image from "next/image";
+import Link from "next/link";
+import { Footer } from "@/components/footer";
 
 interface Project {
-  id: number
-  name: string
-  description: string
-  category: string
-  location: string
-  client_name?: string
-  completion_date: string
-  project_info_details?: string
-  project_value: number
-  key_features: string[]
-  challenges: string
-  solutions: string
-  image_url: string
-  gallery_images: string[]
-  is_featured: boolean
-  is_active: boolean
-  sort_order: number
+  id: number;
+  name: string;
+  description: string;
+  category: string;
+  location: string;
+  client_name?: string;
+  completion_date: string;
+  project_info_details?: string;
+  project_value: number;
+  key_features: string[];
+  challenges: string;
+  solutions: string;
+  image_url: string;
+  gallery_images: string[];
+  is_featured: boolean;
+  is_active: boolean;
+  sort_order: number;
 }
 
 export default function ProjectDetailPage() {
-  const params = useParams()
-  const router = useRouter()
-  const [project, setProject] = useState<Project | null>(null)
-  const [contentItems, setContentItems] = useState<any[]>([])
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState("")
+  const params = useParams();
+  const router = useRouter();
+  const [project, setProject] = useState<Project | null>(null);
+  const [contentItems, setContentItems] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
 
   useEffect(() => {
     if (params.id) {
-      fetchProject(params.id as string)
-      fetchContent()
+      fetchProject(params.id as string);
+      fetchContent();
     }
-  }, [params.id])
+  }, [params.id]);
 
   const fetchProject = async (id: string) => {
     try {
-      const response = await fetch(`/api/projects/${id}`)
+      setError(""); // Clear any previous errors
+      const response = await fetch(`/api/projects/${id}`);
 
       if (!response.ok) {
         if (response.status === 404) {
-          setError("Project not found")
+          setError("Project not found");
         } else {
-          setError("Failed to load project details")
+          setError("Failed to load project details");
         }
-        return
+        setLoading(false);
+        return;
       }
 
-      const data = await response.json()
+      const data = await response.json();
       if (data.success) {
-        setProject(data.data)
+        setProject(data.data);
+        setError(""); // Clear error if project loads successfully
       } else {
-        setError(data.error || "Failed to load project")
+        setError(data.error || "Failed to load project");
       }
     } catch (error) {
-      console.error('Error fetching project:', error)
-      setError("Failed to load project details")
+      console.error("Error fetching project:", error);
+      setError("Failed to load project details");
+    } finally {
+      setLoading(false);
     }
-  }
+  };
 
   const fetchContent = async () => {
     try {
-      const response = await fetch('/api/content?page=project_details')
-      const result = await response.json()
+      const response = await fetch("/api/content?page=project_details");
+      const result = await response.json();
       if (result.success && result.data && result.data.content) {
-        setContentItems(result.data.content)
+        setContentItems(result.data.content);
       }
     } catch (error) {
-      console.error('Error fetching content:', error)
-    } finally {
-      setLoading(false)
+      console.error("Error fetching content:", error);
     }
-  }
+    // Don't set loading to false here since it's independent of project loading
+  };
 
   const getCategoryIcon = (category: string) => {
     switch (category) {
-      case 'bullet-train':
-        return <Train className="h-5 w-5" />
-      case 'metro-rail':
-        return <Train className="h-5 w-5" />
-      case 'roads':
-        return <MapPin className="h-5 w-5" />
-      case 'buildings-factories':
-        return <Building2 className="h-5 w-5" />
-      case 'others':
-        return <Factory className="h-5 w-5" />
+      case "bullet-train":
+        return <Train className="h-5 w-5" />;
+      case "metro-rail":
+        return <Train className="h-5 w-5" />;
+      case "roads":
+        return <MapPin className="h-5 w-5" />;
+      case "buildings-factories":
+        return <Building2 className="h-5 w-5" />;
+      case "others":
+        return <Factory className="h-5 w-5" />;
       default:
-        return <Building2 className="h-5 w-5" />
+        return <Building2 className="h-5 w-5" />;
     }
-  }
+  };
 
   const getCategoryName = (category: string) => {
     switch (category) {
-      case 'bullet-train':
-        return 'High Speed Rail'
-      case 'metro-rail':
-        return 'Metro & Rail'
-      case 'roads':
-        return 'Roads & Highways'
-      case 'buildings-factories':
-        return 'Buildings & Factories'
-      case 'others':
-        return 'Other Projects'
+      case "bullet-train":
+        return "High Speed Rail";
+      case "metro-rail":
+        return "Metro & Rail";
+      case "roads":
+        return "Roads & Highways";
+      case "buildings-factories":
+        return "Buildings & Factories";
+      case "others":
+        return "Other Projects";
       default:
-        return category.charAt(0).toUpperCase() + category.slice(1).replace(/-/g, ' ')
+        return (
+          category.charAt(0).toUpperCase() +
+          category.slice(1).replace(/-/g, " ")
+        );
     }
-  }
+  };
 
   if (loading) {
     return (
@@ -135,14 +148,31 @@ export default function ProjectDetailPage() {
         <div className="container mx-auto px-4 py-8">
           <div className="text-center">
             <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-primary mx-auto"></div>
-            <p className="mt-4 text-muted-foreground">Loading project details...</p>
+            <p className="mt-4 text-muted-foreground">
+              Loading project details...
+            </p>
           </div>
         </div>
       </div>
-    )
+    );
   }
 
-  if (error || !project) {
+  // Show loading state
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-background">
+        <div className="container mx-auto px-4 py-8">
+          <div className="text-center">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
+            <p className="text-muted-foreground">Loading project details...</p>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // Only show error if loading is complete and there's an actual error
+  if (!loading && error && !project) {
     return (
       <div className="min-h-screen bg-background">
         <div className="container mx-auto px-4 py-8">
@@ -159,23 +189,51 @@ export default function ProjectDetailPage() {
           </div>
         </div>
       </div>
-    )
+    );
+  }
+
+  // If no project data after loading, show not found
+  if (!project) {
+    return (
+      <div className="min-h-screen bg-background">
+        <div className="container mx-auto px-4 py-8">
+          <div className="text-center">
+            <AlertTriangle className="h-16 w-16 text-muted-foreground mx-auto mb-4" />
+            <h1 className="text-2xl font-bold mb-2">Project Not Found</h1>
+            <p className="text-muted-foreground mb-6">
+              The requested project could not be found.
+            </p>
+            <Button asChild>
+              <Link href="/projects">
+                <ArrowLeft className="h-4 w-4 mr-2" />
+                Back to Projects
+              </Link>
+            </Button>
+          </div>
+        </div>
+      </div>
+    );
   }
 
   // Get content values from CMS
-  const keyFeaturesSectionTitle = contentItems.find(
-    (item) => item.section === "key_features_section" && item.content_key === "section_title"
-  )?.content_value || "Key Features";
+  const keyFeaturesSectionTitle =
+    contentItems.find(
+      (item) =>
+        item.section === "key_features_section" &&
+        item.content_key === "section_title"
+    )?.content_value || "Key Features";
 
-  const keyFeaturesSectionDescription = contentItems.find(
-    (item) => item.section === "key_features_section" && item.content_key === "section_description"
-  )?.content_value || "";
+  const keyFeaturesSectionDescription =
+    contentItems.find(
+      (item) =>
+        item.section === "key_features_section" &&
+        item.content_key === "section_description"
+    )?.content_value || "";
 
   const projectInfoDetails = project.project_info_details?.trim() || "";
 
   return (
     <div className="min-h-screen bg-background">
-
       {/* Breadcrumb */}
       <section className="py-6 bg-muted/30">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -248,7 +306,10 @@ export default function ProjectDetailPage() {
                   {project.completion_date && (
                     <div className="flex items-center gap-3">
                       <Calendar className="h-5 w-5" />
-                      <span>Completed: {new Date(project.completion_date).getFullYear()}</span>
+                      <span>
+                        Completed:{" "}
+                        {new Date(project.completion_date).getFullYear()}
+                      </span>
                     </div>
                   )}
                 </div>
@@ -300,7 +361,9 @@ export default function ProjectDetailPage() {
             <div className="grid lg:grid-cols-2 gap-12">
               <Card className="py-6">
                 <CardHeader>
-                  <CardTitle className="text-primary">{keyFeaturesSectionTitle}</CardTitle>
+                  <CardTitle className="text-primary">
+                    {keyFeaturesSectionTitle}
+                  </CardTitle>
                   {keyFeaturesSectionDescription && (
                     <CardDescription>
                       {keyFeaturesSectionDescription}
@@ -309,12 +372,16 @@ export default function ProjectDetailPage() {
                 </CardHeader>
                 <CardContent>
                   <ul className="space-y-3">
-                    {project.key_features.map((feature: string, index: number) => (
-                      <li key={index} className="flex items-start">
-                        <div className="w-2 h-2 bg-primary rounded-full mr-3 mt-2 flex-shrink-0" />
-                        <span className="text-muted-foreground">{feature}</span>
-                      </li>
-                    ))}
+                    {project.key_features.map(
+                      (feature: string, index: number) => (
+                        <li key={index} className="flex items-start">
+                          <div className="w-2 h-2 bg-primary rounded-full mr-3 mt-2 flex-shrink-0" />
+                          <span className="text-muted-foreground">
+                            {feature}
+                          </span>
+                        </li>
+                      )
+                    )}
                   </ul>
                 </CardContent>
               </Card>
@@ -327,14 +394,11 @@ export default function ProjectDetailPage() {
       <section className="py-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid lg:grid-cols-2 gap-12">
-
             {/* Challenges */}
             {project.challenges && (
-              <Card>
+              <Card className="py-6">
                 <CardHeader>
-                  <CardTitle className="text-primary">
-                    Challenges
-                  </CardTitle>
+                  <CardTitle className="text-primary">Challenges</CardTitle>
                   <p className="text-muted-foreground text-sm">
                     Project challenges addressed
                   </p>
@@ -349,7 +413,7 @@ export default function ProjectDetailPage() {
 
             {/* Solutions */}
             {project.solutions && (
-              <Card>
+              <Card className="py-6">
                 <CardHeader>
                   <CardTitle className="text-primary">Solutions</CardTitle>
                   <p className="text-muted-foreground text-sm">
@@ -366,7 +430,7 @@ export default function ProjectDetailPage() {
 
             {/* Gallery Images */}
             {project.gallery_images && project.gallery_images.length > 0 && (
-              <Card className="lg:col-span-2">
+              <Card className="lg:col-span-2 py-6">
                 <CardHeader>
                   <CardTitle className="text-primary">
                     Project Gallery
@@ -378,7 +442,10 @@ export default function ProjectDetailPage() {
                 <CardContent>
                   <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
                     {project.gallery_images.map((imageUrl, index) => (
-                      <div key={index} className="aspect-[3/2] relative overflow-hidden rounded-lg bg-muted">
+                      <div
+                        key={index}
+                        className="aspect-[3/2] relative overflow-hidden rounded-lg bg-muted"
+                      >
                         <Image
                           src={imageUrl}
                           alt={`${project.name} - Image ${index + 1}`}
@@ -395,8 +462,7 @@ export default function ProjectDetailPage() {
         </div>
       </section>
 
-      
       <Footer />
     </div>
-  )
+  );
 }

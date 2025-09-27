@@ -9,8 +9,12 @@ export async function GET() {
     const approvalLogos = mediaFiles
       .filter(
         (file: any) =>
+          file.file_path.includes("approvals") ||
+          file.filename.includes("approvals") ||
           file.file_path.includes("approval-logos") ||
-          file.file_path.includes("approvals")
+          file.file_path.includes("Approval%20Logos") ||
+          file.filename.includes("approval-logos") ||
+          file.filename.includes("Approval Logos")
       )
       .map((file: any) => ({
         ...file,
