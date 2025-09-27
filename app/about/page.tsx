@@ -149,7 +149,8 @@ export default function AboutPage() {
   // Get Our Story section title
   const ourStorySectionTitle =
     contentItems.find(
-      (item) => item.section === "our_story" && item.content_key === "section_title"
+      (item) =>
+        item.section === "our_story" && item.content_key === "section_title"
     )?.content_value || "Our Story";
 
   const experience =
@@ -234,7 +235,6 @@ export default function AboutPage() {
   if (loading) {
     return (
       <div className="min-h-screen bg-background">
-
         <section className="py-20 bg-gradient-to-br from-primary/10 to-accent/5">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="grid lg:grid-cols-2 gap-12 items-center">
@@ -272,42 +272,12 @@ export default function AboutPage() {
 
   return (
     <div className="min-h-screen bg-background">
-
       {/* Hero Section */}
-      <section className="py-20 bg-gradient-to-br from-primary/10 to-accent/5">
+      <section className="py-8 lg:py-20 bg-gradient-to-br from-primary/10 to-accent/5">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid lg:grid-cols-2 gap-12 items-center">
-            <div>
-              <h1
-                className="text-3xl lg:text-4xl font-black text-foreground mb-6"
-                style={{ fontFamily: "var(--font-heading)" }}
-              >
-                {pageTitle}
-              </h1>
-              {loading ? (
-                <div className="space-y-3">
-                  <div className="h-6 bg-muted/50 rounded animate-pulse"></div>
-                  <div className="h-6 bg-muted/50 rounded animate-pulse w-4/5"></div>
-                  <div className="h-6 bg-muted/50 rounded animate-pulse w-3/5"></div>
-                </div>
-              ) : introParagraph ? (
-                <p className="text-xl text-muted-foreground leading-relaxed">
-                  {introParagraph}
-                </p>
-              ) : null}
-              {fetchError && (
-                <div className="mt-4 p-4 bg-red-100 text-red-800 rounded">
-                  <strong>Debug Info:</strong> {fetchError}
-                  <button
-                    onClick={() => window.location.reload()}
-                    className="ml-4 px-3 py-1 bg-red-600 text-white rounded text-sm hover:bg-red-700"
-                  >
-                    Retry
-                  </button>
-                </div>
-              )}
-            </div>
-            <div className="relative">
+          <div className="grid lg:grid-cols-2 gap-6 lg:gap-12 items-center">
+            {/* Media section - appears first on mobile, second on desktop */}
+            <div className="relative order-1 lg:order-2">
               {loading ? (
                 <div className="aspect-video rounded-lg bg-muted/50 animate-pulse shadow-2xl"></div>
               ) : heroType === "video" && heroVideoUrl ? (
@@ -353,6 +323,38 @@ export default function AboutPage() {
                   className="rounded-lg shadow-2xl w-full h-auto"
                 />
               ) : null}
+            </div>
+
+            {/* Text section - appears second on mobile, first on desktop */}
+            <div className="order-2 lg:order-1">
+              <h1
+                className="text-3xl lg:text-4xl font-black text-foreground mb-6"
+                style={{ fontFamily: "var(--font-heading)" }}
+              >
+                {pageTitle}
+              </h1>
+              {loading ? (
+                <div className="space-y-3">
+                  <div className="h-6 bg-muted/50 rounded animate-pulse"></div>
+                  <div className="h-6 bg-muted/50 rounded animate-pulse w-4/5"></div>
+                  <div className="h-6 bg-muted/50 rounded animate-pulse w-3/5"></div>
+                </div>
+              ) : introParagraph ? (
+                <p className="text-xl text-muted-foreground leading-relaxed">
+                  {introParagraph}
+                </p>
+              ) : null}
+              {fetchError && (
+                <div className="mt-4 p-4 bg-red-100 text-red-800 rounded">
+                  <strong>Debug Info:</strong> {fetchError}
+                  <button
+                    onClick={() => window.location.reload()}
+                    className="ml-4 px-3 py-1 bg-red-600 text-white rounded text-sm hover:bg-red-700"
+                  >
+                    Retry
+                  </button>
+                </div>
+              )}
             </div>
           </div>
         </div>
@@ -423,9 +425,6 @@ export default function AboutPage() {
           </div>
         </div>
       </section>
-
-
-
 
       {/* {(lastUpdated || lastKnownTimestamp > 0) && (
         <div className="text-center py-2 bg-gray-50 text-xs text-gray-500">

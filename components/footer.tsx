@@ -20,10 +20,9 @@ export function Footer() {
   useEffect(() => {
     const fetchCategories = async () => {
       try {
-        const response = await fetch(
-          `/api/admin/categories?t=${Date.now()}`,
-          { cache: "no-store" }
-        );
+        const response = await fetch(`/api/admin/categories?t=${Date.now()}`, {
+          cache: "no-store",
+        });
         const result = await response.json();
 
         if (result.success && result.data) {
@@ -221,8 +220,6 @@ export function Footer() {
         </div>
 
         <Separator className="my-12" />
-
-        <Separator className="mb-8" />
 
         {/* Bottom Footer */}
         <div className="flex flex-col md:flex-row justify-between items-center gap-6">
