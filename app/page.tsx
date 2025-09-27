@@ -218,46 +218,12 @@ export default function OptimizedHomePage() {
   return (
     <div className="min-h-screen bg-background">
       {/* Hero Section - Critical, loads immediately */}
-      <section className="relative py-20 lg:py-32 bg-gradient-to-br from-primary/5 via-background to-accent/5 overflow-hidden">
+      <section className="relative py-8 lg:py-32 bg-gradient-to-br from-primary/5 via-background to-accent/5 overflow-hidden">
         <div className="absolute inset-0 bg-grid-pattern opacity-[0.02]" />
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid lg:grid-cols-2 gap-12 items-center">
-            <div className="text-center lg:text-left space-y-8">
-              {heroLoading ? (
-                <div className="space-y-4">
-                  <div className="h-12 bg-muted animate-pulse rounded-lg" />
-                  <div className="h-6 bg-muted animate-pulse rounded-lg" />
-                  <div className="h-6 bg-muted animate-pulse rounded-lg w-3/4" />
-                </div>
-              ) : (
-                <>
-                  <h1
-                    className="text-3xl lg:text-4xl font-black text-foreground leading-tight"
-                    style={{ fontFamily: "var(--font-heading)" }}
-                  >
-                    {heroHeadline}
-                  </h1>
-                  <p className="text-lg lg:text-xl text-muted-foreground leading-relaxed max-w-2xl mx-auto lg:mx-0">
-                    {heroDescription}
-                  </p>
-                </>
-              )}
-
-              <div className="flex justify-center lg:justify-start">
-                <Button
-                  asChild
-                  size="lg"
-                  className="text-lg px-8 py-6 bg-primary hover:bg-primary/90 text-white"
-                >
-                  <Link href="/products">
-                    Explore Products
-                    <ArrowRight className="ml-2 h-5 w-5" />
-                  </Link>
-                </Button>
-              </div>
-            </div>
-
-            <div className="block mt-8 lg:mt-0">
+          <div className="grid lg:grid-cols-2 gap-6 lg:gap-12 items-center">
+            {/* Media section - appears first on mobile, second on desktop */}
+            <div className="block order-1 lg:order-2">
               <div className="relative">
                 {heroLoading ? (
                   <div className="aspect-video rounded-lg bg-muted/50 animate-pulse shadow-2xl"></div>
@@ -301,28 +267,49 @@ export default function OptimizedHomePage() {
                   </div>
                 ) : heroImageFromAPI ? (
                   <div className="aspect-video rounded-lg overflow-hidden shadow-2xl">
-                    <Image
+                    <img
                       src={heroImageFromAPI}
-                      alt="Yahska Polymers - Leading Construction Chemicals Manufacturer"
-                      fill
-                      className="object-cover"
-                      priority
-                      sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                      alt="Yahska Polymers Manufacturing Facility"
+                      className="w-full h-full object-cover"
                     />
                   </div>
-                ) : (
-                  <div className="aspect-video rounded-lg bg-muted/20 border-2 border-dashed border-muted-foreground/25 flex items-center justify-center shadow-lg">
-                    <div className="text-center p-8">
-                      <ImageIcon className="h-16 w-16 text-muted-foreground/50 mx-auto mb-4" />
-                      <p className="text-sm text-muted-foreground">
-                        Hero Image Placeholder
-                      </p>
-                      <p className="text-xs text-muted-foreground/70 mt-1">
-                        Add image or video in CMS
-                      </p>
-                    </div>
-                  </div>
-                )}
+                ) : null}
+              </div>
+            </div>
+
+            {/* Text section - appears second on mobile, first on desktop */}
+            <div className="text-center lg:text-left space-y-8 order-2 lg:order-1">
+              {heroLoading ? (
+                <div className="space-y-4">
+                  <div className="h-12 bg-muted animate-pulse rounded-lg" />
+                  <div className="h-6 bg-muted animate-pulse rounded-lg" />
+                  <div className="h-6 bg-muted animate-pulse rounded-lg w-3/4" />
+                </div>
+              ) : (
+                <>
+                  <h1
+                    className="text-3xl lg:text-4xl font-black text-foreground leading-tight"
+                    style={{ fontFamily: "var(--font-heading)" }}
+                  >
+                    {heroHeadline}
+                  </h1>
+                  <p className="text-lg lg:text-xl text-muted-foreground leading-relaxed max-w-2xl mx-auto lg:mx-0">
+                    {heroDescription}
+                  </p>
+                </>
+              )}
+
+              <div className="flex justify-center lg:justify-start">
+                <Button
+                  asChild
+                  size="lg"
+                  className="text-lg px-8 py-6 bg-primary hover:bg-primary/90 text-white"
+                >
+                  <Link href="/products">
+                    Explore Products
+                    <ArrowRight className="ml-2 h-5 w-5" />
+                  </Link>
+                </Button>
               </div>
             </div>
           </div>

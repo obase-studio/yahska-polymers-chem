@@ -48,10 +48,13 @@ export function AutoScrollLogos({
   // Duplicate logos for seamless infinite scroll
   const duplicatedLogos = [...logos, ...logos];
 
-  // Calculate consistent scroll speed: each logo should take ~2.5 seconds to pass
+  // Calculate consistent scroll speed: each logo should take ~4 seconds to pass (slower)
   const logoWidth = 200; // 180px width + 20px gap
-  const speedPerLogo = 2.5; // seconds per logo
-  const animationDuration = Math.max(logos.length * speedPerLogo, speedPerLogo * 4);
+  const speedPerLogo = 4; // seconds per logo (increased from 2.5 for slower scrolling)
+  const animationDuration = Math.max(
+    logos.length * speedPerLogo,
+    speedPerLogo * 4
+  );
 
   return (
     <section className={`py-12 ${className}`}>
@@ -79,10 +82,10 @@ export function AutoScrollLogos({
             {duplicatedLogos.map((logo, index) => (
               <Card
                 key={`${logo.id}-${index}`}
-                className="flex-shrink-0 bg-background border border-border/50"
+                className="flex-shrink-0 bg-background border-0 shadow-none"
                 style={{ width: "180px" }}
               >
-                <CardContent className="p-6 flex items-center justify-center h-24">
+                <CardContent className="p-3 flex items-center justify-center h-20">
                   <div className="relative w-full h-full flex items-center justify-center">
                     <img
                       src={logo.file_path}
