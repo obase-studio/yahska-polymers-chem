@@ -9,12 +9,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import {
-  ArrowRight,
-  CheckCircle,
-  Loader2,
-  ImageIcon,
-} from "lucide-react";
+import { ArrowRight, CheckCircle, Loader2, ImageIcon } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
 import { Footer } from "@/components/footer";
@@ -50,9 +45,13 @@ export default function OptimizedHomePage() {
         if (result.success) {
           console.log("Homepage - Initial content loaded:", {
             contentCount: result.data.content?.length || 0,
-            hasHeroImage: result.data.content?.some((item: any) => item.content_key === "hero_image"),
-            hasHeroType: result.data.content?.some((item: any) => item.content_key === "hero_type"),
-            lastUpdated: result.lastUpdated
+            hasHeroImage: result.data.content?.some(
+              (item: any) => item.content_key === "hero_image"
+            ),
+            hasHeroType: result.data.content?.some(
+              (item: any) => item.content_key === "hero_type"
+            ),
+            lastUpdated: result.lastUpdated,
           });
           setContentItems(result.data.content);
           if (result.lastUpdated) {
@@ -118,8 +117,12 @@ export default function OptimizedHomePage() {
           ) {
             console.log("Homepage - Content updated via polling:", {
               contentCount: contentResult.data.content?.length || 0,
-              hasHeroImage: contentResult.data.content?.some((item: any) => item.content_key === "hero_image"),
-              hasHeroType: contentResult.data.content?.some((item: any) => item.content_key === "hero_type"),
+              hasHeroImage: contentResult.data.content?.some(
+                (item: any) => item.content_key === "hero_image"
+              ),
+              hasHeroType: contentResult.data.content?.some(
+                (item: any) => item.content_key === "hero_type"
+              ),
             });
             setContentItems(contentResult.data.content);
             setLastKnownTimestamp(result.lastUpdated);
@@ -144,7 +147,8 @@ export default function OptimizedHomePage() {
   const heroDescription =
     contentItems.find(
       (item) => item.section === "hero" && item.content_key === "description"
-    )?.content_value || "Comprehensive chemical solutions across multiple industries with uncompromising quality standards.";
+    )?.content_value ||
+    "Comprehensive chemical solutions across multiple industries with uncompromising quality standards.";
 
   const productCategoriesTitle =
     contentItems.find(
@@ -157,7 +161,8 @@ export default function OptimizedHomePage() {
       (item) =>
         item.section === "product_categories" &&
         item.content_key === "description"
-    )?.content_value || "Comprehensive chemical solutions across multiple industries with uncompromising quality standards.";
+    )?.content_value ||
+    "Comprehensive chemical solutions across multiple industries with uncompromising quality standards.";
 
   const projectCategoriesTitle =
     contentItems.find(
@@ -170,7 +175,8 @@ export default function OptimizedHomePage() {
       (item) =>
         item.section === "project_categories" &&
         item.content_key === "description"
-    )?.content_value || "Discover our successful project implementations across various industries and sectors.";
+    )?.content_value ||
+    "Discover our successful project implementations across various industries and sectors.";
 
   const keyCustomersTitle =
     contentItems.find(
@@ -179,7 +185,8 @@ export default function OptimizedHomePage() {
 
   const keyCustomersDescription =
     contentItems.find(
-      (item) => item.section === "key_customers" && item.content_key === "description"
+      (item) =>
+        item.section === "key_customers" && item.content_key === "description"
     )?.content_value || "Trusted by leading companies across industries";
 
   const keyApprovalsTitle =
@@ -189,8 +196,10 @@ export default function OptimizedHomePage() {
 
   const keyApprovalsDescription =
     contentItems.find(
-      (item) => item.section === "key_approvals" && item.content_key === "description"
-    )?.content_value || "Quality assured through industry-standard certifications";
+      (item) =>
+        item.section === "key_approvals" && item.content_key === "description"
+    )?.content_value ||
+    "Quality assured through industry-standard certifications";
 
   // Get hero media type and content
   const heroType =
@@ -263,7 +272,9 @@ export default function OptimizedHomePage() {
                                 heroVideoUrl.split("v=")[1]?.split("&")[0]
                               }`
                             : `https://www.youtube.com/embed/${
-                                heroVideoUrl.split("youtu.be/")[1]?.split("?")[0]
+                                heroVideoUrl
+                                  .split("youtu.be/")[1]
+                                  ?.split("?")[0]
                               }`
                         }
                         title="Company Video"
@@ -336,7 +347,10 @@ export default function OptimizedHomePage() {
           {heroLoading ? (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
               {[...Array(4)].map((_, index) => (
-                <div key={index} className="aspect-square bg-muted animate-pulse rounded-lg" />
+                <div
+                  key={index}
+                  className="aspect-square bg-muted animate-pulse rounded-lg"
+                />
               ))}
             </div>
           ) : (
@@ -406,7 +420,10 @@ export default function OptimizedHomePage() {
               </div>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                 {[...Array(4)].map((_, index) => (
-                  <div key={index} className="aspect-square bg-muted animate-pulse rounded-lg" />
+                  <div
+                    key={index}
+                    className="aspect-square bg-muted animate-pulse rounded-lg"
+                  />
                 ))}
               </div>
             </div>
