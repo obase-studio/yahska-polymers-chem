@@ -333,7 +333,7 @@ export default function OptimizedHomePage() {
 
           {heroLoading ? (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-              {[...Array(4)].map((_, index) => (
+              {[...Array(8)].map((_, index) => (
                 <div
                   key={index}
                   className="aspect-square bg-muted animate-pulse rounded-lg"
@@ -342,39 +342,22 @@ export default function OptimizedHomePage() {
             </div>
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-              {categories.slice(0, 4).map((category) => (
-                <Card
+              {categories.slice(0, 8).map((category) => (
+                <Link
                   key={category.id}
-                  className="group hover:shadow-xl hover:scale-[1.02] transition-all duration-300 border border-border/50 hover:border-primary/30 overflow-hidden"
+                  href={`/products?category=${category.id}`}
+                  className="group"
                 >
-                  <div className="aspect-square overflow-hidden bg-gradient-to-br from-primary/5 to-accent/5 relative">
-                    <OptimizedCategoryImage
-                      categoryId={category.id}
-                      categoryName={category.name}
-                      categoryImageUrl={category.image_url}
-                    />
-                    <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors duration-300" />
-                  </div>
-                  <CardContent className="p-6">
-                    <CardTitle className="text-lg font-bold text-foreground mb-2 group-hover:text-primary transition-colors duration-300">
-                      {category.name}
-                    </CardTitle>
-                    <CardDescription className="text-sm text-muted-foreground leading-relaxed line-clamp-3 mb-4">
-                      {category.description ||
-                        `High-performance ${category.name.toLowerCase()} solutions for enhanced workability and superior results.`}
-                    </CardDescription>
-                    <Button
-                      asChild
-                      variant="outline"
-                      className="w-full bg-muted hover:bg-muted/80 text-muted-foreground hover:text-foreground group-hover:bg-primary group-hover:text-white transition-all duration-300 justify-between border-muted group-hover:border-primary"
-                    >
-                      <Link href={`/products?category=${category.id}`}>
-                        <span>View Products</span>
-                        <ArrowRight className="h-4 w-4 group-hover:translate-x-1 transition-transform duration-300" />
-                      </Link>
-                    </Button>
-                  </CardContent>
-                </Card>
+                  <Card className="h-full hover:shadow-lg hover:scale-[1.02] transition-all duration-300 border border-orange-200 hover:border-orange-300 bg-white cursor-pointer">
+                    <CardContent className="p-6 h-full flex items-center justify-center">
+                      <div className="text-center">
+                        <h3 className="text-lg font-bold text-gray-900 uppercase tracking-wide group-hover:text-orange-600 transition-colors duration-300">
+                          {category.name}
+                        </h3>
+                      </div>
+                    </CardContent>
+                  </Card>
+                </Link>
               ))}
             </div>
           )}
