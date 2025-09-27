@@ -348,10 +348,10 @@ export default function OptimizedHomePage() {
                   href={`/products?category=${category.id}`}
                   className="group"
                 >
-                  <Card className="h-full hover:shadow-lg hover:scale-[1.02] transition-all duration-300 border border-orange-200 hover:border-orange-300 bg-white cursor-pointer">
+                  <Card className="h-full hover:shadow-lg hover:scale-[1.02] transition-all duration-300 border border-gray-300 hover:border-gray-400 bg-white cursor-pointer">
                     <CardContent className="p-6 h-full flex items-center justify-center">
                       <div className="text-center">
-                        <h3 className="text-lg font-bold text-gray-900 uppercase tracking-wide group-hover:text-orange-600 transition-colors duration-300">
+                        <h3 className="text-lg font-bold text-gray-900 uppercase tracking-wide">
                           {category.name}
                         </h3>
                       </div>
