@@ -67,7 +67,6 @@ export default function CertificationsPage() {
 
   return (
     <div className="min-h-screen bg-background">
-
       {/* Hero Section */}
       <section className="py-20 bg-gradient-to-br from-primary/10 to-accent/5">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -78,7 +77,7 @@ export default function CertificationsPage() {
               <CheckCircle className="h-12 w-12 text-primary" />
             </div>
             <h1
-              className="text-4xl lg:text-5xl font-black text-foreground mb-6"
+              className="text-4xl lg:text-5xl text-foreground mb-6"
               style={{ fontFamily: "var(--font-heading)" }}
             >
               Certifications & Approvals
@@ -98,21 +97,21 @@ export default function CertificationsPage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
             <div className="text-center">
-              <div className="text-4xl font-bold text-primary mb-2">
+              <div className="text-4xl text-primary mb-2">
                 {approvalLogos.length}+
               </div>
               <div className="text-muted-foreground">Certifications</div>
             </div>
             <div className="text-center">
-              <div className="text-4xl font-bold text-primary mb-2">ISO</div>
+              <div className="text-4xl text-primary mb-2">ISO</div>
               <div className="text-muted-foreground">Certified</div>
             </div>
             <div className="text-center">
-              <div className="text-4xl font-bold text-primary mb-2">20+</div>
+              <div className="text-4xl text-primary mb-2">20+</div>
               <div className="text-muted-foreground">Years Trusted</div>
             </div>
             <div className="text-center">
-              <div className="text-4xl font-bold text-primary mb-2">100%</div>
+              <div className="text-4xl text-primary mb-2">100%</div>
               <div className="text-muted-foreground">Compliance</div>
             </div>
           </div>
@@ -124,7 +123,7 @@ export default function CertificationsPage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
             <h2
-              className="text-3xl lg:text-4xl font-bold text-foreground mb-4"
+              className="text-3xl lg:text-4xl text-foreground mb-4"
               style={{ fontFamily: "var(--font-heading)" }}
             >
               Our Certifications
@@ -147,7 +146,7 @@ export default function CertificationsPage() {
           ) : approvalLogos.length === 0 ? (
             <div className="text-center py-12">
               <Shield className="h-16 w-16 mx-auto text-muted-foreground/50 mb-4" />
-              <h3 className="text-lg font-semibold text-muted-foreground mb-2">
+              <h3 className="text-lg text-muted-foreground mb-2">
                 No certifications available
               </h3>
               <p className="text-muted-foreground">
@@ -187,7 +186,6 @@ export default function CertificationsPage() {
           )}
         </div>
       </section>
-
 
       <Footer />
     </div>

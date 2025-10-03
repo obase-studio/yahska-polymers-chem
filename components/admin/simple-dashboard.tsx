@@ -1,7 +1,7 @@
-"use client"
+"use client";
 
-import { Card, CardContent } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
+import { Card, CardContent } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 import {
   Package,
   FileText,
@@ -11,17 +11,17 @@ import {
   Edit,
   Upload,
   Building2,
-  Trash2
-} from "lucide-react"
-import Link from "next/link"
+  Trash2,
+} from "lucide-react";
+import Link from "next/link";
 
 interface SimpleDashboardProps {
   stats: {
-    products: number
-    projects: number
-    mediaFiles: number
-    contentPages: number
-  }
+    products: number;
+    projects: number;
+    mediaFiles: number;
+    contentPages: number;
+  };
 }
 
 export function SimpleDashboard({ stats }: SimpleDashboardProps) {
@@ -34,17 +34,17 @@ export function SimpleDashboard({ stats }: SimpleDashboardProps) {
       href: "/admin/products",
       gradient: "bg-gradient-to-br from-blue-500 to-blue-600",
       iconBg: "bg-blue-50",
-      iconColor: "text-blue-600"
+      iconColor: "text-blue-600",
     },
     {
-      title: "Media Files", 
+      title: "Media Files",
       value: stats.mediaFiles,
       description: "Images and documents",
       icon: Image,
       href: "/admin/media",
       gradient: "bg-gradient-to-br from-green-500 to-green-600",
       iconBg: "bg-green-50",
-      iconColor: "text-green-600"
+      iconColor: "text-green-600",
     },
     {
       title: "Projects",
@@ -54,7 +54,7 @@ export function SimpleDashboard({ stats }: SimpleDashboardProps) {
       href: "/admin/projects",
       gradient: "bg-gradient-to-br from-purple-500 to-purple-600",
       iconBg: "bg-purple-50",
-      iconColor: "text-purple-600"
+      iconColor: "text-purple-600",
     },
     {
       title: "Content Pages",
@@ -64,9 +64,9 @@ export function SimpleDashboard({ stats }: SimpleDashboardProps) {
       href: "/admin/content",
       gradient: "bg-gradient-to-br from-orange-500 to-orange-600",
       iconBg: "bg-orange-50",
-      iconColor: "text-orange-600"
-    }
-  ]
+      iconColor: "text-orange-600",
+    },
+  ];
 
   const quickActions = [
     {
@@ -74,44 +74,44 @@ export function SimpleDashboard({ stats }: SimpleDashboardProps) {
       description: "Update homepage, about, and page content",
       href: "/admin/content",
       icon: Edit,
-      primary: true
+      primary: true,
     },
     {
       title: "Add Projects",
       description: "Create a new project for the showcase",
       href: "/admin/projects/new",
       icon: Building2,
-      primary: false
+      primary: false,
     },
     {
       title: "Manage Media",
       description: "Upload and organize images",
       href: "/admin/media",
       icon: Upload,
-      primary: false
+      primary: false,
     },
     {
       title: "Cleanup Images",
       description: "Remove broken image references",
       href: "/admin/cleanup-images",
       icon: Trash2,
-      primary: false
+      primary: false,
     },
     {
       title: "Add Products",
       description: "Add new products to catalog",
       href: "/admin/products",
       icon: Package,
-      primary: false
-    }
-  ]
+      primary: false,
+    },
+  ];
 
   return (
     <div className="space-y-8">
       {/* Header */}
       <div className="flex items-center justify-between mb-6">
         <div>
-          <h1 className="text-2xl font-semibold">Dashboard</h1>
+          <h1 className="text-2xl">Dashboard</h1>
           <p className="text-sm text-muted-foreground mt-1">
             Manage your website content
           </p>
@@ -127,9 +127,12 @@ export function SimpleDashboard({ stats }: SimpleDashboardProps) {
       {/* Stats Overview */}
       <div className="grid gap-6 md:grid-cols-3">
         {mainStats.slice(0, 3).map((stat) => {
-          const Icon = stat.icon
+          const Icon = stat.icon;
           return (
-            <Card key={stat.title} className="border-2 shadow-sm hover:shadow-md transition-shadow bg-white">
+            <Card
+              key={stat.title}
+              className="border-2 shadow-sm hover:shadow-md transition-shadow bg-white"
+            >
               <CardContent className="p-8">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center space-x-5">
@@ -137,8 +140,10 @@ export function SimpleDashboard({ stats }: SimpleDashboardProps) {
                       <Icon className="h-7 w-7 text-primary" />
                     </div>
                     <div>
-                      <p className="text-sm font-medium text-muted-foreground mb-1">{stat.title}</p>
-                      <p className="text-2xl font-bold text-foreground">{stat.value}</p>
+                      <p className="text-sm font-medium text-muted-foreground mb-1">
+                        {stat.title}
+                      </p>
+                      <p className="text-2xl text-foreground">{stat.value}</p>
                     </div>
                   </div>
                   <Button asChild variant="outline" className="ml-4">
@@ -149,18 +154,21 @@ export function SimpleDashboard({ stats }: SimpleDashboardProps) {
                 </div>
               </CardContent>
             </Card>
-          )
+          );
         })}
       </div>
 
       {/* Quick Actions */}
       <div>
-        <h2 className="text-xl font-semibold mb-6">Quick Actions</h2>
+        <h2 className="text-xl mb-6">Quick Actions</h2>
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
           {quickActions.map((action) => {
-            const Icon = action.icon
+            const Icon = action.icon;
             return (
-              <Card key={action.title} className="border-2 shadow-sm hover:shadow-md transition-shadow bg-white">
+              <Card
+                key={action.title}
+                className="border-2 shadow-sm hover:shadow-md transition-shadow bg-white"
+              >
                 <Link href={action.href} className="block">
                   <CardContent className="p-8">
                     <div className="flex items-center justify-between">
@@ -169,7 +177,7 @@ export function SimpleDashboard({ stats }: SimpleDashboardProps) {
                           <Icon className="h-6 w-6 text-primary" />
                         </div>
                         <div>
-                          <p className="text-sm font-semibold">{action.title}</p>
+                          <p className="text-sm">{action.title}</p>
                         </div>
                       </div>
                       <ArrowRight className="h-4 w-4 text-muted-foreground ml-4" />
@@ -177,10 +185,10 @@ export function SimpleDashboard({ stats }: SimpleDashboardProps) {
                   </CardContent>
                 </Link>
               </Card>
-            )
+            );
           })}
         </div>
       </div>
     </div>
-  )
+  );
 }

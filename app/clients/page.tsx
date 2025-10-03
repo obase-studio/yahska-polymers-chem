@@ -117,13 +117,12 @@ export default function ClientsPage() {
 
   return (
     <div className="min-h-screen bg-background">
-
       {/* Page Header */}
       <section className="py-20 bg-gradient-to-br from-primary/10 to-accent/5">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center">
             <h1
-              className="text-3xl lg:text-4xl font-black text-foreground mb-6"
+              className="text-3xl lg:text-4xl text-foreground mb-6"
               style={{ fontFamily: "var(--font-heading)" }}
             >
               {heroHeadline}
@@ -140,7 +139,7 @@ export default function ClientsPage() {
         logos={clientLogos}
         title={clientSectionTitle}
         description={clientSectionDescription}
-        className="bg-muted/30"
+        className="bg-muted/30 font-normal"
       />
 
       {/* Key Approvals Section */}
@@ -148,7 +147,7 @@ export default function ClientsPage() {
         logos={approvalLogos}
         title={approvalSectionTitle}
         description={approvalSectionDescription}
-        className="bg-background"
+        className="bg-background font-normal"
       />
 
       <Footer />

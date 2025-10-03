@@ -1,7 +1,12 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Card, CardContent, CardDescription, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardTitle,
+} from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { ArrowRight, Loader2 } from "lucide-react";
 import Link from "next/link";
@@ -15,7 +20,9 @@ interface ProjectCategory {
 }
 
 export function LazyProjectCategories() {
-  const [projectCategories, setProjectCategories] = useState<ProjectCategory[]>([]);
+  const [projectCategories, setProjectCategories] = useState<ProjectCategory[]>(
+    []
+  );
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -45,7 +52,10 @@ export function LazyProjectCategories() {
     return (
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         {[...Array(4)].map((_, index) => (
-          <div key={index} className="aspect-square bg-muted rounded-lg animate-pulse flex items-center justify-center">
+          <div
+            key={index}
+            className="aspect-square bg-muted rounded-lg animate-pulse flex items-center justify-center"
+          >
             <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
           </div>
         ))}
@@ -79,7 +89,7 @@ export function LazyProjectCategories() {
           </div>
           <CardContent className="p-6 flex flex-col flex-grow">
             <div className="mb-4 flex-grow">
-              <CardTitle className="text-lg font-bold text-foreground mb-2 group-hover:text-primary transition-colors duration-300">
+              <CardTitle className="text-lg text-foreground mb-2 group-hover:text-primary transition-colors duration-300 font-normal">
                 {category.name}
               </CardTitle>
               <CardDescription className="text-sm text-muted-foreground leading-relaxed line-clamp-3">

@@ -328,7 +328,7 @@ export default function AboutPage() {
             {/* Text section - appears second on mobile, first on desktop */}
             <div className="order-2 lg:order-1">
               <h1
-                className="text-3xl lg:text-4xl font-black text-foreground mb-6"
+                className="text-3xl lg:text-4xl text-foreground mb-6"
                 style={{ fontFamily: "var(--font-heading)" }}
               >
                 {pageTitle}
@@ -365,7 +365,7 @@ export default function AboutPage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
             <h2
-              className="text-3xl font-bold text-foreground mb-6"
+              className="text-3xl text-foreground mb-6"
               style={{ fontFamily: "var(--font-heading)" }}
             >
               {ourStorySectionTitle}
@@ -388,9 +388,7 @@ export default function AboutPage() {
                     {item.type === "paragraph" && <p>{item.content}</p>}
                     {item.type === "bullets" && (
                       <div>
-                        {item.title && (
-                          <p className="font-semibold mb-2">{item.title}</p>
-                        )}
+                        {item.title && <p className="mb-2">{item.title}</p>}
                         <ul className="list-disc list-inside space-y-1 ml-4">
                           {item.items?.map((bullet, bulletIndex) => (
                             <li key={bulletIndex}>{bullet}</li>
@@ -400,18 +398,14 @@ export default function AboutPage() {
                     )}
                     {item.type === "checklist" && (
                       <div>
-                        {item.title && (
-                          <p className="font-semibold mb-2">{item.title}</p>
-                        )}
+                        {item.title && <p className="mb-2">{item.title}</p>}
                         <div className="space-y-2">
                           {item.items?.map((checkItem, checkIndex) => (
                             <div
                               key={checkIndex}
                               className="flex items-start gap-2"
                             >
-                              <span className="text-green-600 font-bold">
-                                ✓
-                              </span>
+                              <span className="text-green-600">✓</span>
                               <span>{checkItem}</span>
                             </div>
                           ))}

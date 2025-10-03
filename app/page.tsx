@@ -288,7 +288,7 @@ export default function OptimizedHomePage() {
               ) : (
                 <>
                   <h1
-                    className="text-3xl lg:text-4xl font-black text-foreground leading-tight"
+                    className="text-3xl lg:text-4xl text-foreground leading-tight"
                     style={{ fontFamily: "var(--font-heading)" }}
                   >
                     {heroHeadline}
@@ -303,7 +303,7 @@ export default function OptimizedHomePage() {
                 <Button
                   asChild
                   size="lg"
-                  className="text-lg px-8 py-6 bg-primary hover:bg-primary/90 text-white"
+                  className="text-lg px-8 py-6 bg-primary hover:bg-primary/90 text-white font-normal"
                 >
                   <Link href="/products">
                     Explore Products
@@ -321,7 +321,7 @@ export default function OptimizedHomePage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
             <h2
-              className="text-3xl lg:text-4xl font-black text-foreground mb-6"
+              className="text-3xl lg:text-4xl text-foreground mb-6"
               style={{ fontFamily: "var(--font-heading)" }}
             >
               {productCategoriesTitle}
@@ -351,7 +351,7 @@ export default function OptimizedHomePage() {
                   <Card className="h-full hover:shadow-lg hover:scale-[1.02] transition-all duration-300 border border-orange-200 hover:border-orange-300 bg-white cursor-pointer">
                     <CardContent className="p-6 h-full flex items-center justify-center">
                       <div className="text-center">
-                        <h3 className="text-lg font-bold text-gray-900 uppercase tracking-wide group-hover:text-orange-600 transition-colors duration-300">
+                        <h3 className="text-lg text-gray-900 uppercase tracking-wide group-hover:text-orange-600 transition-colors duration-300">
                           {category.name}
                         </h3>
                       </div>
@@ -404,7 +404,7 @@ export default function OptimizedHomePage() {
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="text-center mb-16">
               <h2
-                className="text-3xl lg:text-4xl font-black text-foreground mb-6"
+                className="text-3xl lg:text-4xl text-foreground mb-6 font-normal"
                 style={{ fontFamily: "var(--font-heading)" }}
               >
                 {projectCategoriesTitle}

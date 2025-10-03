@@ -9,11 +9,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import {
-  ArrowRight,
-  CheckCircle,
-  Loader2,
-} from "lucide-react";
+import { ArrowRight, CheckCircle, Loader2 } from "lucide-react";
 import Link from "next/link";
 import { Footer } from "@/components/footer";
 import { LazySection } from "@/components/lazy-section";
@@ -65,7 +61,8 @@ export default function OptimizedHomePage() {
   const heroDescription =
     contentItems.find(
       (item) => item.section === "hero" && item.content_key === "description"
-    )?.content_value || "Comprehensive chemical solutions across multiple industries with uncompromising quality standards.";
+    )?.content_value ||
+    "Comprehensive chemical solutions across multiple industries with uncompromising quality standards.";
 
   const productCategoriesTitle =
     contentItems.find(
@@ -78,7 +75,8 @@ export default function OptimizedHomePage() {
       (item) =>
         item.section === "product_categories" &&
         item.content_key === "description"
-    )?.content_value || "Comprehensive chemical solutions across multiple industries with uncompromising quality standards.";
+    )?.content_value ||
+    "Comprehensive chemical solutions across multiple industries with uncompromising quality standards.";
 
   const projectCategoriesTitle =
     contentItems.find(
@@ -91,7 +89,8 @@ export default function OptimizedHomePage() {
       (item) =>
         item.section === "project_categories" &&
         item.content_key === "description"
-    )?.content_value || "Discover our successful project implementations across various industries and sectors.";
+    )?.content_value ||
+    "Discover our successful project implementations across various industries and sectors.";
 
   return (
     <div className="min-h-screen bg-background">
@@ -110,7 +109,7 @@ export default function OptimizedHomePage() {
               ) : (
                 <>
                   <h1
-                    className="text-4xl lg:text-6xl font-black text-foreground leading-tight"
+                    className="text-4xl lg:text-6xl text-foreground leading-tight"
                     style={{ fontFamily: "var(--font-heading)" }}
                   >
                     {heroHeadline}
@@ -148,7 +147,7 @@ export default function OptimizedHomePage() {
                 <div className="aspect-square w-full max-w-md mx-auto bg-gradient-to-br from-primary/10 to-accent/10 rounded-full flex items-center justify-center">
                   <div className="text-center p-8">
                     <CheckCircle className="h-24 w-24 text-primary mx-auto mb-4" />
-                    <h3 className="text-2xl font-bold text-foreground mb-2">
+                    <h3 className="text-2xl text-foreground mb-2">
                       Quality Assured
                     </h3>
                     <p className="text-muted-foreground">
@@ -167,7 +166,7 @@ export default function OptimizedHomePage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
             <h2
-              className="text-3xl lg:text-4xl font-black text-foreground mb-6"
+              className="text-3xl lg:text-4xl text-foreground mb-6"
               style={{ fontFamily: "var(--font-heading)" }}
             >
               {productCategoriesTitle}
@@ -180,7 +179,10 @@ export default function OptimizedHomePage() {
           {heroLoading ? (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
               {[...Array(4)].map((_, index) => (
-                <div key={index} className="aspect-[4/3] bg-muted animate-pulse rounded-lg" />
+                <div
+                  key={index}
+                  className="aspect-[4/3] bg-muted animate-pulse rounded-lg"
+                />
               ))}
             </div>
           ) : (
@@ -199,7 +201,7 @@ export default function OptimizedHomePage() {
                     <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors duration-300" />
                   </div>
                   <CardContent className="p-6">
-                    <CardTitle className="text-lg font-bold text-foreground mb-2 group-hover:text-primary transition-colors duration-300">
+                    <CardTitle className="text-lg text-foreground mb-2 group-hover:text-primary transition-colors duration-300">
                       {category.name}
                     </CardTitle>
                     <CardDescription className="text-sm text-muted-foreground leading-relaxed line-clamp-3 mb-4">
@@ -251,7 +253,10 @@ export default function OptimizedHomePage() {
               </div>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                 {[...Array(4)].map((_, index) => (
-                  <div key={index} className="aspect-[4/3] bg-muted animate-pulse rounded-lg" />
+                  <div
+                    key={index}
+                    className="aspect-[4/3] bg-muted animate-pulse rounded-lg"
+                  />
                 ))}
               </div>
             </div>
@@ -262,7 +267,7 @@ export default function OptimizedHomePage() {
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="text-center mb-16">
               <h2
-                className="text-3xl lg:text-4xl font-black text-foreground mb-6"
+                className="text-3xl lg:text-4xl text-foreground mb-6"
                 style={{ fontFamily: "var(--font-heading)" }}
               >
                 {projectCategoriesTitle}
