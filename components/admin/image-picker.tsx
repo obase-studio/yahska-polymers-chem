@@ -182,17 +182,21 @@ export function ImagePicker({
     folderFilter?: string
   ) => {
     let filtered = files.filter(
-      (file) => file.mime_type.startsWith("image/") && !brokenImages.has(file.id) // Only show image files that aren't broken
+      (file) =>
+        file.mime_type.startsWith("image/") && !brokenImages.has(file.id) // Only show image files that aren't broken
     );
 
     // Apply folder filter if specified
     if (folderFilter) {
       // Check for exact folder match in path structure
       const folderFiltered = filtered.filter((file) => {
-        const pathParts = file.file_path.split('/');
+        const pathParts = file.file_path.split("/");
         // Get the folder name from the path (second to last part)
         const fileFolderName = pathParts[pathParts.length - 2];
-        return fileFolderName && fileFolderName.toLowerCase() === folderFilter.toLowerCase();
+        return (
+          fileFolderName &&
+          fileFolderName.toLowerCase() === folderFilter.toLowerCase()
+        );
       });
 
       // If folder filter returns results, use them
@@ -296,7 +300,9 @@ export function ImagePicker({
           alert(result.error || "Failed to upload image");
         }
       } else {
-        const errorData = await response.json().catch(() => ({ error: 'Unknown error' }));
+        const errorData = await response
+          .json()
+          .catch(() => ({ error: "Unknown error" }));
         alert(errorData.error || "Failed to upload image");
       }
     } catch (error) {
@@ -326,7 +332,7 @@ export function ImagePicker({
 
   // Mark image as broken
   const markImageAsBroken = (fileId: number) => {
-    setBrokenImages(prev => new Set([...prev, fileId]));
+    setBrokenImages((prev) => new Set([...prev, fileId]));
   };
 
   // Clean up broken images
@@ -335,10 +341,10 @@ export function ImagePicker({
 
     setRefreshing(true);
     try {
-      const response = await fetch('/api/admin/cleanup-images', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ dryRun: false })
+      const response = await fetch("/api/admin/cleanup-images", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ dryRun: false }),
       });
 
       if (response.ok) {
@@ -346,7 +352,7 @@ export function ImagePicker({
         await fetchMediaFiles();
       }
     } catch (error) {
-      console.error('Error cleaning up images:', error);
+      console.error("Error cleaning up images:", error);
     } finally {
       setRefreshing(false);
     }
@@ -457,7 +463,15 @@ export function ImagePicker({
                   </div>
 
                   <div className="text-xs text-muted-foreground">
-                    {filteredFiles.length} of {mediaFiles.filter(f => f.mime_type.startsWith("image/") && !brokenImages.has(f.id)).length} images
+                    {filteredFiles.length} of{" "}
+                    {
+                      mediaFiles.filter(
+                        (f) =>
+                          f.mime_type.startsWith("image/") &&
+                          !brokenImages.has(f.id)
+                      ).length
+                    }{" "}
+                    images
                   </div>
 
                   {brokenImages.size > 0 && (
@@ -488,7 +502,9 @@ export function ImagePicker({
                       <option value="">All Media</option>
                       {getFolderCategories().map((cat) => (
                         <option key={cat} value={cat}>
-                          {cat.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase())}
+                          {cat
+                            .replace(/-/g, " ")
+                            .replace(/\b\w/g, (l) => l.toUpperCase())}
                         </option>
                       ))}
                     </select>
@@ -563,7 +579,12 @@ export function ImagePicker({
                       <Image className="h-12 w-12 mx-auto mb-2 opacity-50" />
                       <p className="mb-2">No images found</p>
                       {activeFolder && (
-                        <p className="text-sm mb-4">in folder: {activeFolder.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase())}</p>
+                        <p className="text-sm mb-4">
+                          in folder:{" "}
+                          {activeFolder
+                            .replace(/-/g, " ")
+                            .replace(/\b\w/g, (l) => l.toUpperCase())}
+                        </p>
                       )}
                       <div className="flex gap-2 justify-center">
                         {searchQuery && (
@@ -596,7 +617,7 @@ export function ImagePicker({
                     <div className="space-y-3">
                       <Label
                         htmlFor="file-upload"
-                        className="text-xl font-semibold text-foreground"
+                        className="text-xl text-foreground"
                       >
                         Upload New Image
                       </Label>
@@ -611,7 +632,7 @@ export function ImagePicker({
                           accept="image/*"
                           onChange={handleFileUpload}
                           disabled={uploading}
-                          className="file:mr-4 file:py-1 file:px-6 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-primary file:text-primary-foreground hover:file:bg-primary/90 file:cursor-pointer cursor-pointer"
+                          className="file:mr-4 file:py-1 file:px-6 file:rounded-full file:border-0 file:text-sm file:bg-primary file:text-primary-foreground hover:file:bg-primary/90 file:cursor-pointer cursor-pointer"
                         />
                       </div>
                     </div>
@@ -625,7 +646,7 @@ export function ImagePicker({
                             <span className="font-medium">
                               Uploading image...
                             </span>
-                            <span className="text-primary font-bold">
+                            <span className="text-primary">
                               {uploadProgress}%
                             </span>
                           </div>
@@ -675,7 +696,8 @@ export function ImagePicker({
                 )}
                 {brokenImages.size > 0 && (
                   <span className="text-destructive">
-                    {brokenImages.size} broken image{brokenImages.size !== 1 ? 's' : ''} detected
+                    {brokenImages.size} broken image
+                    {brokenImages.size !== 1 ? "s" : ""} detected
                   </span>
                 )}
               </div>

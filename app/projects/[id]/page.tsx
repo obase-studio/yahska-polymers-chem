@@ -178,7 +178,7 @@ export default function ProjectDetailPage() {
         <div className="container mx-auto px-4 py-8">
           <div className="text-center">
             <AlertTriangle className="h-16 w-16 text-muted-foreground mx-auto mb-4" />
-            <h1 className="text-2xl font-bold mb-2">Project Not Found</h1>
+            <h1 className="text-2xl mb-2">Project Not Found</h1>
             <p className="text-muted-foreground mb-6">{error}</p>
             <Button asChild>
               <Link href="/projects">
@@ -199,7 +199,7 @@ export default function ProjectDetailPage() {
         <div className="container mx-auto px-4 py-8">
           <div className="text-center">
             <AlertTriangle className="h-16 w-16 text-muted-foreground mx-auto mb-4" />
-            <h1 className="text-2xl font-bold mb-2">Project Not Found</h1>
+            <h1 className="text-2xl mb-2">Project Not Found</h1>
             <p className="text-muted-foreground mb-6">
               The requested project could not be found.
             </p>
@@ -282,7 +282,7 @@ export default function ProjectDetailPage() {
 
               {/* Project Title */}
               <h1
-                className="text-3xl lg:text-4xl font-black text-foreground mb-4"
+                className="text-3xl lg:text-4xl text-foreground mb-4"
                 style={{ fontFamily: "var(--font-heading)" }}
               >
                 {project.name}
@@ -293,6 +293,34 @@ export default function ProjectDetailPage() {
                 <p className="text-xl text-muted-foreground leading-relaxed">
                   {project.description}
                 </p>
+
+                {/* Project Image - Mobile Only (between description and project_info_details) */}
+                <div className="flex justify-center lg:hidden my-8">
+                  {project.image_url ? (
+                    <div className="w-full max-w-md">
+                      <div className="aspect-[4/3] relative rounded-lg overflow-hidden shadow-2xl">
+                        <Image
+                          src={project.image_url}
+                          alt={project.name}
+                          fill
+                          className="object-cover"
+                        />
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="w-full max-w-md">
+                      <div className="aspect-[4/3] bg-white/10 rounded-lg flex items-center justify-center border border-white/20">
+                        <div className="text-center">
+                          <Building2 className="w-16 h-16 text-white/60 mx-auto mb-4" />
+                          <p className="text-white/70">Project Image</p>
+                          <p className="text-xs text-white/50 mt-1">
+                            Coming Soon
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+                </div>
 
                 {/* Project Information Display */}
                 <div className="space-y-3 text-lg text-muted-foreground">
@@ -325,8 +353,8 @@ export default function ProjectDetailPage() {
               </div>
             </div>
 
-            {/* Right Side - Project Image */}
-            <div className="flex justify-center">
+            {/* Right Side - Project Image - Desktop Only */}
+            <div className="hidden lg:flex justify-center">
               {project.image_url ? (
                 <div className="w-full max-w-md lg:max-w-lg">
                   <div className="aspect-[4/3] relative rounded-lg overflow-hidden shadow-2xl">

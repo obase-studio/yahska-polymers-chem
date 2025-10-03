@@ -30,9 +30,7 @@ export function MobileRestriction({ children }: MobileRestrictionProps) {
           </div>
 
           <div className="space-y-2">
-            <h1 className="text-2xl font-bold text-foreground">
-              Desktop Required
-            </h1>
+            <h1 className="text-2xl text-foreground">Desktop Required</h1>
             <p className="text-muted-foreground">
               Please use a desktop computer to access the admin panel. The admin
               interface is optimized for larger screens and requires desktop
@@ -41,9 +39,7 @@ export function MobileRestriction({ children }: MobileRestrictionProps) {
           </div>
 
           <div className="bg-muted/50 rounded-lg p-4 space-y-2">
-            <h3 className="font-semibold text-sm text-foreground">
-              Why desktop only?
-            </h3>
+            <h3 className="text-sm text-foreground">Why desktop only?</h3>
             <ul className="text-sm text-muted-foreground space-y-1 text-left">
               <li>• Better file management experience</li>
               <li>• Enhanced security for admin operations</li>

@@ -232,7 +232,7 @@ function CategoryImage({
 function ProjectCategoryImage({
   categoryName,
   categoryImageUrl,
-}: Omit<ProjectCategoryImageProps, 'categoryId'>) {
+}: Omit<ProjectCategoryImageProps, "categoryId">) {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
   const [retryCount, setRetryCount] = useState(0);
@@ -379,7 +379,7 @@ export default function HomePage() {
             projectCategories,
             clientLogos,
             approvalLogos,
-            categoryImages
+            categoryImages,
           } = result.data;
 
           // Set all data at once
@@ -400,7 +400,6 @@ export default function HomePage() {
 
     fetchHomepageData();
   }, []);
-
 
   // Get content values from new structure
   const heroHeadline =
@@ -477,7 +476,6 @@ export default function HomePage() {
 
   return (
     <div className="min-h-screen bg-background">
-
       {/* Hero Section */}
       <section className="relative bg-gradient-to-br from-primary/10 to-accent/5 py-20 lg:py-32">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -485,7 +483,7 @@ export default function HomePage() {
             <div>
               {heroHeadline && (
                 <h1
-                  className="text-4xl lg:text-6xl font-black text-foreground mb-6"
+                  className="text-4xl lg:text-6xl text-foreground mb-6"
                   style={{ fontFamily: "var(--font-heading)" }}
                 >
                   {heroHeadline}
@@ -568,19 +566,19 @@ export default function HomePage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-8">
             <div className="text-center">
-              <div className="text-4xl font-bold text-primary mb-2">20+</div>
+              <div className="text-4xl text-primary mb-2">20+</div>
               <div className="text-muted-foreground">Years Experience</div>
             </div>
             <div className="text-center">
-              <div className="text-4xl font-bold text-primary mb-2">500+</div>
+              <div className="text-4xl text-primary mb-2">500+</div>
               <div className="text-muted-foreground">Happy Clients</div>
             </div>
             <div className="text-center">
-              <div className="text-4xl font-bold text-primary mb-2">50+</div>
+              <div className="text-4xl text-primary mb-2">50+</div>
               <div className="text-muted-foreground">Product Range</div>
             </div>
             <div className="text-center">
-              <div className="text-4xl font-bold text-primary mb-2">100%</div>
+              <div className="text-4xl text-primary mb-2">100%</div>
               <div className="text-muted-foreground">Quality Assured</div>
             </div>
           </div>
@@ -593,7 +591,7 @@ export default function HomePage() {
           <div className="text-center mb-16">
             {productCategoriesTitle && (
               <h2
-                className="text-3xl lg:text-4xl font-bold text-foreground mb-4"
+                className="text-3xl lg:text-4xl text-foreground mb-4"
                 style={{ fontFamily: "var(--font-heading)" }}
               >
                 {productCategoriesTitle}
@@ -608,7 +606,6 @@ export default function HomePage() {
 
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
             {categories.map((category) => {
-
               return (
                 <Card
                   key={category.id}
@@ -633,7 +630,7 @@ export default function HomePage() {
                   </div>
                   <CardContent className="p-6 flex flex-col flex-grow">
                     <div className="mb-4 flex-grow">
-                      <CardTitle className="text-lg font-bold text-foreground mb-2 group-hover:text-primary transition-colors duration-300">
+                      <CardTitle className="text-lg text-foreground mb-2 group-hover:text-primary transition-colors duration-300">
                         {category.name}
                       </CardTitle>
                       <CardDescription className="text-sm text-muted-foreground leading-relaxed line-clamp-3">
@@ -680,7 +677,7 @@ export default function HomePage() {
           <div className="text-center mb-16">
             {projectCategoriesTitle && (
               <h2
-                className="text-3xl lg:text-4xl font-bold text-foreground mb-4"
+                className="text-3xl lg:text-4xl text-foreground mb-4"
                 style={{ fontFamily: "var(--font-heading)" }}
               >
                 {projectCategoriesTitle}
@@ -710,7 +707,7 @@ export default function HomePage() {
                   </div>
                   <CardContent className="p-6 flex flex-col flex-grow">
                     <div className="mb-4 flex-grow">
-                      <CardTitle className="text-lg font-bold text-foreground mb-2 group-hover:text-primary transition-colors duration-300">
+                      <CardTitle className="text-lg text-foreground mb-2 group-hover:text-primary transition-colors duration-300">
                         {category.name}
                       </CardTitle>
                       <CardDescription className="text-sm text-muted-foreground leading-relaxed line-clamp-3">

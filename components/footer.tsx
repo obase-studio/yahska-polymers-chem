@@ -77,7 +77,7 @@ export function Footer() {
         <div className="grid lg:grid-cols-3 md:grid-cols-2 gap-8">
           {/* Quick Links */}
           <div>
-            <h4 className="font-semibold text-foreground mb-4">Quick Links</h4>
+            <h4 className="text-foreground mb-4">Quick Links</h4>
             <ul className="space-y-3">
               <li>
                 <Link
@@ -140,7 +140,7 @@ export function Footer() {
 
           {/* Products */}
           <div>
-            <h4 className="font-semibold text-foreground mb-4">Our Products</h4>
+            <h4 className="text-foreground mb-4">Our Products</h4>
             <ul className="space-y-3">
               {categories.map((category) => (
                 <li key={category.id}>
@@ -155,7 +155,7 @@ export function Footer() {
               <li>
                 <Link
                   href="/products?category=all"
-                  className="text-muted-foreground hover:text-primary transition-colors duration-200 font-semibold"
+                  className="text-muted-foreground hover:text-primary transition-colors duration-200"
                 >
                   View All Products
                 </Link>
@@ -165,7 +165,7 @@ export function Footer() {
 
           {/* Projects */}
           <div>
-            <h4 className="font-semibold text-foreground mb-4">Our Projects</h4>
+            <h4 className="text-foreground mb-4">Our Projects</h4>
             <ul className="space-y-3">
               <li>
                 <Link
@@ -210,7 +210,7 @@ export function Footer() {
               <li>
                 <Link
                   href="/projects?category=all"
-                  className="text-muted-foreground hover:text-primary transition-colors duration-200 font-semibold"
+                  className="text-muted-foreground hover:text-primary transition-colors duration-200"
                 >
                   View All Projects
                 </Link>

@@ -58,16 +58,21 @@ export function LazyLogos({
       <AutoScrollLogos
         logos={clientLogos}
         title={clientTitle || "Key Customers"}
-        description={clientDescription || "Trusted by leading companies across industries"}
-        className="bg-muted/30"
+        description={
+          clientDescription || "Trusted by leading companies across industries"
+        }
+        className="bg-muted/30 font-normal"
       />
 
       {/* Approval Logos Ribbon */}
       <AutoScrollLogos
         logos={approvalLogos}
         title={approvalTitle || "Certifications & Approvals"}
-        description={approvalDescription || "Quality assured through industry-standard certifications"}
-        className="bg-background"
+        description={
+          approvalDescription ||
+          "Quality assured through industry-standard certifications"
+        }
+        className="bg-background font-normal"
       />
     </>
   );

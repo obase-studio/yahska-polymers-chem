@@ -10,9 +10,9 @@ function getContentValue(
   fallback: string
 ) {
   return (
-    items.find(
-      (item) => item.section === section && item.content_key === key
-    )?.content_value?.trim() || fallback
+    items
+      .find((item) => item.section === section && item.content_key === key)
+      ?.content_value?.trim() || fallback
   );
 }
 
@@ -38,7 +38,6 @@ export default async function ContactPage() {
     "description",
     ""
   );
-
 
   const locationsContent = getContentValue(
     contactContent,
@@ -70,7 +69,7 @@ export default async function ContactPage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center py-6">
             <h1
-              className="text-4xl lg:text-5xl font-black text-foreground mb-6"
+              className="text-4xl lg:text-5xl text-foreground mb-6"
               style={{ fontFamily: "var(--font-heading)" }}
             >
               {heroHeadline}
@@ -117,7 +116,10 @@ export default async function ContactPage() {
                       </CardHeader>
                       <CardContent className="text-center">
                         <p className="text-muted-foreground">
-                          <a href={`tel:${sanitizedTel}`} className="hover:text-primary">
+                          <a
+                            href={`tel:${sanitizedTel}`}
+                            className="hover:text-primary"
+                          >
                             {phoneNumber}
                           </a>
                         </p>

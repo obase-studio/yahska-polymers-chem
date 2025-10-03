@@ -198,9 +198,7 @@ export default function ProductDetailPage() {
       <div className="min-h-screen bg-background">
         <div className="text-center py-20">
           <AlertCircle className="h-16 w-16 mx-auto mb-4 text-destructive" />
-          <h1 className="text-2xl font-bold text-foreground mb-2">
-            Product Not Found
-          </h1>
+          <h1 className="text-2xl text-foreground mb-2">Product Not Found</h1>
           <p className="text-muted-foreground mb-6">
             {error || "The requested product could not be found."}
           </p>
@@ -221,7 +219,6 @@ export default function ProductDetailPage() {
 
   return (
     <div className="min-h-screen bg-background">
-
       {/* Breadcrumb */}
       <section className="py-6 bg-muted/30">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -257,7 +254,7 @@ export default function ProductDetailPage() {
                 {product.category_name}
               </Badge>
               <h1
-                className="text-3xl lg:text-4xl font-black text-foreground mb-6"
+                className="text-3xl lg:text-4xl text-foreground mb-6"
                 style={{ fontFamily: "var(--font-heading)" }}
               >
                 {product.name}
@@ -271,7 +268,7 @@ export default function ProductDetailPage() {
                   <span className="text-sm text-muted-foreground">
                     Product Code:{" "}
                   </span>
-                  <span className="font-mono text-primary font-semibold">
+                  <span className="font-mono text-primary">
                     {product.product_code}
                   </span>
                 </div>

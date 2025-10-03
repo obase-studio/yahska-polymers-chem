@@ -1,12 +1,22 @@
-'use client';
+"use client";
 
-import React, { memo } from 'react';
-import Image from 'next/image';
-import Link from 'next/link';
-import { Card, CardContent } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { ArrowRight, Package, Zap, Building2, Wrench, CheckCircle, Factory, Award, Truck } from 'lucide-react';
+import React, { memo } from "react";
+import Image from "next/image";
+import Link from "next/link";
+import { Card, CardContent } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import {
+  ArrowRight,
+  Package,
+  Zap,
+  Building2,
+  Wrench,
+  CheckCircle,
+  Factory,
+  Award,
+  Truck,
+} from "lucide-react";
 
 interface Product {
   id: number;
@@ -30,19 +40,21 @@ interface OptimizedProductCardProps {
 }
 
 // Memoized component to prevent unnecessary re-renders
-export const OptimizedProductCard = memo(function OptimizedProductCard({ product }: OptimizedProductCardProps) {
+export const OptimizedProductCard = memo(function OptimizedProductCard({
+  product,
+}: OptimizedProductCardProps) {
   // Get unique icon for each category based on name
   const getCategoryIcon = React.useCallback((categoryName: string) => {
-    if (categoryName.toLowerCase().includes('admixture')) return Package;
-    if (categoryName.toLowerCase().includes('accelerator')) return Zap;
-    if (categoryName.toLowerCase().includes('waterproofing')) return Building2;
-    if (categoryName.toLowerCase().includes('grout')) return Wrench;
-    if (categoryName.toLowerCase().includes('curing')) return CheckCircle;
-    if (categoryName.toLowerCase().includes('micro silica')) return Factory;
-    if (categoryName.toLowerCase().includes('floor')) return Building2;
-    if (categoryName.toLowerCase().includes('structural')) return Building2;
-    if (categoryName.toLowerCase().includes('corrosion')) return Award;
-    if (categoryName.toLowerCase().includes('release')) return Truck;
+    if (categoryName.toLowerCase().includes("admixture")) return Package;
+    if (categoryName.toLowerCase().includes("accelerator")) return Zap;
+    if (categoryName.toLowerCase().includes("waterproofing")) return Building2;
+    if (categoryName.toLowerCase().includes("grout")) return Wrench;
+    if (categoryName.toLowerCase().includes("curing")) return CheckCircle;
+    if (categoryName.toLowerCase().includes("micro silica")) return Factory;
+    if (categoryName.toLowerCase().includes("floor")) return Building2;
+    if (categoryName.toLowerCase().includes("structural")) return Building2;
+    if (categoryName.toLowerCase().includes("corrosion")) return Award;
+    if (categoryName.toLowerCase().includes("release")) return Truck;
     return Package;
   }, []);
 
@@ -80,9 +92,7 @@ export const OptimizedProductCard = memo(function OptimizedProductCard({ product
       <CardContent className="p-6 flex-1 flex flex-col">
         <div className="flex-1 space-y-3 mb-2">
           <div>
-            <h3 className="font-bold text-lg mb-2 line-clamp-2">
-              {product.name}
-            </h3>
+            <h3 className="text-lg mb-2 line-clamp-2">{product.name}</h3>
             <p className="text-muted-foreground text-sm line-clamp-3 mb-3">
               {product.description}
             </p>
@@ -111,4 +121,4 @@ export const OptimizedProductCard = memo(function OptimizedProductCard({ product
 });
 
 // Comparison function for React.memo
-OptimizedProductCard.displayName = 'OptimizedProductCard';
+OptimizedProductCard.displayName = "OptimizedProductCard";

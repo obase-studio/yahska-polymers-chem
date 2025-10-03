@@ -58,11 +58,7 @@ interface ProjectCategoryItem {
 }
 
 const normalizeCategoryId = (value: string) =>
-  value
-    .toLowerCase()
-    .trim()
-    .replace(/_/g, "-")
-    .replace(/\s+/g, "-");
+  value.toLowerCase().trim().replace(/_/g, "-").replace(/\s+/g, "-");
 
 const getDefaultIconForCategory = (id: string, name: string): LucideIcon => {
   const normalized = normalizeCategoryId(id || name);
@@ -97,7 +93,9 @@ function ProjectsPageContent() {
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("all");
   const [error, setError] = useState<string | null>(null);
-  const [projectCategories, setProjectCategories] = useState<ProjectCategoryItem[]>([]);
+  const [projectCategories, setProjectCategories] = useState<
+    ProjectCategoryItem[]
+  >([]);
   const [contentItems, setContentItems] = useState<any[]>([]);
 
   const searchParams = useSearchParams();
@@ -174,10 +172,10 @@ function ProjectsPageContent() {
     fetchData();
   }, []);
 
-
   const getCategoryIcon = (category: string) => {
     const match = projectCategories.find((cat) => cat.id === category);
-    const IconComponent = match?.icon ?? getDefaultIconForCategory(category, category);
+    const IconComponent =
+      match?.icon ?? getDefaultIconForCategory(category, category);
     return <IconComponent className="h-4 w-4" />;
   };
 
@@ -188,8 +186,7 @@ function ProjectsPageContent() {
     }
 
     return (
-      category.charAt(0).toUpperCase() +
-      category.slice(1).replace(/-/g, " ")
+      category.charAt(0).toUpperCase() + category.slice(1).replace(/-/g, " ")
     );
   };
 
@@ -249,23 +246,25 @@ function ProjectsPageContent() {
   }
 
   // Get content values for hero section
-  const heroHeadline = contentItems.find(
-    (item) => item.section === "hero" && item.content_key === "headline"
-  )?.content_value || "Our Projects";
+  const heroHeadline =
+    contentItems.find(
+      (item) => item.section === "hero" && item.content_key === "headline"
+    )?.content_value || "Our Projects";
 
-  const heroDescription = contentItems.find(
-    (item) => item.section === "hero" && item.content_key === "description"
-  )?.content_value || "Explore our portfolio of successful construction projects across infrastructure, railways, and industrial applications.";
+  const heroDescription =
+    contentItems.find(
+      (item) => item.section === "hero" && item.content_key === "description"
+    )?.content_value ||
+    "Explore our portfolio of successful construction projects across infrastructure, railways, and industrial applications.";
 
   return (
     <div className="min-h-screen bg-background">
-
       {/* Hero Section */}
       <section className="py-20 bg-gradient-to-br from-primary/10 to-accent/5">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center">
             <h1
-              className="text-3xl lg:text-4xl font-black text-foreground mb-6"
+              className="text-3xl lg:text-4xl text-foreground mb-6"
               style={{ fontFamily: "var(--font-heading)" }}
             >
               {heroHeadline}
@@ -284,7 +283,7 @@ function ProjectsPageContent() {
             {/* Left Sidebar - Categories */}
             <div className="hidden lg:block w-72 flex-shrink-0">
               <div className="bg-card border border-border rounded-lg p-6 sticky top-24">
-                <h3 className="text-lg font-semibold mb-4 text-foreground">
+                <h3 className="text-lg mb-4 text-foreground">
                   Project Categories
                 </h3>
 
@@ -358,7 +357,6 @@ function ProjectsPageContent() {
                     );
                   })}
                 </div>
-
               </div>
             </div>
 
@@ -415,7 +413,7 @@ function ProjectsPageContent() {
               {/* Results Header */}
               <div className="flex items-center justify-between mb-6">
                 <div>
-                  <h2 className="text-2xl font-bold text-foreground">
+                  <h2 className="text-2xl text-foreground">
                     {searchTerm
                       ? `Search Results for "${searchTerm}"`
                       : selectedCategory === "all"
@@ -441,7 +439,7 @@ function ProjectsPageContent() {
               {filteredProjects.length === 0 ? (
                 <div className="text-center py-12">
                   <Building2 className="h-16 w-16 mx-auto text-muted-foreground/50 mb-4" />
-                  <h3 className="text-lg font-semibold text-muted-foreground mb-2">
+                  <h3 className="text-lg text-muted-foreground mb-2">
                     No projects found
                   </h3>
                   <p className="text-muted-foreground">
@@ -508,7 +506,7 @@ function ProjectsPageContent() {
                       <CardContent className="p-6 flex-1 flex flex-col">
                         <div className="flex-1 space-y-3">
                           <div>
-                            <h3 className="font-bold text-lg mb-2 line-clamp-2">
+                            <h3 className="text-lg mb-2 line-clamp-2">
                               {project.name}
                             </h3>
                             <p className="text-muted-foreground text-sm line-clamp-3 mb-3">
@@ -517,7 +515,6 @@ function ProjectsPageContent() {
                           </div>
 
                           <div className="space-y-2">
-
                             {project.location && (
                               <div className="flex items-center gap-2 text-sm">
                                 <MapPin className="h-4 w-4 text-muted-foreground" />
@@ -543,7 +540,6 @@ function ProjectsPageContent() {
                               </div>
                             )}
                           </div>
-
                         </div>
 
                         <Button

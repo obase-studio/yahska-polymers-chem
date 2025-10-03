@@ -114,13 +114,13 @@ export function Navigation({
                 />
               ) : (
                 normalizedCompanyName && (
-                  <span className="inline-flex h-10 w-10 items-center justify-center rounded-full bg-primary text-sm font-semibold text-primary-foreground md:h-12 md:w-12">
+                  <span className="inline-flex h-10 w-10 items-center justify-center rounded-full bg-primary text-sm text-primary-foreground md:h-12 md:w-12">
                     {normalizedCompanyName.slice(0, 2).toUpperCase()}
                   </span>
                 )
               )}
               {normalizedCompanyName && (
-                <span className="max-w-[140px] truncate text-base font-semibold text-foreground md:max-w-none md:text-xl">
+                <span className="max-w-[140px] truncate text-base text-foreground md:max-w-none md:text-xl">
                   {normalizedCompanyName}
                 </span>
               )}
@@ -156,7 +156,7 @@ export function Navigation({
                   {sortedCategories.length > 0 && <DropdownMenuSeparator />}
                   <DropdownMenuItem
                     onClick={() => handleCategorySelect("all")}
-                    className="cursor-pointer font-semibold text-primary hover:text-primary/80"
+                    className="cursor-pointer text-primary hover:text-primary/80"
                   >
                     See All
                   </DropdownMenuItem>
@@ -184,7 +184,7 @@ export function Navigation({
                   {projectCategories.length > 0 && <DropdownMenuSeparator />}
                   <DropdownMenuItem
                     onClick={() => goToProjectCategory("all")}
-                    className="cursor-pointer font-semibold text-primary hover:text-primary/80"
+                    className="cursor-pointer text-primary hover:text-primary/80"
                   >
                     See All
                   </DropdownMenuItem>
@@ -263,7 +263,7 @@ export function Navigation({
                     ))}
                     {categories.length > 0 && (
                       <button
-                        className="text-primary hover:text-primary/80 font-semibold hover:bg-muted block px-3 py-2 rounded-md text-sm transition-all duration-200 w-full text-left"
+                        className="text-primary hover:text-primary/80 hover:bg-muted block px-3 py-2 rounded-md text-sm transition-all duration-200 w-full text-left"
                         onClick={() => {
                           handleCategorySelect("all");
                         }}
@@ -305,7 +305,7 @@ export function Navigation({
                     ))}
                     {projectCategories.length > 0 && (
                       <button
-                        className="text-primary hover:text-primary/80 font-semibold hover:bg-muted block px-3 py-2 rounded-md text-sm transition-all duration-200 w-full text-left"
+                        className="text-primary hover:text-primary/80 hover:bg-muted block px-3 py-2 rounded-md text-sm transition-all duration-200 w-full text-left"
                         onClick={() => {
                           goToProjectCategory("all");
                         }}

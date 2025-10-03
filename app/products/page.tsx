@@ -235,23 +235,25 @@ export default function ProductsPage() {
   }
 
   // Get content values for hero section
-  const heroHeadline = contentItems.find(
-    (item) => item.section === "hero" && item.content_key === "headline"
-  )?.content_value || "Our Products";
+  const heroHeadline =
+    contentItems.find(
+      (item) => item.section === "hero" && item.content_key === "headline"
+    )?.content_value || "Our Products";
 
-  const heroDescription = contentItems.find(
-    (item) => item.section === "hero" && item.content_key === "description"
-  )?.content_value || "Discover our comprehensive range of high-quality construction chemicals and concrete admixtures designed for professional applications.";
+  const heroDescription =
+    contentItems.find(
+      (item) => item.section === "hero" && item.content_key === "description"
+    )?.content_value ||
+    "Discover our comprehensive range of high-quality construction chemicals and concrete admixtures designed for professional applications.";
 
   return (
     <div className="min-h-screen bg-background">
-
       {/* Hero Section */}
       <section className="py-20 bg-gradient-to-br from-primary/10 to-accent/5">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center">
             <h1
-              className="text-3xl lg:text-4xl font-black text-foreground mb-6"
+              className="text-3xl lg:text-4xl text-foreground mb-6"
               style={{ fontFamily: "var(--font-heading)" }}
             >
               {heroHeadline}
@@ -270,7 +272,7 @@ export default function ProductsPage() {
             {/* Left Sidebar - Categories */}
             <div className="hidden lg:block w-72 flex-shrink-0">
               <div className="bg-card border border-border rounded-lg p-6 sticky top-24">
-                <h3 className="text-lg font-semibold mb-4 text-foreground">
+                <h3 className="text-lg mb-4 text-foreground">
                   Product Categories
                 </h3>
 
@@ -343,7 +345,6 @@ export default function ProductsPage() {
                     );
                   })}
                 </div>
-
               </div>
             </div>
 
@@ -402,7 +403,7 @@ export default function ProductsPage() {
               {/* Results Header */}
               <div className="flex items-center justify-between mb-6">
                 <div>
-                  <h2 className="text-2xl font-bold text-foreground">
+                  <h2 className="text-2xl text-foreground">
                     {searchTerm
                       ? `Search Results for "${searchTerm}"`
                       : selectedCategory === "all"
@@ -436,7 +437,7 @@ export default function ProductsPage() {
               {filteredProducts.length === 0 ? (
                 <div className="text-center py-12">
                   <Package className="h-16 w-16 mx-auto text-muted-foreground/50 mb-4" />
-                  <h3 className="text-lg font-semibold text-muted-foreground mb-2">
+                  <h3 className="text-lg text-muted-foreground mb-2">
                     No products found
                   </h3>
                   <p className="text-muted-foreground">
@@ -525,14 +526,13 @@ export default function ProductsPage() {
                         <CardContent className="p-6 flex-1 flex flex-col">
                           <div className="flex-1 space-y-3 mb-2">
                             <div>
-                              <h3 className="font-bold text-lg mb-2 line-clamp-2">
+                              <h3 className="text-lg mb-2 line-clamp-2">
                                 {product.name}
                               </h3>
                               <p className="text-muted-foreground text-sm line-clamp-3 mb-3">
                                 {product.description}
                               </p>
                             </div>
-
                           </div>
 
                           <div className="flex flex-col gap-2 mt-auto">
