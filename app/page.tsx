@@ -278,7 +278,7 @@ export default function OptimizedHomePage() {
             </div>
 
             {/* Text section - appears second on mobile, first on desktop */}
-            <div className="text-center lg:text-left space-y-8 order-2 lg:order-1">
+            <div className="text-center lg:text-left order-2 lg:order-1">
               {heroLoading ? (
                 <div className="space-y-4">
                   <div className="h-12 bg-muted animate-pulse rounded-lg" />
@@ -286,7 +286,7 @@ export default function OptimizedHomePage() {
                   <div className="h-6 bg-muted animate-pulse rounded-lg w-3/4" />
                 </div>
               ) : (
-                <>
+                <div className="space-y-6">
                   <h1
                     className="text-3xl lg:text-4xl text-foreground leading-tight"
                     style={{ fontFamily: "var(--font-heading)" }}
@@ -296,21 +296,8 @@ export default function OptimizedHomePage() {
                   <p className="text-lg lg:text-xl text-muted-foreground leading-relaxed max-w-2xl mx-auto lg:mx-0">
                     {heroDescription}
                   </p>
-                </>
+                </div>
               )}
-
-              <div className="flex justify-center lg:justify-start">
-                <Button
-                  asChild
-                  size="lg"
-                  className="text-lg px-8 py-6 bg-primary hover:bg-primary/90 text-white font-normal"
-                >
-                  <Link href="/products">
-                    Explore Products
-                    <ArrowRight className="ml-2 h-5 w-5" />
-                  </Link>
-                </Button>
-              </div>
             </div>
           </div>
         </div>
@@ -348,7 +335,7 @@ export default function OptimizedHomePage() {
                   href={`/products?category=${category.id}`}
                   className="group"
                 >
-                  <Card className="h-full hover:shadow-lg hover:scale-[1.02] transition-all duration-300 border border-orange-200 hover:border-orange-300 bg-white cursor-pointer">
+                  <Card className="h-full hover:shadow-lg hover:scale-[1.02] transition-all duration-300 bg-white cursor-pointer">
                     <CardContent className="p-6 h-full flex items-center justify-center">
                       <div className="text-center">
                         <h3 className="text-lg text-gray-900 uppercase tracking-wide group-hover:text-orange-600 transition-colors duration-300">
