@@ -25,9 +25,6 @@ export default function AboutPage() {
         setLoading(true);
         setFetchError("");
 
-        // Wait for component to be mounted and hydrated
-        await new Promise((resolve) => setTimeout(resolve, 500));
-
         if (!mounted) return;
 
         const url = `/api/content?page=about&t=${Date.now()}`; // Add timestamp to prevent caching
@@ -327,23 +324,30 @@ export default function AboutPage() {
 
             {/* Text section - appears second on mobile, first on desktop */}
             <div className="order-2 lg:order-1">
-              <h1
-                className="text-3xl lg:text-4xl text-foreground mb-6"
-                style={{ fontFamily: "var(--font-heading)" }}
-              >
-                {pageTitle}
-              </h1>
               {loading ? (
-                <div className="space-y-3">
-                  <div className="h-6 bg-muted/50 rounded animate-pulse"></div>
-                  <div className="h-6 bg-muted/50 rounded animate-pulse w-4/5"></div>
-                  <div className="h-6 bg-muted/50 rounded animate-pulse w-3/5"></div>
+                <div className="space-y-6">
+                  <div className="h-10 bg-muted/50 rounded animate-pulse w-2/3"></div>
+                  <div className="space-y-3">
+                    <div className="h-6 bg-muted/50 rounded animate-pulse"></div>
+                    <div className="h-6 bg-muted/50 rounded animate-pulse w-4/5"></div>
+                    <div className="h-6 bg-muted/50 rounded animate-pulse w-3/5"></div>
+                  </div>
                 </div>
-              ) : introParagraph ? (
-                <p className="text-xl text-muted-foreground leading-relaxed">
-                  {introParagraph}
-                </p>
-              ) : null}
+              ) : (
+                <>
+                  <h1
+                    className="text-3xl lg:text-4xl text-foreground mb-6"
+                    style={{ fontFamily: "var(--font-heading)" }}
+                  >
+                    {pageTitle}
+                  </h1>
+                  {introParagraph && (
+                    <p className="text-xl text-muted-foreground leading-relaxed">
+                      {introParagraph}
+                    </p>
+                  )}
+                </>
+              )}
               {fetchError && (
                 <div className="mt-4 p-4 bg-red-100 text-red-800 rounded">
                   <strong>Debug Info:</strong> {fetchError}

@@ -121,34 +121,76 @@ export default function ClientsPage() {
       <section className="py-20 bg-gradient-to-br from-primary/10 to-accent/5">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center">
-            <h1
-              className="text-3xl lg:text-4xl text-foreground mb-6"
-              style={{ fontFamily: "var(--font-heading)" }}
-            >
-              {heroHeadline}
-            </h1>
-            <p className="text-xl text-muted-foreground max-w-3xl mx-auto leading-relaxed">
-              {heroDescription}
-            </p>
+            {loading ? (
+              <div className="space-y-4 max-w-3xl mx-auto">
+                <div className="h-10 bg-muted animate-pulse rounded-lg mx-auto w-2/3" />
+                <div className="h-6 bg-muted animate-pulse rounded-lg" />
+                <div className="h-6 bg-muted animate-pulse rounded-lg w-5/6 mx-auto" />
+              </div>
+            ) : (
+              <>
+                <h1
+                  className="text-3xl lg:text-4xl text-foreground mb-6"
+                  style={{ fontFamily: "var(--font-heading)" }}
+                >
+                  {heroHeadline}
+                </h1>
+                <p className="text-xl text-muted-foreground max-w-3xl mx-auto leading-relaxed">
+                  {heroDescription}
+                </p>
+              </>
+            )}
           </div>
         </div>
       </section>
 
       {/* Key Customers Section */}
-      <AutoScrollLogos
-        logos={clientLogos}
-        title={clientSectionTitle}
-        description={clientSectionDescription}
-        className="bg-muted/30 font-normal"
-      />
+      {loading ? (
+        <section className="py-12 bg-muted/30">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="text-center mb-12">
+              <div className="h-10 bg-muted animate-pulse rounded-lg mx-auto w-64 mb-4" />
+              <div className="h-6 bg-muted animate-pulse rounded-lg mx-auto w-96" />
+            </div>
+            <div className="flex gap-6 overflow-hidden">
+              {[...Array(5)].map((_, i) => (
+                <div key={i} className="h-20 w-[180px] bg-muted animate-pulse rounded-lg flex-shrink-0" />
+              ))}
+            </div>
+          </div>
+        </section>
+      ) : (
+        <AutoScrollLogos
+          logos={clientLogos}
+          title={clientSectionTitle}
+          description={clientSectionDescription}
+          className="bg-muted/30 font-normal"
+        />
+      )}
 
       {/* Key Approvals Section */}
-      <AutoScrollLogos
-        logos={approvalLogos}
-        title={approvalSectionTitle}
-        description={approvalSectionDescription}
-        className="bg-background font-normal"
-      />
+      {loading ? (
+        <section className="py-12 bg-background">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="text-center mb-12">
+              <div className="h-10 bg-muted animate-pulse rounded-lg mx-auto w-80 mb-4" />
+              <div className="h-6 bg-muted animate-pulse rounded-lg mx-auto w-72" />
+            </div>
+            <div className="flex gap-6 overflow-hidden">
+              {[...Array(5)].map((_, i) => (
+                <div key={i} className="h-20 w-[180px] bg-muted animate-pulse rounded-lg flex-shrink-0" />
+              ))}
+            </div>
+          </div>
+        </section>
+      ) : (
+        <AutoScrollLogos
+          logos={approvalLogos}
+          title={approvalSectionTitle}
+          description={approvalSectionDescription}
+          className="bg-background font-normal"
+        />
+      )}
 
       <Footer />
     </div>
