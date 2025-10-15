@@ -19,14 +19,29 @@ interface ProjectCategory {
   icon_url?: string;
 }
 
-export function LazyProjectCategories() {
+interface LazyProjectCategoriesProps {
+  initialCategories?: ProjectCategory[];
+}
+
+export function LazyProjectCategories({
+  initialCategories = [],
+}: LazyProjectCategoriesProps) {
   const [projectCategories, setProjectCategories] = useState<ProjectCategory[]>(
-    []
+    initialCategories
   );
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(initialCategories.length === 0);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
+    setProjectCategories(initialCategories);
+    setLoading(initialCategories.length === 0);
+  }, [initialCategories]);
+
+  useEffect(() => {
+    if (initialCategories.length > 0) {
+      return;
+    }
+
     const fetchProjectCategories = async () => {
       try {
         const response = await fetch("/api/project-categories-homepage");
@@ -46,7 +61,7 @@ export function LazyProjectCategories() {
     };
 
     fetchProjectCategories();
-  }, []);
+  }, [initialCategories.length]);
 
   if (loading) {
     return (

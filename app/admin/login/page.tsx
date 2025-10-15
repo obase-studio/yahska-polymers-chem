@@ -102,7 +102,7 @@ export default function AdminLogin() {
           </form>
           
           <div className="mt-6 text-center text-sm text-muted-foreground">
-            <p>Default credentials: admin / admin</p>
+            <p>Default credentials: yahskapolymers / Yahskapolymers1</p>
           </div>
         </CardContent>
       </Card>

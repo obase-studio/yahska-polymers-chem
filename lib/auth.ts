@@ -44,8 +44,8 @@ export async function deleteSession() {
 
 export async function authenticateAdmin(username: string, password: string) {
   // Use environment variables for admin credentials (fallback to defaults for demo)
-  const validUsername = process.env.ADMIN_USERNAME || 'admin'
-  const validPassword = process.env.ADMIN_PASSWORD || 'admin'
+  const validUsername = process.env.ADMIN_USERNAME || 'yahskapolymers'
+  const validPassword = process.env.ADMIN_PASSWORD || 'Yahskapolymers1'
   
   if (username !== validUsername || password !== validPassword) {
     return null

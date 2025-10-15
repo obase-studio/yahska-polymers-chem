@@ -4,9 +4,28 @@ import Link from "next/link";
 import { useState, useEffect } from "react";
 import { Separator } from "@/components/ui/separator";
 
-export function Footer() {
-  const [categories, setCategories] = useState<any[]>([]);
-  const [companyProfileUrl, setCompanyProfileUrl] = useState<string>("");
+interface FooterCategory {
+  id: string;
+  name: string;
+}
+
+interface FooterProps {
+  categories?: FooterCategory[];
+  companyProfileUrl?: string | null;
+  disableFetch?: boolean;
+}
+
+export function Footer({
+  categories: categoriesProp,
+  companyProfileUrl: companyProfileUrlProp,
+  disableFetch = false,
+}: FooterProps = {}) {
+  const [categories, setCategories] = useState<FooterCategory[]>(
+    categoriesProp ?? []
+  );
+  const [companyProfileUrl, setCompanyProfileUrl] = useState<string>(
+    companyProfileUrlProp ?? ""
+  );
 
   // Function to format URL properly
   const formatUrl = (url: string) => {
@@ -18,6 +37,18 @@ export function Footer() {
   };
 
   useEffect(() => {
+    setCategories(categoriesProp ?? []);
+  }, [categoriesProp]);
+
+  useEffect(() => {
+    setCompanyProfileUrl(companyProfileUrlProp ?? "");
+  }, [companyProfileUrlProp]);
+
+  useEffect(() => {
+    if (disableFetch || categoriesProp) {
+      return;
+    }
+
     const fetchCategories = async () => {
       try {
         const response = await fetch(`/api/admin/categories?t=${Date.now()}`, {
@@ -40,6 +71,14 @@ export function Footer() {
         setCategories([]);
       }
     };
+
+    fetchCategories();
+  }, [disableFetch, categoriesProp]);
+
+  useEffect(() => {
+    if (disableFetch || companyProfileUrlProp !== undefined) {
+      return;
+    }
 
     const fetchCompanyProfileUrl = async () => {
       try {
@@ -66,9 +105,8 @@ export function Footer() {
       }
     };
 
-    fetchCategories();
     fetchCompanyProfileUrl();
-  }, []);
+  }, [disableFetch, companyProfileUrlProp]);
 
   return (
     <footer className="bg-muted/30 border-t border-border">
@@ -218,38 +256,37 @@ export function Footer() {
             </ul>
           </div>
         </div>
+      </div>
+      <Separator className="my-12" />
 
-        <Separator className="my-12" />
+      {/* Bottom Footer */}
+      <div className="flex flex-col md:flex-row justify-between items-center gap-6">
+        <div className="text-sm text-muted-foreground">
+          © {new Date().getFullYear()} Yahska Polymers Private Limited. All rights reserved.
+        </div>
 
-        {/* Bottom Footer */}
-        <div className="flex flex-col md:flex-row justify-between items-center gap-6">
-          <div className="text-sm text-muted-foreground">
-            © 2024 Yahska Polymers Private Limited. All rights reserved.
-          </div>
-
-          {/* Legal Links */}
-          <div className="flex items-center space-x-4 text-sm">
-            <Link
-              href="#"
-              className="text-muted-foreground hover:text-primary transition-colors duration-200"
-            >
-              Privacy Policy
-            </Link>
-            <span className="text-muted-foreground">•</span>
-            <Link
-              href="#"
-              className="text-muted-foreground hover:text-primary transition-colors duration-200"
-            >
-              Terms of Service
-            </Link>
-            <span className="text-muted-foreground">•</span>
-            <Link
-              href="#"
-              className="text-muted-foreground hover:text-primary transition-colors duration-200"
-            >
-              Sitemap
-            </Link>
-          </div>
+        {/* Legal Links */}
+        <div className="flex items-center space-x-4 text-sm">
+          <Link
+            href="#"
+            className="text-muted-foreground hover:text-primary transition-colors duration-200"
+          >
+            Privacy Policy
+          </Link>
+          <span className="text-muted-foreground">•</span>
+          <Link
+            href="#"
+            className="text-muted-foreground hover:text-primary transition-colors duration-200"
+          >
+            Terms of Service
+          </Link>
+          <span className="text-muted-foreground">•</span>
+          <Link
+            href="#"
+            className="text-muted-foreground hover:text-primary transition-colors duration-200"
+          >
+            Sitemap
+          </Link>
         </div>
       </div>
     </footer>

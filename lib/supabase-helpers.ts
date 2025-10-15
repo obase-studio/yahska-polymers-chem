@@ -354,6 +354,78 @@ export const supabaseHelpers = {
     return data || [];
   },
 
+  getHomepageLogos: async () => {
+    const { data, error } = await supabase
+      .from("media_files")
+      .select("*")
+      .or(
+        "file_path.ilike.%client-logos%,file_path.ilike.%Client%20Logos%,file_path.ilike.%approval-logos%,file_path.ilike.%approvals%"
+      );
+
+    if (error) throw error;
+
+    const getPublicUrl = (filePath: string) => {
+      // If the file_path already contains the full URL, return it
+      if (filePath.startsWith("http://") || filePath.startsWith("https://")) {
+        return filePath;
+      }
+
+      // Remove leading slash if present
+      const cleanPath = filePath.startsWith("/") ? filePath.slice(1) : filePath;
+
+      // Generate public URL using Supabase Storage (bucket name is 'yahska-media')
+      const { data: urlData } = supabase.storage
+        .from("yahska-media")
+        .getPublicUrl(cleanPath);
+
+      return urlData.publicUrl;
+    };
+
+    const dedupeByOriginalName = (items: any[]) =>
+      items.filter(
+        (file: any, index: number, self: any[]) =>
+          index ===
+          self.findIndex((candidate: any) => candidate.original_name === file.original_name)
+      );
+
+    const clientLogos = dedupeByOriginalName(
+      (data || [])
+        .filter(
+          (file: any) =>
+            file.file_path.includes("client-logos") ||
+            file.file_path.includes("Client%20Logos") ||
+            file.file_path.includes("Client Logos")
+        )
+        .map((file: any) => ({
+          ...file,
+          file_path: getPublicUrl(file.file_path),
+        }))
+        .filter(
+          (logo: any) => logo.filename !== "17.Raj Infrastructure – Pkg 13.jpg"
+        )
+        .sort((a: any, b: any) => a.original_name.localeCompare(b.original_name))
+    );
+
+    const approvalLogos = dedupeByOriginalName(
+      (data || [])
+        .filter(
+          (file: any) =>
+            file.file_path.includes("approval-logos") ||
+            file.file_path.includes("approvals")
+        )
+        .map((file: any) => ({
+          ...file,
+          file_path: getPublicUrl(file.file_path),
+        }))
+        .sort((a: any, b: any) => a.original_name.localeCompare(b.original_name))
+    );
+
+    return {
+      clientLogos,
+      approvalLogos,
+    };
+  },
+
   // Page images - store as special content entries
   getPageImage: async (page: string, section: string = "hero") => {
     const { data, error } = await supabase

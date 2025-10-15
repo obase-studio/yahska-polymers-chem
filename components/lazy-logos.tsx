@@ -9,6 +9,8 @@ interface LazyLogosProps {
   clientDescription?: string;
   approvalTitle?: string;
   approvalDescription?: string;
+  initialClientLogos?: any[];
+  initialApprovalLogos?: any[];
 }
 
 export function LazyLogos({
@@ -16,12 +18,31 @@ export function LazyLogos({
   clientDescription,
   approvalTitle,
   approvalDescription,
+  initialClientLogos = [],
+  initialApprovalLogos = [],
 }: LazyLogosProps) {
-  const [clientLogos, setClientLogos] = useState<any[]>([]);
-  const [approvalLogos, setApprovalLogos] = useState<any[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [clientLogos, setClientLogos] = useState<any[]>(initialClientLogos);
+  const [approvalLogos, setApprovalLogos] = useState<any[]>(
+    initialApprovalLogos
+  );
+  const hasPrefetchedData =
+    initialClientLogos.length > 0 || initialApprovalLogos.length > 0;
+  const [loading, setLoading] = useState(!hasPrefetchedData);
 
   useEffect(() => {
+    setClientLogos(initialClientLogos);
+  }, [initialClientLogos]);
+
+  useEffect(() => {
+    setApprovalLogos(initialApprovalLogos);
+  }, [initialApprovalLogos]);
+
+  useEffect(() => {
+    if (hasPrefetchedData) {
+      setLoading(false);
+      return;
+    }
+
     const fetchLogos = async () => {
       try {
         const response = await fetch("/api/homepage-logos");
@@ -39,7 +60,7 @@ export function LazyLogos({
     };
 
     fetchLogos();
-  }, []);
+  }, [hasPrefetchedData]);
 
   if (loading) {
     return (

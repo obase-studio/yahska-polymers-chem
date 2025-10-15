@@ -1,309 +1,301 @@
-"use client";
-
-import { useState, useEffect } from "react";
-import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import { ArrowRight, CheckCircle, Loader2, ImageIcon } from "lucide-react";
+import { unstable_cache } from "next/cache";
 import Link from "next/link";
 import Image from "next/image";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
+import { ArrowRight, Loader2 } from "lucide-react";
 import { Footer } from "@/components/footer";
 import { LazySection } from "@/components/lazy-section";
 import { LazyProjectCategories } from "@/components/lazy-project-categories";
 import { LazyLogos } from "@/components/lazy-logos";
-import { OptimizedCategoryImage } from "@/components/optimized-category-image";
-import { ContentItem } from "@/lib/database-client";
+import { supabaseHelpers } from "@/lib/supabase-helpers";
+import type { ContentItem } from "@/lib/database-client";
 
-interface Category {
+interface ProductCategory {
   id: string;
   name: string;
   description?: string;
   image_url?: string;
+  sort_order: number;
+  is_active?: boolean;
 }
 
-export default function OptimizedHomePage() {
-  // Critical content state
-  const [contentItems, setContentItems] = useState<ContentItem[]>([]);
-  const [categories, setCategories] = useState<Category[]>([]);
-  const [heroLoading, setHeroLoading] = useState(true);
-  const [lastKnownTimestamp, setLastKnownTimestamp] = useState<number>(0);
+interface ProjectCategory {
+  id: string;
+  name: string;
+  description?: string;
+  icon_url?: string;
+  sort_order: number;
+  is_active?: boolean;
+}
 
-  // Fetch critical above-the-fold content first
-  useEffect(() => {
-    const fetchHeroData = async () => {
-      try {
-        const response = await fetch(`/api/content?page=home&t=${Date.now()}`, {
-          cache: "no-store",
-        });
-        const result = await response.json();
+const getHomepageContent = unstable_cache(async () => {
+  const content = await supabaseHelpers.getContent("home");
+  return Array.isArray(content) ? (content as ContentItem[]) : [];
+}, ["homepage-content"], {
+  tags: ["content"],
+  revalidate: 300,
+});
 
-        if (result.success) {
-          console.log("Homepage - Initial content loaded:", {
-            contentCount: result.data.content?.length || 0,
-            hasHeroImage: result.data.content?.some(
-              (item: any) => item.content_key === "hero_image"
-            ),
-            hasHeroType: result.data.content?.some(
-              (item: any) => item.content_key === "hero_type"
-            ),
-            lastUpdated: result.lastUpdated,
-          });
-          setContentItems(result.data.content);
-          if (result.lastUpdated) {
-            setLastKnownTimestamp(result.lastUpdated);
-          }
-        }
+const getHomepageCategories = unstable_cache(async () => {
+  const categories = await supabaseHelpers.getAllCategories();
+  return Array.isArray(categories)
+    ? (categories as ProductCategory[])
+        .filter((category) => category.is_active !== false)
+        .sort(
+          (a, b) => (a.sort_order ?? Number.MAX_SAFE_INTEGER) - (b.sort_order ?? Number.MAX_SAFE_INTEGER)
+        )
+    : [];
+}, ["homepage-categories"], {
+  tags: ["categories", "navigation"],
+  revalidate: 300,
+});
 
-        // Also fetch categories
-        const catResponse = await fetch(`/api/products?t=${Date.now()}`, {
-          cache: "no-store",
-        });
-        const catResult = await catResponse.json();
-        if (catResult.success && catResult.data.categories) {
-          setCategories(catResult.data.categories);
-        }
-      } catch (error) {
-        console.error("Error fetching hero data:", error);
-      } finally {
-        setHeroLoading(false);
+const getHomepageProjectCategories = unstable_cache(async () => {
+  const categories = await supabaseHelpers.getAllProjectCategories();
+  return Array.isArray(categories)
+    ? (categories as ProjectCategory[])
+        .filter((category) => category.is_active !== false)
+        .sort(
+          (a, b) => (a.sort_order ?? Number.MAX_SAFE_INTEGER) - (b.sort_order ?? Number.MAX_SAFE_INTEGER)
+        )
+        .slice(0, 4)
+    : [];
+}, ["homepage-project-categories"], {
+  tags: ["project-categories", "projects"],
+  revalidate: 300,
+});
+
+const getHomepageLogos = unstable_cache(async () => {
+  return await supabaseHelpers.getHomepageLogos();
+}, ["homepage-logos"], {
+  tags: ["media"],
+  revalidate: 900,
+});
+
+const getFooterContent = unstable_cache(async () => {
+  const footerContent = await supabaseHelpers.getContent("footer");
+  return Array.isArray(footerContent) ? (footerContent as ContentItem[]) : [];
+}, ["footer-content"], {
+  tags: ["content"],
+  revalidate: 300,
+});
+
+function getContentValue(
+  contentItems: ContentItem[],
+  section: string,
+  key: string,
+  fallback: string
+) {
+  return (
+    contentItems.find(
+      (item) => item.section === section && item.content_key === key
+    )?.content_value ?? fallback
+  );
+}
+
+function getHeroVideoEmbedUrl(url: string) {
+  try {
+    if (url.includes("youtube.com")) {
+      const parsed = new URL(url);
+      const videoId = parsed.searchParams.get("v");
+      if (videoId) {
+        return `https://www.youtube.com/embed/${videoId}`;
       }
-    };
+    }
 
-    fetchHeroData();
-  }, []);
-
-  // Real-time sync mechanism for immediate updates
-  useEffect(() => {
-    if (lastKnownTimestamp === 0) return;
-
-    const checkForUpdates = async () => {
-      try {
-        const response = await fetch("/api/sync/content", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ page: "home" }),
-          cache: "no-store",
-        });
-
-        const result = await response.json();
-
-        if (
-          result.success &&
-          result.lastUpdated &&
-          result.lastUpdated > lastKnownTimestamp
-        ) {
-          console.log("Homepage - Content update detected, refreshing...", {
-            old: lastKnownTimestamp,
-            new: result.lastUpdated,
-            page: "home",
-          });
-
-          // Fetch updated content
-          const contentResponse = await fetch(
-            `/api/content?page=home&t=${Date.now()}`,
-            { cache: "no-store" }
-          );
-          const contentResult = await contentResponse.json();
-
-          if (
-            contentResult.success &&
-            contentResult.data &&
-            contentResult.data.content
-          ) {
-            console.log("Homepage - Content updated via polling:", {
-              contentCount: contentResult.data.content?.length || 0,
-              hasHeroImage: contentResult.data.content?.some(
-                (item: any) => item.content_key === "hero_image"
-              ),
-              hasHeroType: contentResult.data.content?.some(
-                (item: any) => item.content_key === "hero_type"
-              ),
-            });
-            setContentItems(contentResult.data.content);
-            setLastKnownTimestamp(result.lastUpdated);
-          }
-        }
-      } catch (error) {
-        console.error("Error checking for updates:", error);
+    if (url.includes("youtu.be")) {
+      const parsed = new URL(url);
+      const videoId = parsed.pathname.replace("/", "");
+      if (videoId) {
+        return `https://www.youtube.com/embed/${videoId}`;
       }
-    };
+    }
 
-    // Check for updates every 30 seconds (reduced frequency)
-    const interval = setInterval(checkForUpdates, 30000);
-    return () => clearInterval(interval);
-  }, [lastKnownTimestamp]);
+    if (url.includes("vimeo.com")) {
+      const parsed = new URL(url);
+      const videoId = parsed.pathname.split("/").filter(Boolean).pop();
+      if (videoId) {
+        return `https://player.vimeo.com/video/${videoId}`;
+      }
+    }
+  } catch (error) {
+    console.error("Failed to parse hero video URL", error);
+  }
 
-  // Get content values
-  const heroHeadline =
-    contentItems.find(
-      (item) => item.section === "hero" && item.content_key === "headline"
-    )?.content_value || "Leading Chemical Solutions Provider";
+  return null;
+}
 
-  const heroDescription =
-    contentItems.find(
-      (item) => item.section === "hero" && item.content_key === "description"
-    )?.content_value ||
-    "Comprehensive chemical solutions across multiple industries with uncompromising quality standards.";
+export default async function HomePage() {
+  const [contentItems, categories, projectCategories, logos, footerContent] =
+    await Promise.all([
+      getHomepageContent(),
+      getHomepageCategories(),
+      getHomepageProjectCategories(),
+      getHomepageLogos(),
+      getFooterContent(),
+    ]);
 
-  const productCategoriesTitle =
-    contentItems.find(
-      (item) =>
-        item.section === "product_categories" && item.content_key === "title"
-    )?.content_value || "Our Product Categories";
+  const { clientLogos = [], approvalLogos = [] } = logos ?? {
+    clientLogos: [],
+    approvalLogos: [],
+  };
 
-  const productCategoriesDescription =
-    contentItems.find(
-      (item) =>
-        item.section === "product_categories" &&
-        item.content_key === "description"
-    )?.content_value ||
-    "Comprehensive chemical solutions across multiple industries with uncompromising quality standards.";
+  const heroHeadline = getContentValue(
+    contentItems,
+    "hero",
+    "headline",
+    "Leading Chemical Solutions Provider"
+  );
 
-  const projectCategoriesTitle =
-    contentItems.find(
-      (item) =>
-        item.section === "project_categories" && item.content_key === "title"
-    )?.content_value || "Our Projects";
+  const heroDescription = getContentValue(
+    contentItems,
+    "hero",
+    "description",
+    "Comprehensive chemical solutions across multiple industries with uncompromising quality standards."
+  );
 
-  const projectCategoriesDescription =
-    contentItems.find(
-      (item) =>
-        item.section === "project_categories" &&
-        item.content_key === "description"
-    )?.content_value ||
-    "Discover our successful project implementations across various industries and sectors.";
+  const productCategoriesTitle = getContentValue(
+    contentItems,
+    "product_categories",
+    "title",
+    "Our Product Categories"
+  );
 
-  const keyCustomersTitle =
-    contentItems.find(
-      (item) => item.section === "key_customers" && item.content_key === "title"
-    )?.content_value || "Key Customers";
+  const productCategoriesDescription = getContentValue(
+    contentItems,
+    "product_categories",
+    "description",
+    "Comprehensive chemical solutions across multiple industries with uncompromising quality standards."
+  );
 
-  const keyCustomersDescription =
-    contentItems.find(
-      (item) =>
-        item.section === "key_customers" && item.content_key === "description"
-    )?.content_value || "Trusted by leading companies across industries";
+  const projectCategoriesTitle = getContentValue(
+    contentItems,
+    "project_categories",
+    "title",
+    "Our Projects"
+  );
 
-  const keyApprovalsTitle =
-    contentItems.find(
-      (item) => item.section === "key_approvals" && item.content_key === "title"
-    )?.content_value || "Certifications & Approvals";
+  const projectCategoriesDescription = getContentValue(
+    contentItems,
+    "project_categories",
+    "description",
+    "Discover our successful project implementations across various industries and sectors."
+  );
 
-  const keyApprovalsDescription =
-    contentItems.find(
-      (item) =>
-        item.section === "key_approvals" && item.content_key === "description"
-    )?.content_value ||
-    "Quality assured through industry-standard certifications";
+  const keyCustomersTitle = getContentValue(
+    contentItems,
+    "key_customers",
+    "title",
+    "Key Customers"
+  );
 
-  // Get hero media type and content
-  const heroType =
-    contentItems.find(
-      (item) => item.section === "hero" && item.content_key === "hero_type"
-    )?.content_value || "image";
+  const keyCustomersDescription = getContentValue(
+    contentItems,
+    "key_customers",
+    "description",
+    "Trusted by leading companies across industries"
+  );
 
-  const heroImageFromAPI = contentItems.find(
-    (item) => item.section === "hero" && item.content_key === "hero_image"
-  )?.content_value;
+  const keyApprovalsTitle = getContentValue(
+    contentItems,
+    "key_approvals",
+    "title",
+    "Certifications & Approvals"
+  );
 
-  const heroVideoUrl = contentItems.find(
-    (item) => item.section === "hero" && item.content_key === "hero_video_url"
+  const keyApprovalsDescription = getContentValue(
+    contentItems,
+    "key_approvals",
+    "description",
+    "Quality assured through industry-standard certifications"
+  );
+
+  const heroType = getContentValue(contentItems, "hero", "hero_type", "image");
+  const heroImageUrl = getContentValue(contentItems, "hero", "hero_image", "");
+  const heroVideoUrl = getContentValue(
+    contentItems,
+    "hero",
+    "hero_video_url",
+    ""
+  );
+
+  const heroVideoEmbedUrl = heroType === "video" ? getHeroVideoEmbedUrl(heroVideoUrl) : null;
+
+  const displayedCategories = categories.slice(0, 8);
+
+  const footerCategories = categories
+    .slice()
+    .sort((a, b) => a.name.localeCompare(b.name))
+    .slice(0, 6)
+    .map((category) => ({ id: category.id, name: category.name }));
+
+  const companyProfileUrl = footerContent.find(
+    (item) =>
+      item.section === "company_profile" && item.content_key === "download_url"
   )?.content_value;
 
   return (
     <div className="min-h-screen bg-background">
-      {/* Hero Section - Critical, loads immediately */}
       <section className="relative py-8 lg:py-32 bg-gradient-to-br from-primary/5 via-background to-accent/5 overflow-hidden">
         <div className="absolute inset-0 bg-grid-pattern opacity-[0.02]" />
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid lg:grid-cols-2 gap-6 lg:gap-12 items-center">
-            {/* Media section - appears first on mobile, second on desktop */}
             <div className="block order-1 lg:order-2">
               <div className="relative">
-                {heroLoading ? (
-                  <div className="aspect-video rounded-lg bg-muted/50 animate-pulse shadow-2xl"></div>
-                ) : heroType === "video" && heroVideoUrl ? (
+                {heroType === "video" && heroVideoEmbedUrl ? (
                   <div className="aspect-video rounded-lg overflow-hidden shadow-2xl">
-                    {heroVideoUrl.includes("youtube.com") ||
-                    heroVideoUrl.includes("youtu.be") ? (
-                      <iframe
-                        src={
-                          heroVideoUrl.includes("youtube.com")
-                            ? `https://www.youtube.com/embed/${
-                                heroVideoUrl.split("v=")[1]?.split("&")[0]
-                              }`
-                            : `https://www.youtube.com/embed/${
-                                heroVideoUrl
-                                  .split("youtu.be/")[1]
-                                  ?.split("?")[0]
-                              }`
-                        }
-                        title="Company Video"
-                        className="w-full h-full"
-                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                        allowFullScreen
-                      />
-                    ) : heroVideoUrl.includes("vimeo.com") ? (
-                      <iframe
-                        src={`https://player.vimeo.com/video/${
-                          heroVideoUrl.split("vimeo.com/")[1]?.split("?")[0]
-                        }`}
-                        title="Company Video"
-                        className="w-full h-full"
-                        allow="autoplay; fullscreen; picture-in-picture"
-                        allowFullScreen
-                      />
-                    ) : (
-                      <video controls className="w-full h-full object-cover">
-                        <source src={heroVideoUrl} type="video/mp4" />
-                        Your browser does not support the video tag.
-                      </video>
-                    )}
-                  </div>
-                ) : heroImageFromAPI ? (
-                  <div className="aspect-video rounded-lg overflow-hidden shadow-2xl">
-                    <img
-                      src={heroImageFromAPI}
-                      alt="Yahska Polymers Manufacturing Facility"
-                      className="w-full h-full object-cover"
+                    <iframe
+                      src={heroVideoEmbedUrl}
+                      title="Company Video"
+                      className="w-full h-full"
+                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                      allowFullScreen
                     />
                   </div>
-                ) : null}
+                ) : heroType === "video" && heroVideoUrl ? (
+                  <div className="aspect-video rounded-lg overflow-hidden shadow-2xl">
+                    <video controls className="w-full h-full object-cover">
+                      <source src={heroVideoUrl} type="video/mp4" />
+                      Your browser does not support the video tag.
+                    </video>
+                  </div>
+                ) : heroImageUrl ? (
+                  <div className="aspect-video rounded-lg overflow-hidden shadow-2xl relative">
+                    <Image
+                      src={heroImageUrl}
+                      alt="Yahska Polymers Manufacturing Facility"
+                      fill
+                      priority
+                      className="object-cover"
+                      sizes="(max-width: 1024px) 100vw, 50vw"
+                    />
+                  </div>
+                ) : (
+                  <div className="aspect-video rounded-lg bg-muted/50 flex items-center justify-center shadow-2xl">
+                    <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+                  </div>
+                )}
               </div>
             </div>
 
-            {/* Text section - appears second on mobile, first on desktop */}
             <div className="text-center lg:text-left order-2 lg:order-1">
-              {heroLoading ? (
-                <div className="space-y-4">
-                  <div className="h-12 bg-muted animate-pulse rounded-lg" />
-                  <div className="h-6 bg-muted animate-pulse rounded-lg" />
-                  <div className="h-6 bg-muted animate-pulse rounded-lg w-3/4" />
-                </div>
-              ) : (
-                <div className="space-y-6">
-                  <h1
-                    className="text-3xl lg:text-4xl text-foreground leading-tight"
-                    style={{ fontFamily: "var(--font-heading)" }}
-                  >
-                    {heroHeadline}
-                  </h1>
-                  <p className="text-lg lg:text-xl text-muted-foreground leading-relaxed max-w-2xl mx-auto lg:mx-0">
-                    {heroDescription}
-                  </p>
-                </div>
-              )}
+              <div className="space-y-6">
+                <h1
+                  className="text-3xl lg:text-4xl text-foreground leading-tight"
+                  style={{ fontFamily: "var(--font-heading)" }}
+                >
+                  {heroHeadline}
+                </h1>
+                <p className="text-lg lg:text-xl text-muted-foreground leading-relaxed max-w-2xl mx-auto lg:mx-0">
+                  {heroDescription}
+                </p>
+              </div>
             </div>
           </div>
         </div>
       </section>
 
-      {/* Product Categories Section - Critical, loads immediately */}
       <section className="py-20 bg-background">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
@@ -318,18 +310,9 @@ export default function OptimizedHomePage() {
             </p>
           </div>
 
-          {heroLoading ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-              {[...Array(8)].map((_, index) => (
-                <div
-                  key={index}
-                  className="aspect-square bg-muted animate-pulse rounded-lg"
-                />
-              ))}
-            </div>
-          ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-              {categories.slice(0, 8).map((category) => (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            {displayedCategories.length > 0 ? (
+              displayedCategories.map((category) => (
                 <Link
                   key={category.id}
                   href={`/products?category=${category.id}`}
@@ -345,9 +328,16 @@ export default function OptimizedHomePage() {
                     </CardContent>
                   </Card>
                 </Link>
-              ))}
-            </div>
-          )}
+              ))
+            ) : (
+              [...Array(8)].map((_, index) => (
+                <div
+                  key={`category-skeleton-${index}`}
+                  className="aspect-square bg-muted animate-pulse rounded-lg"
+                />
+              ))
+            )}
+          </div>
 
           <div className="text-center mt-12">
             <Button
@@ -364,7 +354,6 @@ export default function OptimizedHomePage() {
         </div>
       </section>
 
-      {/* Project Categories Section - Lazy loaded */}
       <LazySection
         threshold={0.1}
         rootMargin="200px"
@@ -401,7 +390,18 @@ export default function OptimizedHomePage() {
               </p>
             </div>
 
-            <LazyProjectCategories />
+            {projectCategories.length > 0 ? (
+              <LazyProjectCategories initialCategories={projectCategories} />
+            ) : (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                {[...Array(4)].map((_, index) => (
+                  <div
+                    key={`project-skeleton-${index}`}
+                    className="aspect-square bg-muted animate-pulse rounded-lg"
+                  />
+                ))}
+              </div>
+            )}
 
             <div className="text-center mt-12">
               <Button
@@ -419,7 +419,6 @@ export default function OptimizedHomePage() {
         </section>
       </LazySection>
 
-      {/* Logos Section - Lazy loaded */}
       <LazySection
         threshold={0.1}
         rootMargin="200px"
@@ -437,10 +436,16 @@ export default function OptimizedHomePage() {
           clientDescription={keyCustomersDescription}
           approvalTitle={keyApprovalsTitle}
           approvalDescription={keyApprovalsDescription}
+          initialClientLogos={clientLogos}
+          initialApprovalLogos={approvalLogos}
         />
       </LazySection>
 
-      <Footer />
+      <Footer
+        categories={footerCategories}
+        companyProfileUrl={companyProfileUrl}
+        disableFetch
+      />
     </div>
   );
 }
